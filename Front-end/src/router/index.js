@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Formulario from '@/components/Formulario'
 import Menu from '@/components/Menu'
 import Listar from '@/components/Listar'
+import AppHeader from '@/components/AppHeader'
 
 Vue.use(Router)
 
@@ -10,13 +11,20 @@ export default new Router({
   mode: 'history',
   routes: [{
     path: '/',
-    name: 'Menu',
-    component: Menu,
-    children: [{
+    name: 'AppHeader',
+    component: AppHeader,
+    children: [
+      {
+        path: '/AppHeader',
+        name: 'AppHeader',
+        component: AppHeader
+      },
+      {
         path: '/Listar',
         name: 'Listar',
         component: Listar
       },
+      
       {
         path: '/Cadastro',
         name: 'Cadastro',
@@ -28,6 +36,7 @@ export default new Router({
         name: 'Alterar',
         component: Formulario,
       }
+      
     ]
   }]
 })
