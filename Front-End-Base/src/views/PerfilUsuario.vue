@@ -9,7 +9,7 @@
         md="8"
       >
         <material-card
-          color="#BA4DE3"
+          color="primary"
           title="Dados do Usuário"
           text="Olá :) ...Bem-vindo (a)"
         >

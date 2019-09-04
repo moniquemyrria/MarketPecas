@@ -5,6 +5,9 @@
 </template>
 
 <script>
+import Vue from 'vue'
+import Vuetify from 'vuetify'
+
 export default {
   name: 'App'
 }

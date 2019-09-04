@@ -9,7 +9,7 @@
         md="8"
       >
         <material-card
-          color="#BA4DE3"
+          color="primary"
           title="Oferta de Produtos"
           text="Olá :) ...Bem-vindo (a)"
         >

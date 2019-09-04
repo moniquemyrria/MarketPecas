@@ -3,28 +3,23 @@ import Router from 'vue-router'
 import Formulario from '@/components/Formulario'
 import Menu from '@/components/Menu'
 import Listar from '@/components/Listar'
-import AppHeader from '@/components/AppHeader'
+import Vuetify from 'vuetify'
+import 'vuetify/dist/vuetify.css'
 
 Vue.use(Router)
+Vue.use(Vuetify);
 
 export default new Router({
   mode: 'history',
   routes: [{
     path: '/',
-    name: 'AppHeader',
-    component: AppHeader,
-    children: [
-      {
-        path: '/AppHeader',
-        name: 'AppHeader',
-        component: AppHeader
-      },
-      {
+    name: 'Menu',
+    component: Menu,
+    children: [{
         path: '/Listar',
         name: 'Listar',
         component: Listar
       },
-      
       {
         path: '/Cadastro',
         name: 'Cadastro',
@@ -36,7 +31,6 @@ export default new Router({
         name: 'Alterar',
         component: Formulario,
       }
-      
     ]
   }]
 })

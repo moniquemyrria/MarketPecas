@@ -19,6 +19,10 @@ export default new Vuetify({
     }
   },
   icons: {
-    iconfont: 'mdi'
-  }
+    iconfont: 'mdi',
+    iconfont: 'mdiSvg', // 'mdi' || 'mdiSvg' || 'md' || 'fa' || 'fa4'
+    iconfont: 'mdiSvg',
+    iconfont: 'fa',
+  },
+
 })
