@@ -1,9 +1,55 @@
 <template>
-  <v-container fill-height fluid>
+  <v-container class="fill-height" fluid>
+    <!-- MENSAGEM PERGUNTA EXCLUIR PRODUTO -->
+    <v-dialog v-model="dialogExcluir" max-width="500px">
+      <v-card>
+        <v-card-title>
+          <span>Excluír Produto</span>
+
+          <div class="flex-grow-1" />
+        </v-card-title>
+        <v-card-text>
+          <span>
+            <b>Deseja relamente excluír o produto?</b>
+          </span>
+          <br />
+          <br />
+          <i>
+            <label
+              style="font-size: 12px;"
+            >*Os produtos excluídos não serão mais listados no MarketPeças</label>
+          </i>
+        </v-card-text>
+        <v-card-actions>
+          <v-col cols="9" sm="12">
+            <v-row style="float: right; ">
+              <v-btn color="error" text @click="dialogExcluir = false">NÃO</v-btn>
+              <v-btn color="primary" text @click="dialogExcluir = false">SIM</v-btn>
+            </v-row>
+          </v-col>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- MENSAGENS -->
     <div class="text-center ma-2">
-      <v-snackbar color="cyan darken-2" :right="x === 'right'" bottom v-model="snackbar">
-        {{ text }}
-        <v-btn color="White"  :multi-line="multiLine" bottom text @click="snackbar = false">Ok</v-btn>
+      <v-snackbar
+        v-model="snackbar"
+        :bottom="bottom"
+        :color="color"
+        :left="left"
+        :right="right"
+        :top="top"
+        :timeout="timeout"
+        dark
+      >
+        <v-icon color="white" class="mr-3">mdi-bell-plus</v-icon>
+        <div>
+          <b>{{ text }}</b>
+        </div>
+        <!-- <v-btn icon @click="snackbar = false">
+          <v-icon>mdi-close-circle</v-icon>
+        </v-btn>-->
       </v-snackbar>
     </div>
 
@@ -13,25 +59,37 @@
           <div>
             <v-data-table
               :headers="headers"
-              :items="desserts"
-               :search="search"
-               :custom-filter="filterOnlyCapsText"
+              :items="tableProduto"
+              :search="search"
               sort-by="calories"
               class="elevation-1"
             >
               <template v-slot:top>
-                 <v-text-field append-icon="search" v-model="search" label="Pesquisa de Produtos por: Codigo, Descrição, Categoria ou Marca" class="mx-4"></v-text-field>
-                 
-                <v-toolbar flat color="white">
-                  <div class="flex-grow-1"></div>
-                  <v-dialog
-                    v-model="dialog"
-                    fullscreen
-                    hide-overlay
-                    transition="dialog-bottom-transition"
-                  >
+                <br />
+                <v-toolbar style="height: 100px;" flat color="white">
+                  <v-col cols="9" sm="8">
+                    <v-toolbar-title>
+                      <v-text-field
+                        v-model="search"
+                        style="margin-top: 50px; "
+                        append-icon="search"
+                        label="Pesquisa de Produtos por: Codigo, Descrição, Categoria ou Marca"
+                        class="mx-4"
+                      />
+                    </v-toolbar-title>
+                  </v-col>
+
+                  <div class="flex-grow-1" />
+                  <v-dialog v-model="dialog" fullscreen hide-overlay>
                     <template v-slot:activator="{ on }">
-                      <v-btn color="primary" dark class="mb-2" v-on="on">NOVO PRODUTO</v-btn>
+                      <v-btn
+                        style="margin-top: 35px"
+                        color="primary"
+                        dark
+                        large
+                        class="mb-2"
+                        v-on="on"
+                      >NOVO PRODUTO</v-btn>
                     </template>
                     <v-card>
                       <v-toolbar dark color="primary">
@@ -41,131 +99,170 @@
                         <v-toolbar-title>
                           <span class="headline">{{ formTitle }}</span>
                         </v-toolbar-title>
-                        <div class="flex-grow-1"></div>
+                        <div class="flex-grow-1" />
                         <v-toolbar-items>
-                          <v-btn dark text @click="close">CANCELAR</v-btn>
-                          <v-btn dark text @click="save">SALVAR</v-btn>
+                          <div class="ma-3">
+                            <v-btn large color="error" @click="close">CANCELAR</v-btn>
+                          </div>
+                          <div class="ma-3">
+                            <v-btn
+                              style="margin-left: -10px;"
+                              large
+                              color="success"
+                              @click="save"
+                            >SALVAR</v-btn>
+                          </div>
                         </v-toolbar-items>
                       </v-toolbar>
-                      <v-card-title></v-card-title>
+                      <v-card-title />
 
                       <v-card-text>
                         <v-container>
                           <v-tabs background-color="white" color="primary" right>
-                            <v-tab>DADOS GERAIS</v-tab>
+                            <v-tab >DADOS GERAIS *</v-tab>
                             <v-tab>MEDIDAS</v-tab>
 
-                            <v-tab-item v-for="n in 3" :key="n">
+                            <v-tab-item v-for="n in 2" :key="n">
                               <br />
                               <v-card>
                                 <v-card-text>
                                   <v-container fluid>
                                     <v-container v-if="n == 1" style>
-                                      <v-layout row>
-                                        <v-flex xs9 sm6 style>
-                                          <v-layout>
-                                            <v-flex xs9 sm12>
-                                              <v-flex xs9 sm5>
+                                      <v-row>
+                                        <v-col cols="9" sm="6" style>
+                                          <v-row>
+                                            <v-col cols="9" sm="12">
+                                              <v-col cols="9" sm="5">
                                                 <v-text-field
-                                                  v-model="editedItem.codigo"
-                                                  label="Código ou Referência"
+                                                  v-model="produto.codigo"
+                                                  label="Código ou Referência *"
                                                   prepend-icon="crop_free"
-                                                ></v-text-field>
-                                              </v-flex>
-                                            </v-flex>
-                                          </v-layout>
+                                                  :rules="codigoRules"
+                                                  :counter="20"
+                                                  required
+                                                />
+                                              </v-col>
+                                            </v-col>
+                                          </v-row>
 
-                                          <v-layout>
-                                            <v-flex xs9 sm12>
-                                              <v-flex xs9 sm12>
+                                          <v-row>
+                                            <v-col cols="9" sm="12">
+                                              <v-col cols="9" sm="12">
                                                 <v-text-field
-                                                  v-model="editedItem.descricao"
-                                                  label="Descrição detalhada"
+                                                  v-model="produto.descricao"
+                                                  label="Descrição detalhada *"
                                                   prepend-icon="create"
-                                                ></v-text-field>
-                                              </v-flex>
-                                            </v-flex>
-                                          </v-layout>
+                                                  :rules="descricaoRules"
+                                                  :counter="100"
+                                                  required
+                                                />
+                                              </v-col>
+                                            </v-col>
+                                          </v-row>
 
-                                          <v-layout>
-                                            <v-flex xs9 sm12>
-                                              <v-flex xs9 sm12>
+                                          <v-row>
+                                            <v-col cols="9" sm="12">
+                                              <v-col cols="9" sm="12">
                                                 <v-textarea
-                                                  v-model="editedItem.aplicacao"
+                                                  v-model="produto.aplicacao"
                                                   name="input-7-1"
-                                                  label="Descreva aqui a aplicação do produto"
+                                                  label="Descreva aqui a aplicação do produto *"
                                                   hint
                                                   prepend-icon="notes"
-                                                ></v-textarea>
-                                              </v-flex>
-                                            </v-flex>
-                                          </v-layout>
-                                        </v-flex>
+                                                  :rules="aplicacaoRules"
+                                                  :counter="300"
+                                                  required
+                                                />
+                                              </v-col>
+                                            </v-col>
+                                          </v-row>
+                                        </v-col>
 
-                                        <v-flex xs9 sm5 style="margin-left: 10vh; ">
-                                          <v-layout>
-                                            <v-flex xs9 sm12>
-                                              <v-flex xs9 sm12>
+                                        <v-col cols="9" sm="5" style="margin-left: 10vh; ">
+                                          <v-row>
+                                            <v-col cols="9" sm="12">
+                                              <v-col cols="9" sm="12">
                                                 <v-autocomplete
-                                                  label="Selecione a Categoria do Item"
-                                                  :items="components"
-                                                  prepend-icon="assignment"
-                                                ></v-autocomplete>
-                                              </v-flex>
-                                            </v-flex>
-                                          </v-layout>
-
-                                          <v-layout>
-                                            <v-flex xs9 sm12>
-                                              <v-flex xs9 sm12>
-                                                <v-autocomplete
-                                                  label="Selecione a Marca do Item"
-                                                  :items="components"
+                                                  v-model="produto.categoria"
+                                                  :search-input.sync="pesquisaCategoria"
+                                                  label="Selecione a Categoria do Item *"
+                                                  :items="itemsCategoria"
+                                                  hide-no-data
+                                                  hide-details
                                                   prepend-icon="assignment_turned_in"
-                                                ></v-autocomplete>
-                                              </v-flex>
-                                            </v-flex>
-                                          </v-layout>
+                                                  :rules="categoriaRules"
+                                                  :counter="100"
+                                                  required
+                                                  placeholder="Digite o nome da categoria para a pesquisa."
+                                                />
+                                              </v-col>
+                                            </v-col>
+                                          </v-row>
 
-                                          <v-layout>
-                                            <v-flex xs9 sm12>
-                                              <v-flex xs9 sm8 style="float: right">
+                                          <v-row>
+                                            <v-col cols="9" sm="12">
+                                              <v-col cols="9" sm="12">
+                                                <v-autocomplete
+                                                  v-model="produto.marca"
+                                                  :search-input.sync="pesquisaMarca"
+                                                  label="Selecione a Marca do Item *"
+                                                  :items="itemsMarca"
+                                                  hide-no-data
+                                                  hide-details
+                                                  prepend-icon="assignment_turned_in"
+                                                  :rules="marcaRules"
+                                                  :counter="100"
+                                                  required
+                                                  placeholder="Digite o nome da marca para a pesquisa."
+                                                />
+                                              </v-col>
+                                            </v-col>
+                                          </v-row>
+
+                                          <v-row>
+                                            <v-col cols="9" sm="12">
+                                              <v-col cols="9" sm="8" style="float: right">
                                                 <v-file-input
-                                                  :rules="rules"
                                                   accept="image/png, image/jpeg, image/bmp"
                                                   placeholder="Selecione a Imagem do Produto"
                                                   prepend-icon="mdi-camera"
-                                                ></v-file-input>
-                                              </v-flex>
-                                            </v-flex>
-                                          </v-layout>
+                                                />
+                                              </v-col>
+                                            </v-col>
+                                          </v-row>
 
-                                          <v-layout>
-                                            <v-flex xs9 sm12>
-                                              <v-flex xs9 sm6 style="float: right">
+                                          <v-row>
+                                            <v-col cols="9" sm="12">
+                                              <v-col cols="9" sm="6" style="float: right">
                                                 <v-text-field
-                                                  v-model="editedItem.uniMedida"
-                                                  label="Unidade de Medida"
+                                                  v-model="produto.uniMedida"
+                                                  label="Unidade de Medida *"
                                                   prepend-icon="scatter_plot"
-                                                ></v-text-field>
-                                              </v-flex>
-                                            </v-flex>
-                                          </v-layout>
+                                                  :rules="uniMedidaRules"
+                                                  :counter="4"
+                                                  required
+                                                />
+                                              </v-col>
+                                            </v-col>
+                                          </v-row>
                                           <br />
-                                          <v-layout>
-                                            <v-flex xs9 sm12>
-                                              <v-flex xs9 sm5 style="float: right; ">
+                                          <v-row>
+                                            <v-col cols="9" sm="12">
+                                              <v-col cols="9" sm="5" style="float: right; ">
                                                 <v-text-field
-                                                  v-model="editedItem.preco"
-                                                  label="Valor de Venda"
+                                                  v-model="produto.preco"
+                                                  label="Valor de Venda *"
+                                                  v-mask="mask"
                                                   prefix="R$"
                                                   prepend-icon="monetization_on"
-                                                ></v-text-field>
-                                              </v-flex>
-                                            </v-flex>
-                                          </v-layout>
-                                        </v-flex>
-                                      </v-layout>
+                                                  
+                                                  
+                                                />
+                                              </v-col>
+                                            </v-col>
+                                          </v-row>
+                                        </v-col>
+                                      </v-row>
 
                                       <!-- <v-col v-for="i in 6" :key="i" cols="12" md="4">
                                     <v-img
@@ -176,94 +273,77 @@
                                       </v-col>-->
                                     </v-container>
                                     <v-container v-if="n == 2">
-                                      <v-layout row>
-                                        <v-flex xs9 sm6>
-                                          <v-layout>
-                                            <v-flex xs9 sm12>
-                                              <v-flex xs9 sm12>
+                                      <v-row>
+                                        <v-col cols="9" sm="6">
+                                          <v-row>
+                                            <v-col cols="9" sm="12">
+                                              <v-col cols="9" sm="12">
                                                 <v-text-field
-                                                  v-model="editedItem.altura"
+                                                  v-model="produto.altura"
                                                   label="Altura do Item"
                                                   prepend-icon="square_foot"
-                                                ></v-text-field>
-                                              </v-flex>
-                                            </v-flex>
-                                          </v-layout>
-                                          <v-layout>
-                                            <v-flex xs9 sm12>
-                                              <v-flex xs9 sm12>
+                                                />
+                                              </v-col>
+                                            </v-col>
+                                          </v-row>
+                                          <v-row>
+                                            <v-col cols="9" sm="12">
+                                              <v-col cols="9" sm="12">
                                                 <v-text-field
-                                                  v-model="editedItem.largura"
+                                                  v-model="produto.largura"
                                                   label="Largura do Item"
                                                   prepend-icon="square_foot"
-                                                ></v-text-field>
-                                              </v-flex>
-                                            </v-flex>
-                                          </v-layout>
-                                          <v-layout>
-                                            <v-flex xs9 sm12>
-                                              <v-flex xs9 sm12>
+                                                />
+                                              </v-col>
+                                            </v-col>
+                                          </v-row>
+                                          <v-row>
+                                            <v-col cols="9" sm="12">
+                                              <v-col cols="9" sm="12">
                                                 <v-text-field
-                                                  v-model="editedItem.comprimento"
+                                                  v-model="produto.comprimento"
                                                   label="Comprimento do Item"
                                                   prepend-icon="square_foot"
-                                                ></v-text-field>
-                                              </v-flex>
-                                            </v-flex>
-                                          </v-layout>
-                                          <v-layout>
-                                            <v-flex xs9 sm12>
-                                              <v-flex xs9 sm12>
+                                                />
+                                              </v-col>
+                                            </v-col>
+                                          </v-row>
+                                          <v-row>
+                                            <v-col cols="9" sm="12">
+                                              <v-col cols="9" sm="12">
                                                 <v-text-field
-                                                  v-model="editedItem.peso"
+                                                  v-model="produto.peso"
                                                   label="Peso Bruto do Item"
                                                   prepend-icon="vertical_align_bottom"
-                                                ></v-text-field>
-                                              </v-flex>
-                                            </v-flex>
-                                          </v-layout>
-                                        </v-flex>
-                                        <v-flex xs9 sm6></v-flex>
-                                      </v-layout>
+                                                />
+                                              </v-col>
+                                            </v-col>
+                                          </v-row>
+                                        </v-col>
+                                        <v-col cols="9" sm="6" />
+                                      </v-row>
                                     </v-container>
                                   </v-container>
                                 </v-card-text>
                               </v-card>
                             </v-tab-item>
                           </v-tabs>
-
-                          <!-- <v-row>
-                            <v-col cols="12" sm="6" md="4">
-                              <v-text-field 
-                                v-model="editedItem.codigo" 
-                                label="Código">
-                              </v-text-field>
-                          </v-col>-->
-                          <!-- <v-col cols="12" sm="6" md="4">
-                              <v-text-field v-model="editedItem.calories" label="Descrição"></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="6" md="4">
-                              <v-text-field v-model="editedItem.fat" label="Categoria"></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="6" md="4">
-                              <v-text-field v-model="editedItem.carbs" label="Marca"></v-text-field>
-                          </v-col>-->
-                          <!-- </v-row> -->
                         </v-container>
                       </v-card-text>
-
-                      <!-- <v-card-actions>
-                        <div class="flex-grow-1"></div>
-                        <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                        <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-                      </v-card-actions>-->
                     </v-card>
                   </v-dialog>
                 </v-toolbar>
               </template>
               <template v-slot:item.action="{ item }">
-                <v-icon small class="mr-2" @click="editItem(item)">edit</v-icon>
-                <v-icon small @click="deleteItem(item)">delete</v-icon>
+                <v-btn fab x-small outlined dark color="warning">
+                  <v-icon @click="editItem(item)">edit</v-icon>
+                </v-btn>
+
+                <v-btn style="margin-left: 10px;" fab x-small outlined dark color="error">
+                  <v-icon @click="deleteItem(item)">delete</v-icon>
+                </v-btn>
+
+                <!-- <v-icon small @click="deleteItem(item)">delete</v-icon> -->
               </template>
               <template v-slot:no-data>
                 <v-btn color="primary" @click="initialize">Reset</v-btn>
@@ -277,56 +357,79 @@
 </template>
 
 <script>
+import axios from "../axios/cliente";
 import Vue from "vue";
 import Vuetify from "vuetify";
+import App from "../App.vue";
+import { mask } from "vue-the-mask";
 
 export default {
   vuetify: new Vuetify(),
+  directives: {
+    mask
+  },
   vue: new Vue(),
+
   data() {
     return {
-      search: '',
-      x: null,
+      mask: "#.###.##",
+      error: false,
+      codigoRules: [
+        v => !!v || "",
+        v => v.length <= 20 || "Campo com 20 caracteres"
+      ],
+      descricaoRules: [
+        v => !!v || "",
+        v => v.length <= 100 || "Campo com 100 caracteres"
+      ],
+      aplicacaoRules: [
+        v => !!v || "",
+        v => v.length <= 300 || "Campo com 300 caracteres"
+      ],
+      categoriaRules: [v => !!v || "", v => v.length <= 100 || ""],
+      uniMedidaRules: [
+        v => !!v || "",
+        v => v.length <= 4 || "Campo com 4 caracteres"
+      ],
+      marcaRules: [v => !!v || "", v => v.length <= 100 || ""],
+      precoRules: [
+        v => !!v || "",
+        v => v.length <= 0 || "Campo com 14 caracteres"
+      ],
+      model: 'tab-1',
+      timeout: 9000,
+      color: null,
+      colors: ["purple", "info", "success", "warning", "error"],
+      top: true,
+      bottom: false,
+      left: false,
+      right: false,
       snackbar: false,
-      text: 'Hello, I\'m a snackbar',
+      text: "",
+      search: "",
+      x: null,
       dialog: false,
+      dialogExcluir: false,
       headers: [
         { text: "Codigo", value: "codigo", sortable: true },
-        { text: "Descrição", value: "descricao", sortable: true},
-        { text: "Categoria", value: "categoria", sortable: true},
+        { text: "Descrição", value: "descricao", sortable: true },
+        { text: "Categoria", value: "categoria", sortable: true },
         { text: "Marca", value: "marca", sortable: true },
-        { text: "Actions", value: "action", sortable: false }
+        { text: "Ação", value: "action", sortable: false }
       ],
-      components: [
-        "Moura",
-        "Autocompletes",
-        "Comboboxes",
-        "Forms",
-        "Inputs",
-        "Overflow Buttons",
-        "Selects",
-        "Selection Controls",
-        "Sliders",
-        "Textareas",
-        "Text Fields"
-      ],
-      desserts: [],
+
+      marcaListagem: [],
+      pesquisaMarca: null,
+      itemsMarca: [],
+
+      categoriaListagem: [],
+      pesquisaCategoria: null,
+      itemsCategoria: [],
+
+      tableProduto: [],
       editedIndex: -1,
       produto: {
-        codigo: "",
-        descricao: "",
-        aplicacao: "",
-        uniMedida: "",
-        altura: "",
-        largura: "",
-        comprimento: "",
-        peso: "",
-        foto: "",
-        preco: "",
-        categoria: "",
-        marca: ""
-      },
-      editedItem: {
+        id: '',
         codigo: "",
         descricao: "",
         aplicacao: "",
@@ -339,33 +442,9 @@ export default {
         preco: "",
         categoria: "",
         marca: "",
-
-        name: "",
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0
-      },
-      defaultItem: {
-        codigo: "",
-        descricao: "",
-        aplicacao: "",
-        uniMedida: "",
-        altura: "",
-        largura: "",
-        comprimento: "",
-        peso: "",
-        foto: "",
-        preco: "",
-        categoria: "",
-        marca: "",
-
-        name: "",
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0
+        dataCadastro: new Date(),
       }
+      
     };
   },
 
@@ -380,6 +459,14 @@ export default {
   watch: {
     dialog(val) {
       val || this.close();
+    },
+
+    pesquisaMarca(val) {
+      val && val !== this.produto.marca && this.queryMarcas(val);
+    },
+
+    pesquisaCategoria(val) {
+      val && val !== this.produto.marca && this.queryCategorias(val);
     }
   },
 
@@ -388,60 +475,181 @@ export default {
   },
 
   methods: {
-    initialize() {
-      this.desserts = [
-        {
-          name: "123",
-          calories: "Amortecedor do Palio",
-          fat: "Amortecedor",
-          carbs: "Teste",
-          protein: "Moura",
+    validacaoCamposPreenchidos() {
+      this.colors = "warning";
+      this.timeout = 5000;
+      this.snack("bottom", "center");
+      this.text = "Ops! Há campos brigatórios não preenchidos.";
+      this.error = true;
 
-          codigo: "123",
-          descricao: "BATERIA DE CARRO",
-          aplicacao: "UTILIZADA PARA LIGAR O CARRO",
-          uniMedida: "UN",
-          altura: "30cm",
-          largura: "30cm",
-          comprimento: "10cm",
-          peso: "20KG",
-          foto: "",
-          preco: "104,80",
-          categoria: "BATERIAS",
-          marca: "MOURA"
-        }
-      ];
+      if (
+        this.produto.codigo == "" ||
+        this.produto.codigo.length > 20 ||
+        this.produto.codigo.length <= 0
+      ) {
+        return true;
+      }
+
+      if (
+        this.produto.descricao == "" ||
+        this.produto.descricao.length > 100 ||
+        this.produto.descricao.length <= 0
+      ) {
+        return true;
+      }
+
+      if (
+        this.produto.aplicacao == "" ||
+        this.produto.aplicacao.length > 100 ||
+        this.produto.aplicacao.length <= 0
+      ) {
+        return true;
+      }
+
+      if (this.produto.categoria == "" || this.produto.categoria.length <= 0) {
+        return true;
+      }
+
+      if (this.produto.marca == "" || this.produto.marca.length <= 0) {
+        return true;
+      }
+
+      if (
+        this.produto.uniMedida == "" ||
+        this.produto.uniMedida.length > 4 ||
+        this.produto.uniMedida.length <= 0
+      ) {
+        return true;
+      }
+
+      if (this.produto.preco == "" || this.produto.preco.length <= 0) {
+        return true;
+      }
+    },
+
+    snack(...args) {
+      this.top = false;
+      this.bottom = false;
+      this.left = false;
+      this.right = false;
+
+      for (const loc of args) {
+        this[loc] = true;
+      }
+
+      this.color = this.colors;
+
+      this.snackbar = true;
+    },
+
+    initialize() {
+      this.marcas();
+      this.categoria();
+      this.produtos();
+    },
+
+    queryMarcas(v) {
+      this.itemsMarca = this.marcaListagem.filter(e => {
+        return (e || "").toLowerCase().indexOf((v || "").toLowerCase()) > -1;
+      });
+    },
+
+    queryCategorias(v) {
+      this.itemsCategoria = this.categoriaListagem.filter(e => {
+        return (e || "").toLowerCase().indexOf((v || "").toLowerCase()) > -1;
+      });
+    },
+
+    marcas() {
+      axios
+        .get("/marca")
+        .then(response => {
+          for (let i = 0; i < response.data.length; i++) {
+            this.marcaListagem.push(response.data[i].descricao);
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+
+    categoria() {
+      axios
+        .get("/categoria")
+        .then(response => {
+          for (let i = 0; i < response.data.length; i++) {
+            this.categoriaListagem.push(response.data[i].descricao);
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+
+    produtos() {
+      axios
+        .get("/produto")
+        .then(response => {
+          this.tableProduto = response.data;
+          console.log(this.tableProduto);
+        })
+        .catch(e => {
+          console.log(e);
+        });
     },
 
     editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
+      this.editedIndex = this.tableProduto.indexOf(item);
+      this.produto = Object.assign({}, item);
       this.dialog = true;
     },
 
     deleteItem(item) {
-      const index = this.desserts.indexOf(item);
+      const index = this.tableProduto.indexOf(item);
       confirm("Deseja realmente deletar o produto selecionado?") &&
-        this.desserts.splice(index, 1);
+        this.tableProduto.splice(index, 1);
     },
 
     close() {
       this.dialog = false;
       setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
+        this.produto = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       }, 300);
     },
 
     save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem);
-        this.snackbar = true;
-        this.text = 'REGISTRO SALVO COM SUCESSO'
-      } else {
-        this.desserts.push(this.editedItem);
-      }
-      this.close();
+      //if (!this.validacaoCamposPreenchidos()) {
+        this.produto.dataCadastro = new Date();
+        axios
+          .post("/produto", this.produto )
+          .then(response => {
+            if(response.data.length > 0){
+              this.text = response.data[0].mensagem
+              this.colors = "blue";
+              this.snack("top", "right");
+            }
+            this.close();
+            this.initialize();
+
+          })
+          .catch(e => {
+            console.log(e);
+          });
+        // if (this.editedIndex > -1) {
+        //   Object.assign(this.tableProduto[this.editedIndex], this.produto);
+        //   this.colors = "blue";
+        //   this.snack("top", "right");
+        //   this.text = "REGISTRO ALTERADO COM SUCESSO";
+        //   this.close();
+        // } else {
+        //   this.tableProduto.push(this.produto);
+        //   this.colors = "blue";
+        //   this.snack("top", "right");
+        //   this.text = "REGISTRO SALVO COM SUCESSO";
+        //   this.close();
+        // }
+      //}
     }
   }
 };

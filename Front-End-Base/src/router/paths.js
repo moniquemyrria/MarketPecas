@@ -7,58 +7,58 @@ export default [
   {
     path: '',
     // Relative to /src/views
-    //view: 'Dashboard'
-    view: 'PerfilUsuario'
+    // view: 'Dashboard'
+    view: 'PerfilUsuario',
   },
   {
     path: '/user-profile',
     name: 'User Profile',
-    view: 'UserProfile'
+    view: 'UserProfile',
   },
   {
     path: '/perfil-usuario',
     name: 'Perfil Usuario',
-    view: 'PerfilUsuario'
+    view: 'PerfilUsuario',
   },
   {
     path: '/cadastro-empresa',
     name: 'Cadastro da Empresa',
-    view: 'CadastroEmpresa'
+    view: 'CadastroEmpresa',
   },
   {
     path: '/cadastro-produto',
     name: 'Cadastro de Produto',
-    view: 'CadastroProduto'
+    view: 'CadastroProduto',
   },
   {
     path: '/oferta-produto',
     name: 'Cadastro de Oferta de Produtos',
-    view: 'CadastroOfertaProduto'
+    view: 'CadastroOfertaProduto',
   },
   {
     path: '/table-list',
     name: 'Table List',
-    view: 'TableList'
+    view: 'TableList',
   },
   {
     path: '/typography',
-    view: 'Typography'
+    view: 'Typography',
   },
   {
     path: '/icons',
-    view: 'Icons'
+    view: 'Icons',
   },
   {
     path: '/maps',
-    view: 'Maps'
+    view: 'Maps',
   },
   {
     path: '/notifications',
-    view: 'Notifications'
+    view: 'Notifications',
   },
   {
     path: '/upgrade',
     name: 'Upgrade to PRO',
-    view: 'Upgrade'
-  }
+    view: 'Upgrade',
+  },
 ]

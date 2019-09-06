@@ -19,16 +19,16 @@
     props: {
       dark: {
         type: Boolean,
-        default: true
+        default: true,
       },
       elevation: {
         type: [Number, String],
-        default: 6
+        default: 6,
       },
       value: {
         type: Boolean,
-        default: true
-      }
-    }
+        default: true,
+      },
+    },
   }
 </script>

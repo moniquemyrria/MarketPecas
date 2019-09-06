@@ -14,8 +14,8 @@
 
     metaInfo () {
       return {
-        title: 'Vue Material Dashboard by CreativeTim'
+        title: 'Vue Material Dashboard by CreativeTim',
       }
-    }
+    },
   }
 </script>

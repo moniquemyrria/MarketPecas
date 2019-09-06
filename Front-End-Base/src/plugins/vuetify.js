@@ -7,22 +7,19 @@ export default new Vuetify({
   theme: {
     themes: {
       light: {
-        primary: '#BA4DE3',
-        secondary: '#BA4DE3',
+        primary: '#1867C0',
+        secondary: '#FAFAFA',
         tertiary: '#495057',
         accent: '#82B1FF',
-        error: '#f55a4e',
-        info: '#00d3ee',
-        success: '#5cb860',
-        warning: '#ffa21a'
-      }
-    }
+        error: '#FF6060',
+        info: '#2A73C5',
+        success: '#5AB55E',
+        warning: '#FB9514',
+      },
+    },
   },
   icons: {
-    iconfont: 'mdi',
-    iconfont: 'mdiSvg', // 'mdi' || 'mdiSvg' || 'md' || 'fa' || 'fa4'
-    iconfont: 'mdiSvg',
-    iconfont: 'fa',
+    iconfont: 'mdi' || 'mdiSvg' || 'md' || 'fa' || 'fa4'//
   },
 
 })

@@ -1,6 +1,6 @@
 <template>
   <v-container
-    fill-height
+    class="fill-height"
     fluid
     grid-list-xl
   >
@@ -30,7 +30,6 @@
           <v-data-table
             :headers="headers"
             :items="items.slice(0, 7)"
-           
           />
         </material-card>
       </v-col>
@@ -45,59 +44,59 @@
         {
           sortable: false,
           text: 'Name',
-          value: 'name'
+          value: 'name',
         },
         {
           sortable: false,
           text: 'Country',
-          value: 'country'
+          value: 'country',
         },
         {
           sortable: false,
           text: 'City',
-          value: 'city'
+          value: 'city',
         },
         {
           sortable: false,
           text: 'Salary',
           value: 'salary',
-          align: 'right'
-        }
+          align: 'right',
+        },
       ],
       items: [
         {
           name: 'Dakota Rice',
           country: 'Niger',
           city: 'Oud-Tunrhout',
-          salary: '$35,738'
+          salary: '$35,738',
         },
         {
           name: 'Minerva Hooper',
           country: 'Curaçao',
           city: 'Sinaai-Waas',
-          salary: '$23,738'
+          salary: '$23,738',
         }, {
           name: 'Sage Rodriguez',
           country: 'Netherlands',
           city: 'Overland Park',
-          salary: '$56,142'
+          salary: '$56,142',
         }, {
           name: 'Philip Chanley',
           country: 'Korea, South',
           city: 'Gloucester',
-          salary: '$38,735'
+          salary: '$38,735',
         }, {
           name: 'Doris Greene',
           country: 'Malawi',
           city: 'Feldkirchen in Kārnten',
-          salary: '$63,542'
+          salary: '$63,542',
         }, {
           name: 'Mason Porter',
           country: 'Chile',
           city: 'Gloucester',
-          salary: '$78,615'
-        }
-      ]
-    })
+          salary: '$78,615',
+        },
+      ],
+    }),
   }
 </script>

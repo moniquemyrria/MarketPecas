@@ -1,6 +1,6 @@
 <template>
   <v-container
-    fill-height
+    class="fill-height"
     fluid
   >
     <v-row>
@@ -287,8 +287,8 @@
         'mdi-backburger',
         'mdi-backspace',
         'mdi-backup-restore',
-        'mdi-badminton'
-      ]
-    })
+        'mdi-badminton',
+      ],
+    }),
   }
 </script>

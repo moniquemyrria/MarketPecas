@@ -1,7 +1,7 @@
 <template>
   <v-container
+    class="fill-height"
     fluid
-    fill-height
   >
     <v-row
       align="center"
@@ -252,13 +252,13 @@
         'info',
         'success',
         'warning',
-        'error'
+        'error',
       ],
       top: true,
       bottom: false,
       left: false,
       right: false,
-      snackbar: false
+      snackbar: false,
     }),
 
     methods: {
@@ -275,7 +275,7 @@
         this.color = this.colors[Math.floor(Math.random() * this.colors.length)]
 
         this.snackbar = true
-      }
-    }
+      },
+    },
   }
 </script>

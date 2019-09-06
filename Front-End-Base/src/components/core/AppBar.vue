@@ -99,7 +99,7 @@
 <script>
   // Utilities
   import {
-    mapMutations
+    mapMutations,
   } from 'vuex'
 
   export default {
@@ -109,16 +109,16 @@
         'You have 5 new tasks',
         'You\'re now a friend with Andrew',
         'Another Notification',
-        'Another One'
+        'Another One',
       ],
       title: null,
-      responsive: false
+      responsive: false,
     }),
 
     watch: {
       '$route' (val) {
         this.title = val.name
-      }
+      },
     },
 
     mounted () {
@@ -140,8 +140,8 @@
         } else {
           this.responsive = false
         }
-      }
-    }
+      },
+    },
   }
 </script>
 

@@ -1,6 +1,6 @@
 <template>
   <v-container
-    fill-height
+    class="fill-height"
     fluid
   >
     <v-row justify="center">
@@ -12,9 +12,7 @@
           color="primary"
           title="Dados da Sua Empresa"
           text="Olá :) ...Bem-vindo (a)"
-        >
-        
-        </material-card>
+        />
       </v-col>
     </v-row>
   </v-container>

@@ -13,9 +13,9 @@ return [
         // Database connection settings
         "db" => [
             "host" => "localhost",
-            "dbname" => "ativo_arris",
+            "dbname" => "MKTPECAS",
             "user" => "sa",
-            "pass" => "Pedro8251"
+            "pass" => "123"
         ],
         // Database connection settings
         "dbERP" => [

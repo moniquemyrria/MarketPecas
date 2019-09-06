@@ -39,6 +39,11 @@ require __DIR__ . '/../src/cors.php';
 require __DIR__ . '/../src/utils/mail/email.php';
 // Register routes
 require __DIR__ . '/../src/models/horas/routes.php';
+require __DIR__ . '/../src/models/marca/routes.php';
+
+require __DIR__ . '/../src/models/categoria/routes.php';
+
+require __DIR__ . '/../src/models/produto/routes.php';
 
 
 

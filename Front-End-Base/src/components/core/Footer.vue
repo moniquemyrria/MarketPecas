@@ -41,7 +41,7 @@
       //   { name: 'About Us', Link: 'https://creative-tim.com/presentation' },
       //   { name: 'Blog', Link: 'https://blog.creative-tim.com' }
       // ]
-    })
+    }),
   }
 </script>
 

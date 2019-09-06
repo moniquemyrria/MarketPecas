@@ -1,6 +1,6 @@
 <template>
   <v-container
-    fill-height
+    class="fill-height"
     fluid
   >
     <v-row
@@ -89,9 +89,9 @@
         'text-success': ['Success Text', leaderShort, 'p'],
         'text-warning': ['Warning Text', leaderShort, 'p'],
         'text-danger': ['Danger Text', leaderShort, 'p'],
-        'small': ['Small Tag', small, 'h2']
-      }
-    })
+        'small': ['Small Tag', small, 'h2'],
+      },
+    }),
   }
 </script>
 

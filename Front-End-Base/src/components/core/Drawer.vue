@@ -53,8 +53,8 @@
     </v-list>
 
     <template v-slot:append>
-      <!-- <v-list nav>
-        <v-list-item
+      <v-list nav>
+        <!-- <v-list-item
           to="/upgrade"
         >
           <v-list-item-action>
@@ -62,10 +62,10 @@
           </v-list-item-action>
 
           <v-list-item-title class="font-weight-light">
-            
+
           </v-list-item-title>
-        </v-list-item>
-      </v-list> -->
+        </v-list-item> -->
+      </v-list>
     </template>
   </v-navigation-drawer>
 </template>
@@ -74,15 +74,15 @@
 // Utilities
   import {
     mapMutations,
-    mapState
+    mapState,
   } from 'vuex'
 
   export default {
     props: {
       opened: {
         type: Boolean,
-        default: false
-      }
+        default: false,
+      },
     },
     data: () => ({
       links: [
@@ -94,22 +94,22 @@
         {
           to: '/perfil-usuario',
           icon: 'mdi-account',
-          text: 'Perfil do Usuário'
+          text: 'Perfil do Usuário',
         },
         {
           to: '/cadastro-empresa',
           icon: 'mdi-clipboard-outline',
-          text: 'Dados da Empresa'
+          text: 'Dados da Empresa',
         },
         {
           to: '/cadastro-produto',
           icon: 'mdi-chart-bubble',
-          text: 'Produtos'
+          text: 'Produtos',
         },
         {
           to: '/oferta-produto',
           icon: 'mdi-view-dashboard',
-          text: 'Oferta de Produtos'
+          text: 'Oferta de Produtos',
         },
         // {
         //   to: '/icons',
@@ -126,7 +126,7 @@
         //   icon: 'mdi-bell',
         //   text: 'Notifications'
         // }
-      ]
+      ],
     }),
 
     computed: {
@@ -137,12 +137,12 @@
         },
         set (val) {
           this.setDrawer(val)
-        }
-      }
+        },
+      },
     },
 
     methods: {
-      ...mapMutations('app', ['setDrawer', 'toggleDrawer'])
-    }
+      ...mapMutations('app', ['setDrawer', 'toggleDrawer']),
+    },
   }
 </script>
