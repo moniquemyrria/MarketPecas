@@ -7,7 +7,7 @@ require 'dao.php';
 // Routes
 
 $app->get('/categoria', function ($request, $response, $args) {
-    $categoria = categoriaGet($this->db);
+    $categoria = listarCategoria($this->db);
     return $this->response->withJson($categoria);
 });
 

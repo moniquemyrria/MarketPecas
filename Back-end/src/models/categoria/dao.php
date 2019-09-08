@@ -1,6 +1,6 @@
 <?php
 
-function categoriaGet($db)
+function listarCategoria($db)
 {
     
         $str = $db->prepare("SELECT * FROM CATEGORIA");

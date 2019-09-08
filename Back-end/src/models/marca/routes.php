@@ -7,7 +7,7 @@ require 'dao.php';
 // Routes
 
 $app->get('/marca', function ($request, $response, $args) {
-    $marca = marcaGet($this->db);
+    $marca = listarMarca($this->db);
     return $this->response->withJson($marca);
 });
 
