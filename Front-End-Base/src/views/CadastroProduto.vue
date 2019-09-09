@@ -1,5 +1,27 @@
 <template>
   <v-container class="fill-height" fluid>
+    <!-- CARREGANDO DADOS -->
+    <v-dialog
+      v-model="dialogCarregandoDados"
+     
+      width="320"
+    >
+      <v-card
+        color="primary"
+        dark
+      >
+      <br>
+        <v-card-text>
+          {{ textCarregandoDados }}
+          <v-progress-linear
+            indeterminate
+            color="white"
+            class="mb-0"
+          ></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
     <!-- MENSAGEM PERGUNTA EXCLUIR PRODUTO -->
     <v-dialog v-model="dialogExcluir" max-width="500px">
       <v-card>
@@ -55,7 +77,7 @@
 
     <v-row justify="center">
       <v-col cols="12" md="12">
-        <material-card color="primary" text="Produtos">
+        <material-card color="primary" text="Produtos" style="margin-top: -1vh;">
           <div>
             <v-data-table
               :headers="headers"
@@ -63,12 +85,18 @@
               :search="search"
               sort-by="calories"
               class="elevation-1"
+              hide-default-footer
+              :page.sync="page"
+              :items-per-page="itemsPerPage"
+              @page-count="pageCount = $event"
             >
               <template v-slot:top>
                 <br />
                 <v-toolbar style="height: 100px;" flat color="white">
-                  <v-col cols="9" sm="8">
-                    <v-toolbar-title>
+                  <v-col cols="9" sm="12">
+                    <v-row style="">
+                      <v-col cols="9" sm="10" style="">
+                        <v-toolbar-title>
                       <v-text-field
                         v-model="search"
                         style="margin-top: 50px; "
@@ -77,20 +105,26 @@
                         class="mx-4"
                       />
                     </v-toolbar-title>
-                  </v-col>
-
-                  <div class="flex-grow-1" />
-                  <v-dialog v-model="dialog" fullscreen hide-overlay >
-                    <template v-slot:activator="{ on }">
-                      <v-btn
+                      </v-col>
+                      <v-col cols="9" sm="2" style="">
+                        <v-btn
                         style="margin-top: 35px"
                         color="primary"
                         dark
                         large
                         class="mb-2"
-                        v-on="on"
+                        @click="novo"
                       >NOVO PRODUTO</v-btn>
-                    </template>
+                      </v-col>
+                    </v-row>
+                    
+                  </v-col>
+
+                  <div class="flex-grow-1" />
+                  <v-dialog v-model="dialog" fullscreen hide-overlay>
+                   
+                      
+                    
                     <v-card>
                       <v-toolbar dark color="primary">
                         <v-btn icon dark @click="dialog = false">
@@ -123,7 +157,6 @@
                             <v-tab>MEDIDAS</v-tab>
 
                             <v-tab-item v-for="n in 2" :key="n">
-                             
                               <v-card>
                                 <v-card-text>
                                   <v-container fluid>
@@ -185,8 +218,8 @@
                                                   label="Selecione a Categoria do Item *"
                                                   menu-props="auto"
                                                   hide-details
-                                                  prepend-icon="map"
-                                                  single-line
+                                                  prepend-icon="assignment_turned_in"
+                                                 
                                                 ></v-select>
                                                 <!-- <v-autocomplete
                                                   v-model="produto.categoria"
@@ -215,8 +248,8 @@
                                                   label="Selecione a Marca do Item *"
                                                   menu-props="auto"
                                                   hide-details
-                                                  prepend-icon="map"
-                                                  single-line
+                                                  prepend-icon="assignment_turned_in"
+                                                  
                                                 ></v-select>
                                                 <!-- <v-autocomplete
                                                   v-model="produto.marca"
@@ -252,6 +285,7 @@
                                                   show-size
                                                   hide-details
                                                   ref="img"
+                                                  :clearable="limparImg"
                                                 />
                                               </v-col>
                                             </v-col>
@@ -270,7 +304,7 @@
                                               </v-col>
                                             </v-col>
                                           </v-row>
-                                         
+
                                           <v-row>
                                             <v-col cols="9" sm="12">
                                               <v-col cols="9" sm="6" style="float: right; ">
@@ -368,10 +402,23 @@
 
                 <!-- <v-icon small @click="deleteItem(item)">delete</v-icon> -->
               </template>
-              <template v-slot:no-data>
+              <!-- <template v-slot:no-data>
                 <v-btn color="primary" @click="initialize">Reset</v-btn>
-              </template>
+              </template>-->
             </v-data-table>
+            <br />
+            <!-- <v-row>
+              <v-col cols="9" sm="12" style="margin-left: 2vh;">
+            <v-col cols="9" sm="2" style="float: right">-->
+            <v-pagination
+              v-model="page"
+              :length="pageCount"
+              prev-icon="mdi-menu-left"
+              next-icon="mdi-menu-right"
+            ></v-pagination>
+            <!-- </v-col>
+              </v-col>
+            </v-row>-->
           </div>
         </material-card>
       </v-col>
@@ -397,6 +444,10 @@ export default {
 
   data() {
     return {
+      limparImg: true,
+      page: 1,
+      pageCount: 0,
+      itemsPerPage: 5,
       mask: "####.##",
       error: false,
       file: "",
@@ -414,6 +465,8 @@ export default {
       x: null,
       dialog: false,
       dialogExcluir: false,
+      dialogCarregandoDados: false,
+      textCarregandoDados: '',
       headers: [
         { text: "Codigo", value: "codigo", sortable: true },
         { text: "Descrição", value: "descricao", sortable: true },
@@ -454,7 +507,7 @@ export default {
       files: [],
       nomeArquivo: "",
       tipoArquivo: "",
-      foto: '',
+      foto: ""
     };
   },
 
@@ -463,8 +516,7 @@ export default {
       return this.produto.id == ""
         ? "Cadastro de Produtos"
         : "Editando um Item";
-    },
-
+    }
   },
 
   watch: {
@@ -486,10 +538,14 @@ export default {
   },
 
   methods: {
-   
+    novo(){
+      this.initialize();
+      this.dialog = true;
+    },
     gerarArquivoBase64(event) {
       if (event != null) {
         //this.produto.imagem = event.target.files[0];
+        fileUpload = '';
         fileUpload = event; //event.target.files[0];
         this.nomeArquivo = event.name;
         this.tipoArquivo = event.type;
@@ -517,14 +573,14 @@ export default {
       this.colors = "warning";
       this.timeout = 5000;
       this.snack("bottom", "center");
-      this.text = "Ops! Há campos brigatórios não preenchidos.";
+      this.text = "Ops! Há campos brigatórios não preenchidos, ou algum dado informado está maior que o permitido para o campo.";
       this.error = true;
     },
 
     validacaoCamposPreenchidos() {
       if (
         this.produto.codigo == "" ||
-        (this.produto.codigo.length <= 0 && this.produto.codigo.length > 20)
+        (this.produto.codigo.length <= 0 || this.produto.codigo.length > 20)
       ) {
         this.msgAlertCamposPreenchidos();
         return true;
@@ -541,7 +597,7 @@ export default {
 
       if (
         this.produto.aplicacao == "" ||
-        (this.produto.aplicacao.length <= 0 &&
+        (this.produto.aplicacao.length <= 0 ||
           this.produto.aplicacao.length > 300)
       ) {
         this.msgAlertCamposPreenchidos();
@@ -560,7 +616,7 @@ export default {
 
       if (
         this.produto.uniMedida == "" ||
-        (this.produto.uniMedida.length <= 0 &&
+        (this.produto.uniMedida.length <= 0 ||
           this.produto.uniMedida.length > 4)
       ) {
         this.msgAlertCamposPreenchidos();
@@ -588,9 +644,32 @@ export default {
       this.snackbar = true;
     },
 
+    limparCampos() {
+      this.produto.id = "";
+      this.produto.codigo = "";
+      this.produto.descricao = "";
+      this.produto.aplicacao = "";
+      this.produto.uniMedida = "";
+      this.produto.altura = "";
+      this.produto.largura = "";
+      this.produto.comprimento = "";
+      this.produto.peso = "";
+      this.produto.imagem = "";
+      this.produto.imagemNome = "";
+      this.produto.imagemTipo = "";
+      this.produto.preco = "";
+      this.produto.categoria = "";
+      this.produto.marca = "";
+      this.produto.dataCadastro = new Date();
+      fileUpload = null;
+      file = null;
+      this.limparImg = true;
+    },
+
     initialize() {
-      this.marcas();
+      this.limparCampos();
       this.categoria();
+      this.marcas();
       this.produtos();
     },
 
@@ -610,6 +689,7 @@ export default {
       axios
         .get("/marca")
         .then(response => {
+          this.marcaListagem = [];
           for (let i = 0; i < response.data.length; i++) {
             this.marcaListagem.push(response.data[i].descricao);
           }
@@ -623,6 +703,7 @@ export default {
       axios
         .get("/categoria")
         .then(response => {
+          this.categoriaListagem = [];
           for (let i = 0; i < response.data.length; i++) {
             this.categoriaListagem.push(response.data[i].descricao);
           }
@@ -636,6 +717,7 @@ export default {
       axios
         .get("/produto")
         .then(response => {
+          this.tableProduto = [];
           this.tableProduto = response.data;
         })
         .catch(e => {
@@ -644,12 +726,15 @@ export default {
     },
 
     editar(item) {
+      this.dialogCarregandoDados = true;
+      this.textCarregandoDados = "Aguarde ...Carregando dados do Produto."
       axios
         .get("/produtopesquisaid/" + item.id)
         .then(response => {
           if (response.data.length > 0) {
             this.produto = response.data[0];
             this.produto.preco = parseFloat(response.data[0].preco);
+            console.log(this.produto)
             // let image = new Image();
             // image.src = response.data[0].imagem;
             // this.foto = response.data[0].imagem;;
@@ -657,6 +742,7 @@ export default {
 
             //document.body.appendChild(image);
             this.dialog = true;
+            this.dialogCarregandoDados = false;
           }
         })
         .catch(e => {
@@ -670,29 +756,32 @@ export default {
     },
 
     cancelarDeletarItem() {
-      this.produto.id = '';
+      this.produto.id = "";
       this.dialogExcluir = false;
     },
 
     close() {
       this.dialog = false;
-      setTimeout(() => {
-        this.produto = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      }, 300);
+      this.initialize();
+      // setTimeout(() => {
+      //   this.produto = Object.assign({}, this.defaultItem);
+      //   this.editedIndex = -1;
+      // }, 300);
     },
 
     salvar() {
       if (!this.validacaoCamposPreenchidos()) {
+        this.produto.dataCadastro = new Date();
         if (this.produto.id == "") {
           this.produto.imagem = file;
           this.produto.imagemNome = this.nomeArquivo;
           this.produto.imagemTipo = this.tipoArquivo;
-          console.log(this.produto);
           this.cadastrar();
         } else {
           this.alterar();
         }
+        //this.initialize();
+        //this.close();
       }
     },
 
@@ -708,24 +797,22 @@ export default {
           }
           this.close();
           this.initialize();
-          this.id = "";
         })
         .catch(e => {
           console.log(e);
         });
-
     },
 
     alterar() {
-      this.produto.dataCadastro = new Date();
+      console.log(this.produto)
       axios
         .put("/produto", this.produto)
         .then(response => {
-          if (response.data[0].produto.length > 0) {
+          //if (response.data[0].produto.length > 0) {
             this.text = response.data[0].mensagem;
             this.colors = "blue";
             this.snack("top", "right");
-          }
+          //}
           this.close();
           this.initialize();
           this.id = "";
@@ -735,7 +822,7 @@ export default {
         });
     },
 
-    excluir(){
+    excluir() {
       axios
         .delete("/produto/" + this.produto.id)
         .then(response => {
@@ -752,7 +839,7 @@ export default {
         .catch(e => {
           console.log(e);
         });
-    },
+    }
   }
 };
 </script>

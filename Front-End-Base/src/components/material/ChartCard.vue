@@ -3,6 +3,7 @@
     class="v-card--material-chart"
     v-bind="$attrs"
     v-on="$listeners"
+    
   >
     <template v-slot:header>
       <chartist

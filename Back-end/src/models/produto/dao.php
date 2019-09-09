@@ -16,8 +16,10 @@ function listarProduto($db){
 function pesquisaProdutoId($db, $id){
 
     $str = $db->prepare(
-        "SELECT m.descricao as marca, c.descricao as categoria,
-        p.unidade_medida as uniMedida, p.* from produto p with(nolock)
+        "SELECT p.id, p.codigo, p.descricao, p.aplicacao, p.unidade_medida as uniMedida,
+        p.altura, p.largura, p.comprimento, p.peso, p.imagem, p.preco, c.descricao as categoria,
+        m.descricao as marca, p.data_cadastro as dataCadastro, p.peso
+        from produto p with(nolock)
         inner join marca m with(nolock) on (m.id = p.id_marca)
         inner join categoria c with(nolock) on (c.id = p.id_categoria)
         where p.id = '" .$id. "'
@@ -73,7 +75,7 @@ function cadastrarProduto($db, $produto){
             , :altura
             , :largura
             , :comprimento
-            , :pesoBruto
+            , :peso
             , CONVERT(varbinary(max), @encoded)
             , convert(DATE, :dataCadastro, 103)
             , 'N'
@@ -89,7 +91,7 @@ function cadastrarProduto($db, $produto){
     $str->bindParam("altura", $produto["altura"]);
     $str->bindParam("largura", $produto["largura"]);
     $str->bindParam("comprimento", $produto["comprimento"]);
-    $str->bindParam("pesoBruto", $produto["pesoBruto"]);
+    $str->bindParam("peso", $produto["peso"]);
     $str->bindParam("imagem", $produto["imagem"]);
     $str->bindParam("dataCadastro", $produto['dataCadastro']);
     $str->bindParam("preco", floatval($produto['preco']));
@@ -126,8 +128,8 @@ function alterarProduto($db, $produto){
             , altura = :altura
             , largura = :largura
             , comprimento = :comprimento
-            , peso = :pesoBruto
-            , imagem = CONVERT(varbinary(max), @encoded)
+            , peso = :peso
+           
             , data_cadastro = convert(DATE, :dataCadastro, 103)
             , preco = :preco
         WHERE id = :id
@@ -141,7 +143,7 @@ function alterarProduto($db, $produto){
     $str->bindParam("altura", $produto["altura"]);
     $str->bindParam("largura", $produto["largura"]);
     $str->bindParam("comprimento", $produto["comprimento"]);
-    $str->bindParam("pesoBruto", $produto["pesoBruto"]);
+    $str->bindParam("peso", $produto["peso"]);
     $str->bindParam("imagem", $produto["imagem"]);
     $str->bindParam("dataCadastro", $produto['dataCadastro']);
     $str->bindParam("preco", floatval($produto['preco']));

@@ -7,7 +7,7 @@
     flat
     height="88"
   >
-    <v-toolbar-title class="tertiary--text font-weight-light align-self-center">
+    <!-- <v-toolbar-title class="tertiary--text font-weight-light align-self-center">
       <v-btn
         v-if="responsive"
         dark
@@ -17,7 +17,7 @@
         <v-icon>mdi-view-list</v-icon>
       </v-btn>
       {{ title }}
-    </v-toolbar-title>
+    </v-toolbar-title> -->
 
     <v-spacer />
 
@@ -26,12 +26,12 @@
         align="center"
         class="mx-0"
       >
-        <v-text-field
+        <!-- <v-text-field
           class="mr-4 purple-input"
           color="purple"
           label="Search..."
           hide-details
-        />
+        /> -->
 
         <v-btn
           icon
@@ -48,7 +48,7 @@
           offset-y
           transition="slide-y-transition"
         >
-          <template v-slot:activator="{ attrs, on }">
+          <!-- <template v-slot:activator="{ attrs, on }">
             <v-btn
               class="toolbar-items"
               icon
@@ -68,9 +68,9 @@
                 </v-icon>
               </v-badge>
             </v-btn>
-          </template>
+          </template> -->
 
-          <v-card>
+          <!-- <v-card>
             <v-list dense>
               <v-list-item
                 v-for="notification in notifications"
@@ -80,7 +80,7 @@
                 <v-list-item-title v-text="notification" />
               </v-list-item>
             </v-list>
-          </v-card>
+          </v-card> -->
         </v-menu>
 
         <v-btn
