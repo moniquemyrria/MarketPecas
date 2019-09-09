@@ -1,6 +1,6 @@
 <?php
 
-function marcaGet($db)
+function listarMarca($db)
 {
     
         $str = $db->prepare("SELECT * FROM MARCA");
