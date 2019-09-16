@@ -45,11 +45,7 @@ function cadastrarProduto($db, $produto){
 
    
     $str = $db->prepare(
-        "DECLARE 
-            @source VARBINARY(MAX),
-            @encoded VARCHAR(MAX);
-        SET @source = CONVERT(VARBINARY(MAX), :imagem);
-        SET @encoded = CAST('' AS XML).value('xs:base64Binary(sql:variable(\"@source\"))', 'varchar(max)')
+        "
         INSERT INTO PRODUTO(
             id_categoria
             , id_marca
@@ -61,10 +57,11 @@ function cadastrarProduto($db, $produto){
             , largura
             , comprimento
             , peso
-            , imagem
             , data_cadastro
             , deletado
-            , preco)
+            , preco
+            , imagem
+            , id_empresa)
         VALUES( 
             :idCategoria
             , :idMarca
@@ -76,10 +73,11 @@ function cadastrarProduto($db, $produto){
             , :largura
             , :comprimento
             , :peso
-            , CONVERT(varbinary(max), @encoded)
             , convert(DATE, :dataCadastro, 103)
             , 'N'
             , :preco
+            , :imagem
+            , 1
         )
      ");
     $str->bindParam("idCategoria", $idCategoria);
@@ -113,11 +111,7 @@ function alterarProduto($db, $produto){
     $idCategoria = $categoria[0]['id'];
 
     $str = $db->prepare(
-        "DECLARE 
-            @source VARBINARY(MAX),
-            @encoded VARCHAR(MAX);
-        SET @source = CONVERT(VARBINARY(MAX), :imagem);
-        SET @encoded = CAST('' AS XML).value('xs:base64Binary(sql:variable(\"@source\"))', 'varchar(max)');
+        "
         UPDATE PRODUTO SET
             id_categoria = :idCategoria
             , id_marca = :idMarca
@@ -129,9 +123,10 @@ function alterarProduto($db, $produto){
             , largura = :largura
             , comprimento = :comprimento
             , peso = :peso
-           
             , data_cadastro = convert(DATE, :dataCadastro, 103)
             , preco = :preco
+            , imagem = :imagem
+            , id_empresa: = 1
         WHERE id = :id
      ");
     $str->bindParam("idCategoria", $idCategoria);

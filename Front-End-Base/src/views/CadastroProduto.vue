@@ -113,7 +113,7 @@
                         dark
                         large
                         class="mb-2"
-                        @click="novo"
+                        @click="novoProduto"
                       >NOVO PRODUTO</v-btn>
                       </v-col>
                     </v-row>
@@ -538,7 +538,7 @@ export default {
   },
 
   methods: {
-    novo(){
+    novoProduto(){
       this.initialize();
       this.dialog = true;
     },
@@ -773,7 +773,8 @@ export default {
       if (!this.validacaoCamposPreenchidos()) {
         this.produto.dataCadastro = new Date();
         if (this.produto.id == "") {
-          this.produto.imagem = file;
+          let img = file;
+          this.produto.imagem = String(img);
           this.produto.imagemNome = this.nomeArquivo;
           this.produto.imagemTipo = this.tipoArquivo;
           this.cadastrar();

@@ -9,7 +9,7 @@
     floating
     mobile-break-point="991"
     persistent
-    width="260"
+    :width="width"
   >
     <template v-slot:img="attrs">
       <v-img
@@ -85,6 +85,7 @@
       },
     },
     data: () => ({
+      width: 260,
       links: [
         // {
         //   to: '/',
