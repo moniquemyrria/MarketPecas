@@ -18,7 +18,7 @@ function pesquisaProdutoId($db, $id){
     $str = $db->prepare(
         "SELECT p.id, p.codigo, p.descricao, p.aplicacao, p.unidade_medida as uniMedida,
         p.altura, p.largura, p.comprimento, p.peso, p.imagem, p.preco, c.descricao as categoria,
-        m.descricao as marca, p.data_cadastro as dataCadastro, p.peso
+        m.descricao as marca, p.data_cadastro as dataCadastro, p.peso, p.validade
         from produto p with(nolock)
         inner join marca m with(nolock) on (m.id = p.id_marca)
         inner join categoria c with(nolock) on (c.id = p.id_categoria)
@@ -49,6 +49,7 @@ function cadastrarProduto($db, $produto){
         INSERT INTO PRODUTO(
             id_categoria
             , id_marca
+            , id_empresa
             , codigo
             , descricao
             , aplicacao
@@ -61,10 +62,11 @@ function cadastrarProduto($db, $produto){
             , deletado
             , preco
             , imagem
-            , id_empresa)
+            , validade)
         VALUES( 
             :idCategoria
             , :idMarca
+            , 1
             , :codigo
             , :descricao
             , :aplicacao
@@ -77,11 +79,12 @@ function cadastrarProduto($db, $produto){
             , 'N'
             , :preco
             , :imagem
-            , 1
+            , convert(DATE, :validade, 103)
         )
      ");
     $str->bindParam("idCategoria", $idCategoria);
     $str->bindParam("idMarca", $idMarca);
+    //$str->bindParam("idEmpresa", $produto["idEmpresa"]);
     $str->bindParam("codigo", $produto["codigo"]);
     $str->bindParam("descricao", $produto["descricao"]);
     $str->bindParam("aplicacao", $produto["aplicacao"]);
@@ -90,9 +93,10 @@ function cadastrarProduto($db, $produto){
     $str->bindParam("largura", $produto["largura"]);
     $str->bindParam("comprimento", $produto["comprimento"]);
     $str->bindParam("peso", $produto["peso"]);
-    $str->bindParam("imagem", $produto["imagem"]);
     $str->bindParam("dataCadastro", $produto['dataCadastro']);
     $str->bindParam("preco", floatval($produto['preco']));
+    $str->bindParam("imagem", $produto["imagem"]);
+    $str->bindParam("validade", $produto["validade"]);
     $str->execute();
     $produto["id"] = $db->lastInsertid();
 
@@ -126,7 +130,7 @@ function alterarProduto($db, $produto){
             , data_cadastro = convert(DATE, :dataCadastro, 103)
             , preco = :preco
             , imagem = :imagem
-            , id_empresa: = 1
+            , validade = convert(DATE, :validade, 103)
         WHERE id = :id
      ");
     $str->bindParam("idCategoria", $idCategoria);
@@ -142,6 +146,7 @@ function alterarProduto($db, $produto){
     $str->bindParam("imagem", $produto["imagem"]);
     $str->bindParam("dataCadastro", $produto['dataCadastro']);
     $str->bindParam("preco", floatval($produto['preco']));
+    $str->bindParam("validade", $produto["validade"]);
     $str->bindParam("id",  $produto["id"]);
     $str->execute();
 

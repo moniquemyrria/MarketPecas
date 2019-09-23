@@ -8,7 +8,7 @@ export default [
     path: '',
     // Relative to /src/views
     // view: 'Dashboard'
-    view: 'PerfilUsuario',
+    view: 'IndexSite',
   },
   {
     path: '/user-profile',
@@ -34,6 +34,16 @@ export default [
     path: '/oferta-produto',
     name: 'Cadastro de Oferta de Produtos',
     view: 'CadastroOfertaProduto',
+  },
+  {
+    path: '/cadastro-usuario',
+    name: 'Cadastro de Usuario',
+    view: 'CadastroUsuario',
+  },
+  {
+    path: '/index-site',
+    name: 'Tela Princial',
+    view: 'IndexSite',
   },
   {
     path: '/table-list',

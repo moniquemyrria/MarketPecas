@@ -1,23 +1,12 @@
 <template>
   <v-container class="fill-height" fluid>
     <!-- CARREGANDO DADOS -->
-    <v-dialog
-      v-model="dialogCarregandoDados"
-     
-      width="320"
-    >
-      <v-card
-        color="primary"
-        dark
-      >
-      <br>
+    <v-dialog v-model="dialogCarregandoDados" width="320">
+      <v-card color="primary" dark>
+        <br />
         <v-card-text>
           {{ textCarregandoDados }}
-          <v-progress-linear
-            indeterminate
-            color="white"
-            class="mb-0"
-          ></v-progress-linear>
+          <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -75,9 +64,11 @@
       </v-snackbar>
     </div>
 
+    <!-- CRUDPRODUTO -->
     <v-row justify="center">
       <v-col cols="12" md="12">
         <material-card color="primary" text="Produtos" style="margin-top: -1vh;">
+          <!-- LISTAGEM DE PRODUTOS -->
           <div>
             <v-data-table
               :headers="headers"
@@ -90,41 +81,39 @@
               :items-per-page="itemsPerPage"
               @page-count="pageCount = $event"
             >
+              <!-- PESQUISA -->
               <template v-slot:top>
                 <br />
                 <v-toolbar style="height: 100px;" flat color="white">
                   <v-col cols="9" sm="12">
-                    <v-row style="">
-                      <v-col cols="9" sm="10" style="">
+                    <v-row style>
+                      <v-col cols="9" sm="10" style>
                         <v-toolbar-title>
-                      <v-text-field
-                        v-model="search"
-                        style="margin-top: 50px; "
-                        append-icon="search"
-                        label="Pesquisa de Produtos por: Codigo, Descrição, Categoria ou Marca"
-                        class="mx-4"
-                      />
-                    </v-toolbar-title>
+                          <v-text-field
+                            v-model="search"
+                            style="margin-top: 50px; "
+                            append-icon="search"
+                            label="Pesquisa de Produtos por: Codigo, Descrição, Categoria ou Marca"
+                            class="mx-4"
+                          />
+                        </v-toolbar-title>
                       </v-col>
-                      <v-col cols="9" sm="2" style="">
+                      <v-col cols="9" sm="2" style>
                         <v-btn
-                        style="margin-top: 35px"
-                        color="primary"
-                        dark
-                        large
-                        class="mb-2"
-                        @click="novoProduto"
-                      >NOVO PRODUTO</v-btn>
+                          style="margin-top: 35px"
+                          color="primary"
+                          dark
+                          large
+                          class="mb-2"
+                          @click="novoProduto"
+                        >NOVO PRODUTO</v-btn>
                       </v-col>
                     </v-row>
-                    
                   </v-col>
 
                   <div class="flex-grow-1" />
+                  
                   <v-dialog v-model="dialog" fullscreen hide-overlay>
-                   
-                      
-                    
                     <v-card>
                       <v-toolbar dark color="primary">
                         <v-btn icon dark @click="dialog = false">
@@ -164,8 +153,8 @@
                                       <v-row>
                                         <v-col cols="9" sm="6" style>
                                           <v-row>
-                                            <v-col cols="9" sm="12">
-                                              <v-col cols="9" sm="5">
+                                            <v-col cols="9" sm="6">
+                                              <v-col cols="9" sm="12">
                                                 <v-text-field
                                                   v-model="produto.codigo"
                                                   label="Código ou Referência *"
@@ -173,6 +162,39 @@
                                                   :counter="20"
                                                   required
                                                 />
+                                              </v-col>
+                                            </v-col>
+
+                                            <v-col cols="9" sm="6">
+                                              <v-col cols="9" sm="12">
+                                                <v-menu
+                                                  ref="menu1"
+                                                  v-model="menu1"
+                                                  :close-on-content-click="false"
+                                                  transition="scale-transition"
+                                                  offset-y
+                                                  full-width
+                                                  max-width="290px"
+                                                  min-width="290px"
+                                                >
+                                                  <template v-slot:activator="{ on }">
+                                                    <v-text-field
+                                                      v-model="dateFormatted"
+                                                      label="Validade"
+                                                      hint="mês/dia/ano"
+                                                      persistent-hint
+                                                      prepend-icon="event"
+                                                      @blur="date = parseDate(dateFormatted)"
+                                                      v-on="on"
+                                                    ></v-text-field>
+                                                  </template>
+                                                  <v-date-picker
+                                                    v-model="date"
+                                                    no-title
+                                                    @input="menu1 = false"
+                                                    locale="pt-br"
+                                                  ></v-date-picker>
+                                                </v-menu>
                                               </v-col>
                                             </v-col>
                                           </v-row>
@@ -219,7 +241,6 @@
                                                   menu-props="auto"
                                                   hide-details
                                                   prepend-icon="assignment_turned_in"
-                                                 
                                                 ></v-select>
                                                 <!-- <v-autocomplete
                                                   v-model="produto.categoria"
@@ -249,7 +270,6 @@
                                                   menu-props="auto"
                                                   hide-details
                                                   prepend-icon="assignment_turned_in"
-                                                  
                                                 ></v-select>
                                                 <!-- <v-autocomplete
                                                   v-model="produto.marca"
@@ -444,6 +464,10 @@ export default {
 
   data() {
     return {
+      date: new Date().toISOString().substr(0, 10),
+      dateFormatted: this.formatDate(new Date().toISOString().substr(0, 10)),
+      menu1: false,
+      menu2: false,
       limparImg: true,
       page: 1,
       pageCount: 0,
@@ -466,7 +490,7 @@ export default {
       dialog: false,
       dialogExcluir: false,
       dialogCarregandoDados: false,
-      textCarregandoDados: '',
+      textCarregandoDados: "",
       headers: [
         { text: "Codigo", value: "codigo", sortable: true },
         { text: "Descrição", value: "descricao", sortable: true },
@@ -501,7 +525,8 @@ export default {
         preco: "",
         categoria: "",
         marca: "",
-        dataCadastro: new Date()
+        dataCadastro: new Date(),
+        validade: ""
       },
 
       files: [],
@@ -516,6 +541,10 @@ export default {
       return this.produto.id == ""
         ? "Cadastro de Produtos"
         : "Editando um Item";
+    },
+
+    computedDateFormatted() {
+      return this.formatDate(this.date);
     }
   },
 
@@ -530,6 +559,10 @@ export default {
 
     pesquisaCategoria(val) {
       val && val !== this.produto.marca && this.queryCategorias(val);
+    },
+
+    date(val) {
+      this.dateFormatted = this.formatDate(this.date);
     }
   },
 
@@ -538,14 +571,27 @@ export default {
   },
 
   methods: {
-    novoProduto(){
+    formatDate(date) {
+      if (!date) return null;
+
+      const [year, month, day] = date.split("-");
+      return `${month}/${day}/${year}`;
+    },
+    parseDate(date) {
+      if (!date) return null;
+
+      const [month, day, year] = date.split("/");
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    },
+
+    novoProduto() {
       this.initialize();
       this.dialog = true;
     },
     gerarArquivoBase64(event) {
       if (event != null) {
         //this.produto.imagem = event.target.files[0];
-        fileUpload = '';
+        fileUpload = "";
         fileUpload = event; //event.target.files[0];
         this.nomeArquivo = event.name;
         this.tipoArquivo = event.type;
@@ -573,7 +619,8 @@ export default {
       this.colors = "warning";
       this.timeout = 5000;
       this.snack("bottom", "center");
-      this.text = "Ops! Há campos brigatórios não preenchidos, ou algum dado informado está maior que o permitido para o campo.";
+      this.text =
+        "Ops! Há campos brigatórios não preenchidos, ou algum dado informado está maior que o permitido para o campo.";
       this.error = true;
     },
 
@@ -727,14 +774,15 @@ export default {
 
     editar(item) {
       this.dialogCarregandoDados = true;
-      this.textCarregandoDados = "Aguarde ...Carregando dados do Produto."
+      this.textCarregandoDados = "Aguarde ...Carregando dados do Produto.";
       axios
         .get("/produtopesquisaid/" + item.id)
         .then(response => {
           if (response.data.length > 0) {
             this.produto = response.data[0];
             this.produto.preco = parseFloat(response.data[0].preco);
-            console.log(this.produto)
+            (this.dateFormatted = this.formatDate(response.data[0].validade)),
+              console.log(this.produto);
             // let image = new Image();
             // image.src = response.data[0].imagem;
             // this.foto = response.data[0].imagem;;
@@ -788,6 +836,7 @@ export default {
 
     cadastrar() {
       this.produto.dataCadastro = new Date();
+      this.produto.validade = this.dateFormatted;
       axios
         .post("/produto", this.produto)
         .then(response => {
@@ -805,14 +854,14 @@ export default {
     },
 
     alterar() {
-      console.log(this.produto)
+      this.produto.validade = new Date(this.dateFormatted);
       axios
         .put("/produto", this.produto)
         .then(response => {
           //if (response.data[0].produto.length > 0) {
-            this.text = response.data[0].mensagem;
-            this.colors = "blue";
-            this.snack("top", "right");
+          this.text = response.data[0].mensagem;
+          this.colors = "blue";
+          this.snack("top", "right");
           //}
           this.close();
           this.initialize();

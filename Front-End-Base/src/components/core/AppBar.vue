@@ -84,7 +84,7 @@
         </v-menu>
 
         <v-btn
-          to="/user-profile"
+          to="/cadastro-usuario"
           icon
         >
           <v-icon color="tertiary">

@@ -13,7 +13,7 @@ return [
         // Database connection settings
         "db" => [
             "host" => "localhost",
-            "dbname" => "MKTPECAS",
+            "dbname" => "MKTPECAS_2",
             "user" => "sa",
             "pass" => "123"
         ],
