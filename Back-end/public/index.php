@@ -45,6 +45,15 @@ require __DIR__ . '/../src/models/categoria/routes.php';
 
 require __DIR__ . '/../src/models/produto/routes.php';
 
+require __DIR__ . '/../src/models/usuario/routes.php';
+
+require __DIR__ . '/../src/models/cliente/routes.php';
+
+//require __DIR__ . '/../src/models/empresa/routes.php';
+
+require __DIR__ . '/../src/models/endereco/routes.php';
+
+require __DIR__ . '/../src/models/contato/routes.php';
 
 
 // Run app

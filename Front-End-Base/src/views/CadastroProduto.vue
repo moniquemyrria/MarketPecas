@@ -634,6 +634,14 @@ export default {
       }
 
       if (
+        this.dateFormatted == "" ||
+        (this.dateFormatted.length <= 0)
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (
         this.produto.descricao == "" ||
         (this.produto.descricao.length <= 0 ||
           this.produto.descricao.length > 100)
@@ -714,6 +722,8 @@ export default {
     },
 
     initialize() {
+      let dataInicial = new Date();
+      this.dateFormatted = '';
       this.limparCampos();
       this.categoria();
       this.marcas();

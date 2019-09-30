@@ -3,7 +3,27 @@
     <v-app id="inspire">
       <v-row justify="center">
         <v-container class="fill-height" fluid>
-          
+          <!-- MENSAGENS -->
+          <div class="text-center ma-2">
+            <v-snackbar
+              v-model="snackbar"
+              :bottom="bottom"
+              :color="color"
+              :left="left"
+              :right="right"
+              :top="top"
+              :timeout="timeout"
+              dark
+            >
+              <v-icon color="white" class="mr-3">mdi-bell-plus</v-icon>
+              <div>
+                <b>{{ text }}</b>
+              </div>
+              <!-- <v-btn icon @click="snackbar = false">
+          <v-icon>mdi-close-circle</v-icon>
+              </v-btn>-->
+            </v-snackbar>
+          </div>
           <!-- MENSAGEM PERGUNTA TIPO PESSOA -->
           <v-dialog v-model="dialogTipoPessoa" max-width="500px">
             <v-card>
@@ -13,31 +33,28 @@
                 <div class="flex-grow-1" />
               </v-card-title>
               <v-card-text>
-                <br>
+                <br />
                 <span>
                   <b>Deseja realizar o cadastro para ...</b>
                 </span>
                 <br />
-           
-                
               </v-card-text>
               <v-card-actions>
                 <v-col cols="9" sm="12">
                   <v-row class="d-flex justify-sm-center">
                     <v-btn color="error" @click="acessaModalEmpresa()">MINHA EMPRESA</v-btn>
-                    <v-btn color="primary"  @click="acessaModalCliente()"> UM NOVO CLIENTE</v-btn>
+                    <v-btn color="primary" @click="acessaModalCliente()">UM NOVO CLIENTE</v-btn>
                   </v-row>
                 </v-col>
               </v-card-actions>
-              
             </v-card>
           </v-dialog>
 
           <!-- CADASTRO USUARIO - EMPRESA -->
-          <v-dialog v-model="dialogCadEmp" max-width="150vh" persistent>
+          <v-dialog v-model="dialogCadEmp" scrollable max-width="300vh" persistent>
             <v-card>
               <v-toolbar dark color="primary">
-                <v-btn icon dark @click="dialogCadEmp= false">
+                <v-btn icon dark @click="dialogCadEmp = false">
                   <v-icon>mdi-close</v-icon>
                 </v-btn>
                 <v-toolbar-title>
@@ -46,61 +63,338 @@
                 <div class="flex-grow-1" />
                 <v-toolbar-items>
                   <div class="ma-3">
-                    <v-btn large color="error" @click="close">CANCELAR</v-btn>
+                    <v-btn large color="error" @click="dialogCadEmp = false">CANCELAR</v-btn>
                   </div>
                   <div class="ma-3">
-                    <v-btn style="margin-left: -10px;" large color="success" @click="salvar">SALVAR</v-btn>
+                    <v-btn
+                      style="margin-left: -10px;"
+                      large
+                      color="success"
+                      @click="salvarEmpresa"
+                    >SALVAR</v-btn>
                   </div>
                 </v-toolbar-items>
               </v-toolbar>
-              <v-card-title />
 
-              <v-stepper v-model="e1">
-                <v-stepper-header>
-                  <v-stepper-step :complete="e1 > 1" step="1">Dados para Acesso</v-stepper-step>
+              <v-card-text>
+                <v-container>
+                  <v-tabs background-color="white" color="primary" right>
+                    <v-tab>DADOS GERAIS *</v-tab>
+                    <v-tab>ENDEREÇO E CONTATO</v-tab>
 
-                  <v-divider></v-divider>
-
-                  <v-stepper-step :complete="e1 > 2" step="2">Dados da Empresa</v-stepper-step>
-
-                  <v-divider></v-divider>
-                </v-stepper-header>
-
-                <v-stepper-items>
-                  <v-stepper-content step="1">
-                    <v-row>
-                      <v-col cols="9" sm="12" style>
-                        <v-text-field
-                          v-model="search"
-                          style="margin-top: 50px; "
-                          append-icon="search"
-                          label="Nome Completo"
-                          class="mx-4"
-                        />
-                      </v-col>
-                    </v-row>
-                    <v-btn color="primary" @click="e1 = 2">Continue</v-btn>
-
-                    <v-btn text>Cancel</v-btn>
-                  </v-stepper-content>
-
-                  <v-stepper-content step="2">
-                    <v-card class="mb-12" color="grey lighten-1" height="200px"></v-card>
-
-                    <v-btn color="primary" @click="e1 = 3">Continue</v-btn>
-
-                    <v-btn text>Cancel</v-btn>
-                  </v-stepper-content>
-                </v-stepper-items>
-              </v-stepper>
+                    <v-tab-item v-for="n in 2" :key="n">
+                      <v-card style="height: 85vh;">
+                        <v-card-text>
+                          <v-container fluid>
+                            <v-container v-if="n == 1">
+                              <v-row>
+                                <v-col cols="9" sm="6">
+                                  Dados de Acesso e Empresa
+                                  <v-row style="margin-top: -5vh;">
+                                    <v-col
+                                      cols="9"
+                                      sm="11"
+                                      class="d-flex justify-sm-end"
+                                      style="margin-top: -3vh; margin-left: -12px;"
+                                    >
+                                      <v-checkbox
+                                        v-model="empresa.checkboxOfertaPraca"
+                                        :label="`Cobre Oferta da Praça? *`"
+                                      ></v-checkbox>
+                                    </v-col>
+                                  </v-row>
+                                  <v-row class="d-flex justify-sm-center">
+                                    <v-col cols="9" sm="10" style="margin-top: -11vh;">
+                                      <v-text-field
+                                        v-model="empresa.email"
+                                        style="margin-top: 50px; "
+                                        prepend-icon="email"
+                                        label="E-mail *"
+                                        class="mx-4"
+                                        placeholder="Informe o seu email para acesso"
+                                        :counter="20"
+                                        required
+                                      />
+                                    </v-col>
+                                  </v-row>
+                                  <v-row class="d-flex justify-sm-center" style="margin-top: -5vh;">
+                                    <v-col cols="9" sm="10" style="margin-top: -3vh;">
+                                      <v-text-field
+                                        v-model="empresa.senha"
+                                        style="margin-top: 50px; "
+                                        prepend-icon="vpn_key"
+                                        label="Senha *"
+                                        class="mx-4"
+                                        placeholder="Informe uma senha para acesso"
+                                        :counter="20"
+                                        required
+                                      />
+                                    </v-col>
+                                  </v-row>
+                                  <v-divider></v-divider>
+                                  <v-row class="d-flex justify-sm-center" style="margin-top: -5vh;">
+                                    <v-col cols="9" sm="10" style="margin-top: -3vh;">
+                                      <v-text-field
+                                        v-model="empresa.cnpj"
+                                        style="margin-top: 50px; "
+                                        prepend-icon="emoji_transportation"
+                                        label="C.N.PJ. *"
+                                        class="mx-4"
+                                        placeholder="Informe o CNPJ de sua empresa"
+                                        :counter="18"
+                                        required
+                                      />
+                                    </v-col>
+                                  </v-row>
+                                  <v-row class="d-flex justify-sm-center" style="margin-top: -5vh;">
+                                    <v-col cols="9" sm="10" style="margin-top: -3vh;">
+                                      <v-text-field
+                                        v-model="empresa.razaoSocial"
+                                        style="margin-top: 50px; "
+                                        prepend-icon="emoji_transportation"
+                                        label="Razão Social *"
+                                        class="mx-4"
+                                        placeholder="Informe a Razão Social"
+                                        :counter="80"
+                                        required
+                                      />
+                                    </v-col>
+                                  </v-row>
+                                  <v-row class="d-flex justify-sm-center" style="margin-top: -5vh;">
+                                    <v-col cols="9" sm="10" style="margin-top: -3vh;">
+                                      <v-text-field
+                                        v-model="empresa.nomeFantasia"
+                                        style="margin-top: 50px; "
+                                        prepend-icon="emoji_transportation"
+                                        label="Nome Fantasia *"
+                                        class="mx-4"
+                                        placeholder="Informe a Nome Fantasia"
+                                        :counter="80"
+                                        required
+                                      />
+                                    </v-col>
+                                  </v-row>
+                                </v-col>
+                                <v-col cols="9" sm="6">
+                                  Dados de Recebimentos e Categoria da Loja
+                                  <v-row class="d-flex justify-sm-center" style="margin-top: 25px;">
+                                    <v-col
+                                      cols="9"
+                                      sm="10"
+                                      style="margin-left: -15vh; margin-top: -2vh"
+                                    >
+                                      <span>Escolha as forma de pagamendos aceitos pela sua Loja:</span>
+                                    </v-col>
+                                  </v-row>
+                                  <v-row class="d-flex justify-sm-center">
+                                    <v-col cols="9" sm="12" style="margin-top: -2vh;">
+                                      <v-row style="margin-left: 20px;">
+                                        <v-col cols="9" sm="3" style="margin-top: -4vh;">
+                                          <v-checkbox
+                                            v-model="empresa.checkboxDinheiro"
+                                            :label="`Dinheiro`"
+                                          ></v-checkbox>
+                                        </v-col>
+                                        <v-col cols="9" sm="5" style="margin-top: -4vh;">
+                                          <v-checkbox
+                                            v-model="empresa.checkboxCredito"
+                                            :label="`Cartão de Crédito`"
+                                          ></v-checkbox>
+                                        </v-col>
+                                        <v-col cols="9" sm="4" style="margin-top: -4vh;">
+                                          <v-checkbox
+                                            v-model="empresa.checkboxDebito"
+                                            :label="`Cartão de Debito`"
+                                          ></v-checkbox>
+                                        </v-col>
+                                      </v-row>
+                                      <v-row style="margin-left: 20px; margin-top: 10px;">
+                                        <v-col cols="9" sm="3" style="margin-top: -5vh;">
+                                          <v-checkbox
+                                            v-model="empresa.checkboxBoleto"
+                                            :label="`Boleto`"
+                                          ></v-checkbox>
+                                        </v-col>
+                                        <v-col cols="9" sm="5" style="margin-top: -5vh;">
+                                          <v-checkbox
+                                            v-model="empresa.checkboxProprio"
+                                            :label="`Crediário Próprio`"
+                                          ></v-checkbox>
+                                        </v-col>
+                                      </v-row>
+                                      <v-divider></v-divider>
+                                      <v-row
+                                        class="d-flex justify-sm-center"
+                                        style="margin-top: 25px;"
+                                      >
+                                        <v-col
+                                          cols="9"
+                                          sm="10"
+                                          style="margin-left: -15vh; margin-top: -2vh"
+                                        >
+                                          <span>Escolha as Categorias de sua Loja:</span>
+                                        </v-col>
+                                      </v-row>
+                                      <v-row style="margin-left: 20px;">
+                                        <v-col cols="9" sm="3" style="margin-top: -4vh;">
+                                          <v-checkbox
+                                            v-model="empresa.checkboxLeve"
+                                            :label="`Linha Leve`"
+                                          ></v-checkbox>
+                                        </v-col>
+                                        <v-col cols="9" sm="5" style="margin-top: -4vh;">
+                                          <v-checkbox
+                                            v-model="empresa.checkboxPesada"
+                                            :label="`Linha Pesada`"
+                                          ></v-checkbox>
+                                        </v-col>
+                                      </v-row>
+                                      <v-row>
+                                        <v-col cols="9" sm="12" style="margin-top: -6vh">
+                                          <v-col cols="9" sm="12">
+                                            <v-textarea
+                                              v-model="empresa.obs"
+                                              name="input-7-1"
+                                              label="Observações de sua Loja"
+                                              hint
+                                              prepend-icon="notes"
+                                              :counter="300"
+                                              required
+                                              placeholder="Descreva aqui alguma observação da sua loja que vc gostaria de referenciar para que o cliente visualize na tela de Contação."
+                                            />
+                                          </v-col>
+                                        </v-col>
+                                      </v-row>
+                                    </v-col>
+                                  </v-row>
+                                </v-col>
+                              </v-row>
+                            </v-container>
+                            <v-container v-if="n == 2">
+                              <v-row>
+                                <v-col cols="9" sm="6">
+                                  Dados para Contatos
+                                  <v-row class="d-flex justify-sm-center">
+                                    <v-col cols="9" sm="10" style="margin-top: -5vh;">
+                                      <v-text-field
+                                        v-model="empresa.telefone"
+                                        style="margin-top: 50px; "
+                                        prepend-icon="phone"
+                                        label="Telefone"
+                                        class="mx-4"
+                                        placeholder="Informe o telefone"
+                                        :counter="14"
+                                        required
+                                      />
+                                    </v-col>
+                                  </v-row>
+                                  <v-row class="d-flex justify-sm-center">
+                                    <v-col cols="9" sm="10" style="margin-top: -5vh;">
+                                      <v-text-field
+                                        v-model="empresa.wapp"
+                                        style="margin-top: 50px; "
+                                        prepend-icon="phone"
+                                        label="What's App"
+                                        class="mx-4"
+                                        placeholder="Informe o What's App"
+                                        :counter="14"
+                                        required
+                                      />
+                                    </v-col>
+                                  </v-row>
+                                  <v-row class="d-flex justify-sm-center">
+                                    <v-col cols="9" sm="10" style="margin-top: -5vh;">
+                                      <v-text-field
+                                        v-model="empresa.fb"
+                                        style="margin-top: 50px; "
+                                        prepend-icon="insert_emoticon"
+                                        label="Endereço Facebook"
+                                        class="mx-4"
+                                        placeholder="Informe o endereço do Facebook"
+                                        :counter="50"
+                                        required
+                                      />
+                                    </v-col>
+                                  </v-row>
+                                </v-col>
+                                <v-col cols="9" sm="6">
+                                  Dados do Endereço
+                                  <v-row class="d-flex justify-sm-left">
+                                    <v-col
+                                      cols="9"
+                                      sm="5"
+                                      style="margin-top: -5vh; margin-left: 45px;"
+                                    >
+                                      <v-text-field
+                                        v-model="empresa.cep"
+                                        style="margin-top: 50px; "
+                                        prepend-icon="location_city"
+                                        label="CEP *"
+                                        class="mx-4"
+                                        placeholder="CEP da Rua"
+                                        :counter="9"
+                                        required
+                                      />
+                                    </v-col>
+                                    <v-col cols="9" sm="5" style="margin-top: -5vh;">
+                                      <v-text-field
+                                        v-model="empresa.num"
+                                        style="margin-top: 50px; "
+                                        prepend-icon="location_city"
+                                        label="Número *"
+                                        class="mx-4"
+                                        placeholder="Informe o número"
+                                        :counter="10"
+                                        required
+                                      />
+                                    </v-col>
+                                  </v-row>
+                                  <v-row class="d-flex justify-sm-center">
+                                    <v-col cols="9" sm="10" style="margin-top: -5vh;">
+                                      <v-text-field
+                                        v-model="empresa.logradouro"
+                                        style="margin-top: 50px; "
+                                        prepend-icon="location_city"
+                                        label="Logradouro *"
+                                        class="mx-4"
+                                        placeholder="Informe o nome da Rua / Avenida"
+                                        :counter="50"
+                                        required
+                                      />
+                                    </v-col>
+                                  </v-row>
+                                  <v-row class="d-flex justify-sm-center">
+                                    <v-col cols="9" sm="10" style="margin-top: -5vh;">
+                                      <v-text-field
+                                        v-model="empresa.bairro"
+                                        style="margin-top: 50px; "
+                                        prepend-icon="location_city"
+                                        label="Bairro"
+                                        class="mx-4"
+                                        placeholder="Informe o Bairro *"
+                                        :counter="30"
+                                        required
+                                      />
+                                    </v-col>
+                                  </v-row>
+                                </v-col>
+                              </v-row>
+                            </v-container>
+                          </v-container>
+                        </v-card-text>
+                      </v-card>
+                    </v-tab-item>
+                  </v-tabs>
+                </v-container>
+              </v-card-text>
             </v-card>
           </v-dialog>
 
           <!-- CADASTRO USUARIO - CLIENTE -->
-          <v-dialog v-model="dialogCadCli" max-width="150vh" persistent>
+          <v-dialog v-model="dialogCadCli" max-width="130vh" scrollable persistent>
             <v-card>
               <v-toolbar dark color="primary">
-                <v-btn icon dark @click="dialogCadCli = false">
+                <v-btn icon dark @click="closeDialogCliente">
                   <v-icon>mdi-close</v-icon>
                 </v-btn>
                 <v-toolbar-title>
@@ -109,17 +403,96 @@
                 <div class="flex-grow-1" />
                 <v-toolbar-items>
                   <div class="ma-3">
-                    <v-btn large color="error" @click="close">CANCELAR</v-btn>
+                    <v-btn large color="error" @click="closeDialogCliente">CANCELAR</v-btn>
                   </div>
                   <div class="ma-3">
-                    <v-btn style="margin-left: -10px;" large color="success" @click="salvar">SALVAR</v-btn>
+                    <v-btn
+                      style="margin-left: -10px;"
+                      large
+                      color="success"
+                      @click="salvarCliente"
+                    >SALVAR</v-btn>
                   </div>
                 </v-toolbar-items>
               </v-toolbar>
-              <v-card-title />
 
-              <v-card-text style="margin-top: -5vh;">
-                <v-container></v-container>
+              <v-card-text style="margin-top: -1vh;">
+                <v-container>
+                  <v-row class="d-flex justify-sm-center" style="margin-top: -3vh;">
+                    <v-col cols="9" sm="10" style="margin-top: -3vh;">
+                      <v-text-field
+                        v-model="cliente.nome"
+                        style="margin-top: 50px; "
+                        prepend-icon="face"
+                        label="Nome *"
+                        class="mx-4"
+                        placeholder="Informe o seu nome"
+                        :counter="20"
+                        required
+                      />
+                    </v-col>
+                  </v-row>
+
+                  <v-row class="d-flex justify-sm-center" style="margin-top: -3vh;">
+                    <v-col cols="9" sm="10" style="margin-top: -3vh;">
+                      <v-text-field
+                        v-model="cliente.sobrenome"
+                        style="margin-top: 50px; "
+                        prepend-icon="sentiment_satisfied_alt"
+                        label="Sobrenome *"
+                        class="mx-4"
+                        placeholder="Informe o seu Sobrenome"
+                        :counter="20"
+                        required
+                      />
+                    </v-col>
+                  </v-row>
+
+                  <v-row class="d-flex justify-sm-center" style="margin-top: -3vh;">
+                    <v-col cols="9" sm="10" style="margin-top: -3vh;">
+                      <v-text-field
+                        v-model="cliente.email"
+                        style="margin-top: 50px; "
+                        prepend-icon="email"
+                        label="E-mail *"
+                        class="mx-4"
+                        placeholder="seuemail@email.com"
+                        :counter="50"
+                        required
+                      />
+                    </v-col>
+                  </v-row>
+
+                  <v-row class="d-flex justify-sm-center" style="margin-top: -3vh;">
+                    <v-col cols="9" sm="10" style="margin-top: -3vh;">
+                      <v-text-field
+                        v-model="cliente.senha"
+                        style="margin-top: 50px; "
+                        prepend-icon="vpn_key"
+                        label="Senha *"
+                        class="mx-4"
+                        placeholder="Informe uma senha"
+                        :counter="20"
+                        required
+                      />
+                    </v-col>
+                  </v-row>
+
+                  <v-row class="d-flex justify-sm-center" style="margin-top: -3vh;">
+                    <v-col cols="9" sm="10">
+                      <v-col cols="9" sm="12">
+                        <v-select
+                          v-model="cliente.notificacao"
+                          :items="itemsOferta"
+                          label="Deseja receber Notificações de ofertas no aplicativo? *"
+                          menu-props="auto"
+                          hide-details
+                          prepend-icon="assignment_turned_in"
+                        ></v-select>
+                      </v-col>
+                    </v-col>
+                  </v-row>
+                </v-container>
               </v-card-text>
             </v-card>
           </v-dialog>
@@ -207,13 +580,60 @@ export default {
   vue: new Vue(),
   data() {
     return {
+      timeout: 9000,
+      color: null,
+      colors: ["purple", "info", "success", "warning", "error"],
+      top: true,
+      bottom: false,
+      left: false,
+      right: false,
+      snackbar: false,
+      text: "",
+      search: "",
+      x: null,
       dialogCadCli: false,
       dialogCadEmp: false,
       dialogTipoPessoa: false,
-      e1: 0
+      e1: 0,
+      itemsOferta: ["SIM", "NÃO"],
+
+      cliente: {
+        nome: "",
+        sobrenome: "",
+        email: "",
+        senha: "",
+        notificacao: null,
+        idUsuario: null
+      },
+
+      empresa: {
+        email: "",
+        senha: "",
+        cnpj: "",
+        razaoSocial: "",
+        nomeFantasia: "",
+        obs: "",
+        checkboxDinheiro: false,
+        checkboxCredito: false,
+        checkboxDebito: false,
+        checkboxBoleto: false,
+        checkboxProprio: false,
+        checkboxLeve: false,
+        checkboxPesada: false,
+        checkboxOfertaPraca: false,
+        telefone: "",
+        wapp: "",
+        fb: "",
+        cep: "",
+        num: "",
+        logradouro: "",
+        bairro: "",
+        idUsuario: null,
+        idEndereco: null,
+        idContato: null
+      }
     };
   },
-
 
   // computed: {
   //   formTitle() {
@@ -224,23 +644,235 @@ export default {
   // },
 
   methods: {
-    close() {
-      this.dialog = false;
+    snack(...args) {
+      this.top = false;
+      this.bottom = false;
+      this.left = false;
+      this.right = false;
+
+      for (const loc of args) {
+        this[loc] = true;
+      }
+
+      this.color = this.colors;
+
+      this.snackbar = true;
     },
 
-    salvar() {},
+    msgAlertCamposPreenchidos() {
+      this.colors = "warning";
+      this.timeout = 5000;
+      this.snack("bottom", "center");
+      this.text =
+        "Ops! Há campos brigatórios não preenchidos, ou algum dado informado está maior que o permitido para o campo.";
+      this.error = true;
+    },
 
-    acessaModalEmpresa(){
+    validacaoCamposPreenchidosCliente() {
+      if (
+        this.cliente.nome == "" ||
+        (this.cliente.nome.length <= 0 || this.cliente.nome.length > 20)
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (
+        this.cliente.sobrenome == "" ||
+        (this.cliente.sobrenome.length <= 0 ||
+          this.cliente.sobrenome.length > 20)
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (
+        this.cliente.email == "" ||
+        (this.cliente.email.length <= 0 || this.cliente.email.length > 50)
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+      if (
+        this.cliente.senha == "" ||
+        (this.cliente.senha.length <= 0 || this.cliente.senha.length > 20)
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (
+        this.cliente.notificacao == "" ||
+        this.cliente.notificacao.length <= 0
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+    },
+
+    validacaoCamposPreenchidosEmpresa() {
+      if (
+        this.empresa.cnpj == "" ||
+        (this.empresa.cnpj.length <= 0 || this.empresa.cnpj.length > 18)
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (
+        this.empresa.razaoSocial == "" ||
+        (this.empresa.razaoSocial.length <= 0 ||
+          this.empresa.razaoSocial.length > 80)
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (
+        this.empresa.nomeFantasia == "" ||
+        (this.empresa.nomeFantasia.length <= 0 ||
+          this.empresa.nomeFantasia.length > 80)
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (
+        this.empresa.obs == "" ||
+        (this.empresa.obs.length <= 0 || this.empresa.obs.length > 300)
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (
+        this.empresa.email == "" ||
+        (this.empresa.email.length <= 0 || this.empresa.email.length > 50)
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+      if (
+        this.empresa.senha == "" ||
+        (this.empresa.senha.length <= 0 || this.empresa.senha.length > 20)
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (
+        this.empresa.checkboxLeve == false &&
+        this.empresa.checkboxPesada == false
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+    },
+
+    cadastrarEmpresa() {
+      //console.log(this.empresa)
+      let usuario = [];
+
+      usuario.push({
+        email: this.empresa.email,
+        senha: this.empresa.senha,
+        tipoPessoa: "J"
+      });
+
+      axios
+        .post("/usuario", usuario)
+        .then(response => {
+          if (response.data[0].idUsuario.length > 0) {
+            this.empresa.idUsuario = response.data[0].idUsuario;
+            axios
+              .post("/endereco", this.empresa)
+              .then(response => {
+                if (response.data[0].idEndereco.length > 0) {
+                  this.empresa.idEndereco = response.data[0].idEndereco;
+
+                  axios
+                    .post("/contato", this.empresa)
+                    .then(response => {
+                      
+                    })
+                    .catch(e => {
+                      console.log(error);
+                    });
+                }
+              })
+              .catch(e => {
+                console.log(error);
+              });
+          }
+        })
+        .catch(e => {
+          console.log(error);
+        });
+    },
+
+    cadastrarCliente() {
+      let usuario = [];
+
+      usuario.push({
+        email: this.cliente.email,
+        senha: this.cliente.senha,
+        tipoPessoa: "F"
+      });
+
+      axios
+        .post("/usuario", usuario)
+        .then(response => {
+          if (response.data[0].idUsuario.length > 0) {
+            this.cliente.idUsuario = response.data[0].idUsuario;
+            axios
+              .post("/cliente", this.cliente)
+              .then(response => {
+                if (response.data.length > 0) {
+                  this.text = response.data[0].mensagem;
+                  this.colors = "blue";
+                  this.snack("top", "right");
+                  this.closeDialogCliente();
+                }
+              })
+              .catch(e => {
+                console.log(error);
+              });
+          }
+        })
+        .catch(e => {
+          console.log(error);
+        });
+    },
+
+    closeDialogCliente() {
+      this.dialogCadCli = false;
+    },
+
+    closeDialogEmpresa() {
+      this.dialogCadEmp = false;
+    },
+
+    salvarCliente() {
+      if (!this.validacaoCamposPreenchidosCliente()) {
+        this.cadastrarCliente();
+      }
+    },
+
+    salvarEmpresa() {
+      //if (!this.validacaoCamposPreenchidosEmpresa()) {
+      this.cadastrarEmpresa();
+      //}
+    },
+
+    acessaModalEmpresa() {
       this.dialogTipoPessoa = false;
       this.dialogCadEmp = true;
     },
 
-    acessaModalCliente(){
+    acessaModalCliente() {
       this.dialogTipoPessoa = false;
       this.dialogCadCli = true;
-    },
+    }
   }
-
-  
 };
 </script>

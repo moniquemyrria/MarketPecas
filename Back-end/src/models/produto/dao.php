@@ -45,8 +45,7 @@ function cadastrarProduto($db, $produto){
 
    
     $str = $db->prepare(
-        "
-        INSERT INTO PRODUTO(
+        "INSERT INTO PRODUTO(
             id_categoria
             , id_marca
             , id_empresa
