@@ -123,11 +123,16 @@
                                         v-model="empresa.senha"
                                         style="margin-top: 50px; "
                                         prepend-icon="vpn_key"
-                                        label="Senha *"
+                                        label="Normal with hint text"
                                         class="mx-4"
                                         placeholder="Informe uma senha para acesso"
                                         :counter="20"
                                         required
+                                        :append-icon="show1 ? 'visibility' : 'visibility_off'"
+                                        :type="show1 ? 'text' : 'password'"
+                                        name="input-10-1"
+                                        hint="At least 8 characters"
+                                        @click:append="show1 = !show1"
                                       />
                                     </v-col>
                                   </v-row>
@@ -469,11 +474,16 @@
                         v-model="cliente.senha"
                         style="margin-top: 50px; "
                         prepend-icon="vpn_key"
-                        label="Senha *"
+                        label="Normal with hint text"
                         class="mx-4"
-                        placeholder="Informe uma senha"
+                        placeholder="Informe uma senha para acesso"
                         :counter="20"
                         required
+                        :append-icon="show1 ? 'visibility' : 'visibility_off'"
+                        :type="show1 ? 'text' : 'password'"
+                        name="input-10-1"
+                        hint="At least 8 characters"
+                        @click:append="show1 = !show1"
                       />
                     </v-col>
                   </v-row>
@@ -511,12 +521,22 @@
                       <v-col xl="9" sm="12">
                         <v-row class="d-flex justify-sm-center">
                           <v-col xl="9" sm="6">
-                            <v-text-field label="E-mail de acesso" outlined></v-text-field>
+                            <v-text-field v-model="usuario.email" label="E-mail de acesso" outlined></v-text-field>
                           </v-col>
                         </v-row>
                         <v-row style="margin-top: -5vh;" class="d-flex justify-sm-center">
                           <v-col xl="9" sm="6">
-                            <v-text-field label="Senha de acesso" outlined></v-text-field>
+                            
+                            <v-text-field
+                              v-model="usuario.senha"
+                              label="Senha de acesso"
+                              outlined
+                              :append-icon="show1 ? 'visibility' : 'visibility_off'"
+                              :type="show1 ? 'text' : 'password'"
+                              name="input-10-1"
+                            
+                              @click:append="show1 = !show1"
+                            ></v-text-field>
                           </v-col>
                         </v-row>
                         <v-row style="margin-top: -7vh; " class="d-flex justify-md-end">
@@ -526,7 +546,13 @@
                         </v-row>
                         <v-row style="margin-top: -5vh;">
                           <v-col xl="9" sm="12" class="d-flex justify-sm-center">
-                            <v-btn large min-width="60vh" class="mt-12" color="primary">Acessar</v-btn>
+                            <v-btn
+                              large
+                              min-width="60vh"
+                              class="mt-12"
+                              @click="acessar"
+                              color="primary"
+                            >Acessar</v-btn>
                           </v-col>
                         </v-row>
                       </v-col>
@@ -580,6 +606,12 @@ export default {
   vue: new Vue(),
   data() {
     return {
+      show1: false,
+      show2: true,
+      show3: false,
+      show4: false,
+      password: "Password",
+
       timeout: 9000,
       color: null,
       colors: ["purple", "info", "success", "warning", "error"],
@@ -631,6 +663,11 @@ export default {
         idUsuario: null,
         idEndereco: null,
         idContato: null
+      },
+
+      usuario: {
+        email: null,
+        senha: null
       }
     };
   },
@@ -644,6 +681,30 @@ export default {
   // },
 
   methods: {
+    acessar() {
+      axios
+        .post("/validaUsuario", this.usuario)
+        .then(response => {
+          console.log(response.data);
+          if (response.data[0].usuario.length > 0) {
+            this.text = response.data[0].mensagem;
+            this.colors = "green";
+            this.snack("top", "center");
+          } else {
+            this.text = response.data[0].mensagem;
+            this.colors = "red";
+            this.snack("bottom", "center");
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
+      // Cria um item "usuario" com valor "Thiago Belem"
+      //window.localStorage.setItem('usuario', 'Baby boy :)');
+
+      //let usuario = window.localStorage.getItem('usuario');
+      //console.log(usuario);
+    },
     snack(...args) {
       this.top = false;
       this.bottom = false;
@@ -793,7 +854,23 @@ export default {
                   axios
                     .post("/contato", this.empresa)
                     .then(response => {
-                      
+                      if (response.data[0].idContato.length > 0) {
+                        this.empresa.idContato = response.data[0].idContato;
+
+                        axios
+                          .post("/empresa", this.empresa)
+                          .then(response => {
+                            if (response.data.length > 0) {
+                              this.text = response.data[0].mensagem;
+                              this.colors = "blue";
+                              this.snack("top", "right");
+                              this.closeDialogEmpresa();
+                            }
+                          })
+                          .catch(e => {
+                            console.log(error);
+                          });
+                      }
                     })
                     .catch(e => {
                       console.log(error);
@@ -810,6 +887,29 @@ export default {
         });
     },
 
+    verificaEmailDuplicado: function(usuario) {
+      let verificador = null;
+      axios
+        .post("/consultaEmailDuplicado", { email: usuario[0].email })
+        .then(response => {
+          if (parseInt(response.data) == 0) {
+            verificador = 0;
+          }
+
+          if (parseInt(response.data[0].duplicidade) >= 1) {
+            this.text = response.data[0].mensagem;
+            this.colors = "red";
+            this.snack("bottom", "center");
+            verificador = 1;
+          }
+
+          return verificador;
+        })
+        .catch(e => {
+          console.log(error);
+        });
+    },
+
     cadastrarCliente() {
       let usuario = [];
 
@@ -819,25 +919,45 @@ export default {
         tipoPessoa: "F"
       });
 
+      let teste = this.verificaEmailDuplicado(usuario);
+
       axios
-        .post("/usuario", usuario)
+        .post("/consultaEmailDuplicado", { email: usuario[0].email })
         .then(response => {
-          if (response.data[0].idUsuario.length > 0) {
-            this.cliente.idUsuario = response.data[0].idUsuario;
+          if (parseInt(response.data) == 0) {
             axios
-              .post("/cliente", this.cliente)
+              .post("/usuario", usuario)
               .then(response => {
-                if (response.data.length > 0) {
-                  this.text = response.data[0].mensagem;
-                  this.colors = "blue";
-                  this.snack("top", "right");
-                  this.closeDialogCliente();
+                if (response.data[0].idUsuario.length > 0) {
+                  this.cliente.idUsuario = response.data[0].idUsuario;
+                  axios
+                    .post("/cliente", this.cliente)
+                    .then(response => {
+                      if (response.data.length > 0) {
+                        this.text = response.data[0].mensagem;
+                        this.colors = "blue";
+                        this.snack("top", "right");
+                        this.closeDialogCliente();
+                      }
+                    })
+                    .catch(e => {
+                      console.log(error);
+                    });
                 }
               })
               .catch(e => {
                 console.log(error);
               });
           }
+
+          if (parseInt(response.data[0].duplicidade) >= 1) {
+            this.text = response.data[0].mensagem;
+            this.colors = "red";
+            this.snack("bottom", "center");
+            verificador = 1;
+          }
+
+          return verificador;
         })
         .catch(e => {
           console.log(error);
