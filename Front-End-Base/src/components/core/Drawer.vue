@@ -159,7 +159,7 @@ export default {
   },
 
   created: function() {
-    this.carregar(5);
+    this.carregar(1);
   }
 };
 </script>

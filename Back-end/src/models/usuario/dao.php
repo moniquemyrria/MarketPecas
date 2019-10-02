@@ -34,5 +34,14 @@ function cadastrarUsuario($db, $usuario){
     return $result;
 }
 
+function pesquisaUsuarioId($db, $id){
 
-
+    $str = $db->prepare(
+        "SELECT u.id as idUsuario, c.id as idCliente, u.*, c.* from cliente c with(nolock)
+        inner join usuario u with(nolock) on (u.id = c.id_usuario)
+        where u.id ='" .$id. "'
+        and u.ativo = 'S'
+    ");
+    $str->execute();
+    return $str->fetchAll();
+}
