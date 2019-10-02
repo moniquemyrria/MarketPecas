@@ -54,7 +54,7 @@
           <v-dialog v-model="dialogCadEmp" scrollable max-width="300vh" persistent>
             <v-card>
               <v-toolbar dark color="primary">
-                <v-btn icon dark @click="dialogCadEmp = false">
+                <v-btn icon dark @click="closeDialogEmpresa">
                   <v-icon>mdi-close</v-icon>
                 </v-btn>
                 <v-toolbar-title>
@@ -63,7 +63,7 @@
                 <div class="flex-grow-1" />
                 <v-toolbar-items>
                   <div class="ma-3">
-                    <v-btn large color="error" @click="dialogCadEmp = false">CANCELAR</v-btn>
+                    <v-btn large color="error" @click="closeDialogEmpresa">CANCELAR</v-btn>
                   </div>
                   <div class="ma-3">
                     <v-btn
@@ -123,7 +123,7 @@
                                         v-model="empresa.senha"
                                         style="margin-top: 50px; "
                                         prepend-icon="vpn_key"
-                                        label="Normal with hint text"
+                                        label="Senha"
                                         class="mx-4"
                                         placeholder="Informe uma senha para acesso"
                                         :counter="20"
@@ -526,7 +526,6 @@
                         </v-row>
                         <v-row style="margin-top: -5vh;" class="d-flex justify-sm-center">
                           <v-col xl="9" sm="6">
-                            
                             <v-text-field
                               v-model="usuario.senha"
                               label="Senha de acesso"
@@ -534,7 +533,6 @@
                               :append-icon="show1 ? 'visibility' : 'visibility_off'"
                               :type="show1 ? 'text' : 'password'"
                               name="input-10-1"
-                            
                               @click:append="show1 = !show1"
                             ></v-text-field>
                           </v-col>
@@ -681,29 +679,70 @@ export default {
   // },
 
   methods: {
-    acessar() {
-      axios
-        .post("/validaUsuario", this.usuario)
-        .then(response => {
-          console.log(response.data);
-          if (response.data[0].usuario.length > 0) {
-            this.text = response.data[0].mensagem;
-            this.colors = "green";
-            this.snack("top", "center");
-          } else {
-            this.text = response.data[0].mensagem;
-            this.colors = "red";
-            this.snack("bottom", "center");
-          }
-        })
-        .catch(e => {
-          console.log(e);
-        });
-      // Cria um item "usuario" com valor "Thiago Belem"
-      //window.localStorage.setItem('usuario', 'Baby boy :)');
+    limpaCamposCliente() {
+      this.cliente.nome = "";
+      this.cliente.sobrenome = "";
+      this.cliente.email = "";
+      this.cliente.senha = "";
+      this.cliente.notificacao = null;
+      this.cliente.idUsuario = null;
+    },
 
-      //let usuario = window.localStorage.getItem('usuario');
-      //console.log(usuario);
+    limparCamposEmpresa() {
+      this.empresa.email = "";
+      this.empresa.senha = "";
+      this.empresa.cnpj = "";
+      this.empresa.razaoSocial = "";
+      this.empresa.nomeFantasia = "";
+      this.empresa.obs = "";
+      this.empresa.checkboxDinheiro = false;
+      this.empresa.checkboxCredito = false;
+      this.empresa.checkboxDebito = false;
+      this.empresa.checkboxBoleto = false;
+      this.empresa.checkboxProprio = false;
+      this.empresa.checkboxLeve = false;
+      this.empresa.checkboxPesada = false;
+      this.empresa.checkboxOfertaPraca = false;
+      this.empresa.telefone = "";
+      this.empresa.wapp = "";
+      this.empresa.fb = "";
+      this.empresa.cep = "";
+      this.empresa.num = "";
+      this.empresa.logradouro = "";
+      this.empresa.bairro = "";
+      this.empresa.idUsuario = null;
+      this.empresa.idEndereco = null;
+      this.empresa.idContato = null;
+    },
+
+    acessar() {
+      if (!this.validacaoCamposPreenchidosUsuario()) {
+        window.localStorage.clear();
+        axios
+          .post("/validaUsuario", this.usuario)
+          .then(response => {
+            if (response.data[0].usuario.length > 0) {
+              this.text = response.data[0].mensagem;
+              this.colors = "green";
+              this.snack("top", "center");
+
+              window.localStorage.clear();
+              window.localStorage.setItem("usuario", response.data[0].usuario[0].id);
+
+              //let usuario = window.localStorage.getItem("usuario");
+              //console.log(usuario);
+
+            } else {
+              localStorage.clear();
+              this.text = response.data[0].mensagem;
+              this.colors = "red";
+              this.snack("bottom", "center");
+            }
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      }
     },
     snack(...args) {
       this.top = false;
@@ -720,6 +759,14 @@ export default {
       this.snackbar = true;
     },
 
+    msgAlertCamposPreenchidosUsuario() {
+      this.colors = "warning";
+      this.timeout = 5000;
+      this.snack("bottom", "center");
+      this.text = "Ops! Informe seu e-email e senha para realizar o login.";
+      this.error = true;
+    },
+
     msgAlertCamposPreenchidos() {
       this.colors = "warning";
       this.timeout = 5000;
@@ -727,6 +774,26 @@ export default {
       this.text =
         "Ops! Há campos brigatórios não preenchidos, ou algum dado informado está maior que o permitido para o campo.";
       this.error = true;
+    },
+
+    validacaoCamposPreenchidosUsuario() {
+      if (
+        this.usuario.email == "" ||
+        this.usuario.email == null ||
+        (this.usuario.email.length <= 0 || this.usuario.email.length > 20)
+      ) {
+        this.msgAlertCamposPreenchidosUsuario();
+        return true;
+      }
+
+      if (
+        this.usuario.senha == "" ||
+        this.usuario.senha == null ||
+        (this.usuario.senha.length <= 0 || this.usuario.senha.length > 20)
+      ) {
+        this.msgAlertCamposPreenchidosUsuario();
+        return true;
+      }
     },
 
     validacaoCamposPreenchidosCliente() {
@@ -822,6 +889,47 @@ export default {
       }
 
       if (
+        this.empresa.cep == "" ||
+        (this.empresa.cep.length <= 0 || this.empresa.cep.length > 9)
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (
+        this.empresa.logradouro == "" ||
+        (this.empresa.logradouro.length <= 0 ||
+          this.empresa.logradouro.length > 50)
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (
+        this.empresa.num == "" ||
+        (this.empresa.num.length <= 0 || this.empresa.num.length > 10)
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (
+        this.empresa.bairro == "" ||
+        (this.empresa.bairro.length <= 0 || this.empresa.bairro.length > 30)
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (
+        this.empresa.cep == "" ||
+        (this.empresa.cep.length <= 0 || this.empresa.cep.length > 9)
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (
         this.empresa.checkboxLeve == false &&
         this.empresa.checkboxPesada == false
       ) {
@@ -841,30 +949,41 @@ export default {
       });
 
       axios
-        .post("/usuario", usuario)
+        .post("/consultaEmailDuplicado", { email: usuario[0].email })
         .then(response => {
-          if (response.data[0].idUsuario.length > 0) {
-            this.empresa.idUsuario = response.data[0].idUsuario;
+          if (parseInt(response.data) == 0) {
             axios
-              .post("/endereco", this.empresa)
+              .post("/usuario", usuario)
               .then(response => {
-                if (response.data[0].idEndereco.length > 0) {
-                  this.empresa.idEndereco = response.data[0].idEndereco;
-
+                if (response.data[0].idUsuario.length > 0) {
+                  this.empresa.idUsuario = response.data[0].idUsuario;
                   axios
-                    .post("/contato", this.empresa)
+                    .post("/endereco", this.empresa)
                     .then(response => {
-                      if (response.data[0].idContato.length > 0) {
-                        this.empresa.idContato = response.data[0].idContato;
+                      if (response.data[0].idEndereco.length > 0) {
+                        this.empresa.idEndereco = response.data[0].idEndereco;
 
                         axios
-                          .post("/empresa", this.empresa)
+                          .post("/contato", this.empresa)
                           .then(response => {
-                            if (response.data.length > 0) {
-                              this.text = response.data[0].mensagem;
-                              this.colors = "blue";
-                              this.snack("top", "right");
-                              this.closeDialogEmpresa();
+                            if (response.data[0].idContato.length > 0) {
+                              this.empresa.idContato =
+                                response.data[0].idContato;
+
+                              axios
+                                .post("/empresa", this.empresa)
+                                .then(response => {
+                                  if (response.data.length > 0) {
+                                    this.text = response.data[0].mensagem;
+                                    this.colors = "green";
+                                    this.snack("top", "center");
+                                    this.closeDialogEmpresa();
+                                    this.limparCamposEmpresa();
+                                  }
+                                })
+                                .catch(e => {
+                                  console.log(error);
+                                });
                             }
                           })
                           .catch(e => {
@@ -881,20 +1000,6 @@ export default {
                 console.log(error);
               });
           }
-        })
-        .catch(e => {
-          console.log(error);
-        });
-    },
-
-    verificaEmailDuplicado: function(usuario) {
-      let verificador = null;
-      axios
-        .post("/consultaEmailDuplicado", { email: usuario[0].email })
-        .then(response => {
-          if (parseInt(response.data) == 0) {
-            verificador = 0;
-          }
 
           if (parseInt(response.data[0].duplicidade) >= 1) {
             this.text = response.data[0].mensagem;
@@ -902,8 +1007,6 @@ export default {
             this.snack("bottom", "center");
             verificador = 1;
           }
-
-          return verificador;
         })
         .catch(e => {
           console.log(error);
@@ -919,8 +1022,6 @@ export default {
         tipoPessoa: "F"
       });
 
-      let teste = this.verificaEmailDuplicado(usuario);
-
       axios
         .post("/consultaEmailDuplicado", { email: usuario[0].email })
         .then(response => {
@@ -935,9 +1036,10 @@ export default {
                     .then(response => {
                       if (response.data.length > 0) {
                         this.text = response.data[0].mensagem;
-                        this.colors = "blue";
-                        this.snack("top", "right");
+                        this.colors = "green";
+                        this.snack("top", "center");
                         this.closeDialogCliente();
+                        this.limpaCamposCliente();
                       }
                     })
                     .catch(e => {
@@ -956,8 +1058,6 @@ export default {
             this.snack("bottom", "center");
             verificador = 1;
           }
-
-          return verificador;
         })
         .catch(e => {
           console.log(error);
@@ -966,10 +1066,12 @@ export default {
 
     closeDialogCliente() {
       this.dialogCadCli = false;
+      this.limpaCamposCliente();
     },
 
     closeDialogEmpresa() {
       this.dialogCadEmp = false;
+      this.limparCamposEmpresa();
     },
 
     salvarCliente() {
@@ -979,17 +1081,19 @@ export default {
     },
 
     salvarEmpresa() {
-      //if (!this.validacaoCamposPreenchidosEmpresa()) {
-      this.cadastrarEmpresa();
-      //}
+      if (!this.validacaoCamposPreenchidosEmpresa()) {
+        this.cadastrarEmpresa();
+      }
     },
 
     acessaModalEmpresa() {
+      this.limparCamposEmpresa();
       this.dialogTipoPessoa = false;
       this.dialogCadEmp = true;
     },
 
     acessaModalCliente() {
+      this.limpaCamposCliente();
       this.dialogTipoPessoa = false;
       this.dialogCadCli = true;
     }
