@@ -49,7 +49,7 @@ require __DIR__ . '/../src/models/usuario/routes.php';
 
 require __DIR__ . '/../src/models/cliente/routes.php';
 
-//require __DIR__ . '/../src/models/empresa/routes.php';
+require __DIR__ . '/../src/models/empresa/routes.php';
 
 require __DIR__ . '/../src/models/endereco/routes.php';
 
