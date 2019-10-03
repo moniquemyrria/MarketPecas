@@ -68,3 +68,33 @@ function pesquisaUsuarioId($db, $id){
     $str->execute();
     return $str->fetchAll();
 }
+
+function alterarUsuario($db, $usuario){
+
+    $notificacao = null;
+    if ($usuario['oferta_app'] == 'SIM'){
+        $notificacao = 'S';
+    }
+    if ($usuario['oferta_app'] == 'NÃO'){
+        $notificacao = 'N';
+    }
+
+
+    $str = $db->prepare(
+        "UPDATE usuario SET senha = :senha
+        where id = :id
+    ");
+    $str->bindParam("id", $usuario["idUsuario"]);
+    $str->bindParam("senha", $usuario["senha"]);
+    $str->execute();
+
+    $strr = $db->prepare(
+        "UPDATE cliente SET oferta_app = :ofertaApp
+        where id_usuario = :id
+    ");
+    $strr->bindParam("id", $usuario["idUsuario"]);
+    $strr->bindParam("ofertaApp", $notificacao);
+    $strr->execute();
+
+    return;
+}

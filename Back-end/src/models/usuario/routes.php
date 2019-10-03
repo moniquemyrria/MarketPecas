@@ -55,3 +55,18 @@ $app->post('/validaUsuario', function ($request, $response, $args) {
 });
 
 
+$app->put('/usuario', function ($request, $response, $args) {
+    $modelUsuario = $request->getParsedBody();
+    $usuario = alterarUsuario($this->db, $modelUsuario);
+    $result = array();
+    
+    $resultItem = array(
+        "mensagem" => "Dados do Usuário alterado com sucesso."
+    );
+    
+    
+    array_push($result,$resultItem);
+    return $this->response->withJson($result);
+});
+
+
