@@ -178,7 +178,7 @@ export default {
     },
     carregarTela() {
       axios
-        .get("/pesquisaUsuarioClienteId/" + 12)
+        .get("/pesquisaUsuarioClienteId/" + 2)
         .then(response => {
           this.usuario = response.data[0];
 
