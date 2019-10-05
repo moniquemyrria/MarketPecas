@@ -16,14 +16,14 @@ export default [
     view: 'UserProfile',
   },
   {
-    path: '/perfil-usuario',
+    path: '/perfil-usuario-cliente',
     name: 'Perfil Usuario',
-    view: 'PerfilUsuario',
+    view: 'PerfilUsuarioCliente',
   },
   {
-    path: '/cadastro-empresa',
+    path: '/perfil-usuario-empresa',
     name: 'Cadastro da Empresa',
-    view: 'CadastroEmpresa',
+    view: 'PerfilUsuarioEmpresa',
   },
   {
     path: '/cadastro-produto',
@@ -36,9 +36,9 @@ export default [
     view: 'CadastroOfertaProduto',
   },
   {
-    path: '/cadastro-usuario',
-    name: 'Cadastro de Usuario',
-    view: 'CadastroUsuario',
+    path: '/login-cadastro-usuario',
+    name: 'Cadastro de Usuarios e Login',
+    view: 'LoginCadastroUsuario',
   },
   {
     path: '/index-site',

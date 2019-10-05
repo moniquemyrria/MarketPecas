@@ -86,29 +86,29 @@ export default {
       },
 
       {
-        to: "/perfil-usuario",
+        to: "/perfil-usuario-cliente",
         icon: "mdi-account",
         text: "Meus Dados",
         id: 1,
       },
-      // {
-      //   to: "/cadastro-empresa",
-      //   icon: "mdi-clipboard-outline",
-      //   text: "Dados da Empresa",
-      //   id: 2
-      // },
-      // {
-      //   to: "/cadastro-produto",
-      //   icon: "mdi-chart-bubble",
-      //   text: "Produtos",
-      //   id: 3,
-      // },
-      // {
-      //   to: "/oferta-produto",
-      //   icon: "mdi-view-dashboard",
-      //   text: "Oferta de Produtos",
-      //   id: 4
-      // },
+      {
+        to: "/perfil-usuario-empresa",
+        icon: "mdi-clipboard-outline",
+        text: "Dados da Empresa",
+        id: 2
+      },
+      {
+        to: "/cadastro-produto",
+        icon: "mdi-chart-bubble",
+        text: "Produtos",
+        id: 3,
+      },
+      {
+        to: "/oferta-produto",
+        icon: "mdi-view-dashboard",
+        text: "Oferta de Produtos",
+        id: 4
+      },
       // {
       //   to: "/cadastro-usuario",
       //   icon: "mdi-view-dashboard",

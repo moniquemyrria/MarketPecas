@@ -31,7 +31,7 @@
           <v-row>
             <v-col cols="9" sm="6">
               <v-col cols="12" sm="12">
-                <material-card color="info" type="Line" icon="mdi-store" title="Dados Pessois">
+                <material-card color="info" type="Line" icon="mdi-store" title="Dados Pessoais">
                   <h4 class="title font-weight-light">{{ usuario.nome + ' ' + usuario.sobrenome}}</h4>
 
                   <p class="category d-inline-flex font-weight-light">
@@ -166,7 +166,7 @@ export default {
     },
     salvar() {
       axios
-        .put("/usuario", this.usuario)
+        .put("/cliente", this.usuario)
         .then(response => {
           this.text = response.data[0].mensagem;
           this.colors = "blue";
@@ -178,7 +178,7 @@ export default {
     },
     carregarTela() {
       axios
-        .get("/pesquisaUsuarioId/" + 12)
+        .get("/pesquisaUsuarioClienteId/" + 12)
         .then(response => {
           this.usuario = response.data[0];
 

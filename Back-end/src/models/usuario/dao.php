@@ -58,7 +58,7 @@ function validaUsuario($db, $usuario){
     return $str->fetchAll();
 }
 
-function pesquisaUsuarioId($db, $id){
+function pesquisaUsuarioClienteId($db, $id){
     $str = $db->prepare(
         "SELECT u.id as idUsuario, c.id as idCliente, u.*, c.* from cliente c with(nolock)
         inner join usuario u with(nolock) on (u.id = c.id_usuario)
@@ -69,32 +69,16 @@ function pesquisaUsuarioId($db, $id){
     return $str->fetchAll();
 }
 
-function alterarUsuario($db, $usuario){
-
-    $notificacao = null;
-    if ($usuario['oferta_app'] == 'SIM'){
-        $notificacao = 'S';
-    }
-    if ($usuario['oferta_app'] == 'NÃO'){
-        $notificacao = 'N';
-    }
-
-
+function pesquisaUsuarioEmpresaId($db, $id){
     $str = $db->prepare(
-        "UPDATE usuario SET senha = :senha
-        where id = :id
+        "SELECT e.*, u.*, ed.*, c.* from empresa e with(nolock)
+        inner join usuario u with(nolock) on (u.id = e.id_usuario)
+        inner join endereco ed with(nolock) on (ed.id = e.id_endereco)
+        inner join contato c with(nolock) on (c.id = e.id_contato)
+        where e.id_usuario = '" .$id. "'
+         and u.ativo = 'S'
     ");
-    $str->bindParam("id", $usuario["idUsuario"]);
-    $str->bindParam("senha", $usuario["senha"]);
     $str->execute();
-
-    $strr = $db->prepare(
-        "UPDATE cliente SET oferta_app = :ofertaApp
-        where id_usuario = :id
-    ");
-    $strr->bindParam("id", $usuario["idUsuario"]);
-    $strr->bindParam("ofertaApp", $notificacao);
-    $strr->execute();
-
-    return;
+    return $str->fetchAll();
 }
+

@@ -84,7 +84,7 @@
         </v-menu>
 
         <v-btn
-          to="/cadastro-usuario"
+          to="/login-cadastro-usuario"
           icon
         >
           <v-icon color="tertiary">

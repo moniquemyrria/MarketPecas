@@ -11,8 +11,13 @@ $app->post('/usuario', function ($request, $response, $args) {
     return $this->response->withJson($usuario);
 });
 
-$app->get('/pesquisaUsuarioId/{id}', function ($request, $response, $args) {
-    $usuario = pesquisaUsuarioId($this->db, $args['id']);
+$app->get('/pesquisaUsuarioClienteId/{id}', function ($request, $response, $args) {
+    $usuario = pesquisaUsuarioClienteId($this->db, $args['id']);
+    return $this->response->withJson($usuario);
+});
+
+$app->get('/pesquisaUsuarioEmpresaId/{id}', function ($request, $response, $args) {
+    $usuario = pesquisaUsuarioEmpresaId($this->db, $args['id']);
     return $this->response->withJson($usuario);
 });
 
@@ -55,18 +60,5 @@ $app->post('/validaUsuario', function ($request, $response, $args) {
 });
 
 
-$app->put('/usuario', function ($request, $response, $args) {
-    $modelUsuario = $request->getParsedBody();
-    $usuario = alterarUsuario($this->db, $modelUsuario);
-    $result = array();
-    
-    $resultItem = array(
-        "mensagem" => "Dados do Usuário alterado com sucesso."
-    );
-    
-    
-    array_push($result,$resultItem);
-    return $this->response->withJson($result);
-});
 
 
