@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="login">
     <v-app id="inspire">
       <v-row justify="center">
         <v-container class="fill-height" fluid>
@@ -188,7 +188,7 @@
                                       sm="10"
                                       style="margin-left: -15vh; margin-top: -2vh"
                                     >
-                                      <span>Escolha as forma de pagamendos aceitos pela sua Loja:</span>
+                                      <span>Escolha as forma de pagamentos aceitos pela sua Loja:</span>
                                     </v-col>
                                   </v-row>
                                   <v-row class="d-flex justify-sm-center">
@@ -717,7 +717,7 @@ export default {
 
     acessar() {
       if (!this.validacaoCamposPreenchidosUsuario()) {
-        window.localStorage.clear();
+        //sessionStorage.clear();
         axios
           .post("/validaUsuario", this.usuario)
           .then(response => {
@@ -726,14 +726,19 @@ export default {
               this.colors = "green";
               this.snack("top", "center");
 
-              window.localStorage.clear();
-              window.localStorage.setItem("usuario", response.data[0].usuario[0].id);
+              //sessionStorage.clear();
+              sessionStorage.setItem("usuario", response.data[0].usuario[0].id);
+              sessionStorage.setItem("drawer", 1);
 
-              //let usuario = window.localStorage.getItem("usuario");
-              //console.log(usuario);
+              let url = "/principal-profile";
+              this.$router.push(url);
+
+
+              //let usuario = sessionStorage.getItem("usuario");
+              
 
             } else {
-              localStorage.clear();
+              //sessionStorage.clear();
               this.text = response.data[0].mensagem;
               this.colors = "red";
               this.snack("bottom", "center");

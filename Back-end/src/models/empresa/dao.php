@@ -58,6 +58,76 @@ function cadastrarEmpresa($db, $empresa){
     return $empresa;
 }
 
+function alterarDadosEmpresa($db, $empresa){
+
+    //aletrando dados da empresa
+    $emp = $db->prepare(
+        "UPDATE EMPRESA SET
+             observacao = :observacao
+            , forma_pgto_dinheiro = :dinheiro
+            , forma_pgto_cartao_credito = :cartaoCredito
+            , forma_pgto_cartao_debito = :cartaoDebito
+            , forma_pgto_boleto = :boleto
+            , forma_pgto_crediario_proprio = :crediarioProprio
+            , loja_linha_leve = :linhaLeve
+            , loja_linha_pesada = :linhaPesada
+            , cobre_oferta_praca = :ofertaPraca
+        WHERE id = :idEmpresa
+    ");
+
+    $emp->bindParam("idEmpresa",        $empresa["id"]);
+    $emp->bindParam("observacao",       $empresa["observacao"]);
+    $emp->bindValue("dinheiro",         verificaCheck($empresa['forma_pgto_dinheiro']));
+    $emp->bindValue("cartaoCredito",    verificaCheck($empresa["forma_pgto_cartao_credito"]));
+    $emp->bindValue("cartaoDebito",     verificaCheck($empresa["forma_pgto_cartao_debito"]));
+    $emp->bindValue("boleto",           verificaCheck($empresa["forma_pgto_boleto"]));
+    $emp->bindValue("crediarioProprio", verificaCheck($empresa["forma_pgto_crediario_proprio"]));
+    $emp->bindValue("linhaLeve",        verificaCheck($empresa["loja_linha_leve"]));
+    $emp->bindValue("linhaPesada",      verificaCheck($empresa["loja_linha_pesada"]));
+    $emp->bindValue("ofertaPraca",      verificaCheck($empresa["cobre_oferta_praca"]));
+    $emp->execute();
+
+    //alterando dado do usuario
+    $usu = $db->prepare(
+        "UPDATE usuario SET senha = :senha
+        where id = :idUsuario
+    ");
+    $usu->bindParam("idUsuario", $empresa["id_usuario"]);
+    $usu->bindParam("senha", $empresa["senha"]);
+    $usu->execute();
+
+    //alterando endereco
+    $end = $db->prepare(
+        "UPDATE ENDERECO SET
+            logradouro = :logradouro
+            , numero = :numero
+            , bairro = :bairro
+            , cep = :cep
+        where id = :idEndereco
+    ");
+    $end->bindParam("idEndereco", $empresa["id_endereco"]);
+    $end->bindParam("logradouro", $empresa["logradouro"]);
+    $end->bindParam("numero", $empresa["numero"]);
+    $end->bindParam("bairro", $empresa["bairro"]);
+    $end->bindParam("cep", $empresa["cep"]);
+    $end->execute();
+
+    $cont = $db->prepare(
+        "UPDATE CONTATO SET
+            telefone = :telefone
+            , whatsapp = :wapp
+            , facebook = :fb
+        WHERE id = :idContato
+    ");
+    $cont->bindParam("idContato", $empresa["id_contato"]);
+    $cont->bindParam("telefone", $empresa["telefone"]);
+    $cont->bindParam("wapp", $empresa["whatsapp"]);
+    $cont->bindParam("fb", $empresa["facebook"]);
+    $cont->execute();
+    
+    return $empresa;
+}
+
 function verificaCheck($value){
     if ($value == true){
         return 'S';

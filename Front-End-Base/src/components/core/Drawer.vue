@@ -9,7 +9,7 @@
     floating
     mobile-break-point="991"
     persistent
-    :width="width"
+    width="260"
   >
     <template v-slot:img="attrs">
       <v-img v-bind="attrs" gradient="to top, rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)" />
@@ -43,7 +43,7 @@
           <v-icon>{{ link.icon }}</v-icon>
         </v-list-item-action>
 
-        <v-list-item-title v-text="link.text" @click="carregar(link.id)"/>
+        <v-list-item-title v-text="link.text"/>
       </v-list-item>
     </v-list>
 
@@ -77,7 +77,6 @@ export default {
     }
   },
   data: () => ({
-    width: 260,
     links: [
       {
         to: '/',
@@ -89,25 +88,25 @@ export default {
         to: "/perfil-usuario-cliente",
         icon: "mdi-account",
         text: "Meus Dados",
-        id: 1,
+        
       },
       {
         to: "/perfil-usuario-empresa",
         icon: "mdi-clipboard-outline",
         text: "Dados da Empresa",
-        id: 2
+       
       },
       {
         to: "/cadastro-produto",
         icon: "mdi-chart-bubble",
         text: "Produtos",
-        id: 3,
+       
       },
       {
         to: "/oferta-produto",
         icon: "mdi-view-dashboard",
         text: "Oferta de Produtos",
-        id: 4
+        
       },
       // {
       //   to: "/cadastro-usuario",
@@ -150,16 +149,8 @@ export default {
   methods: {
     ...mapMutations("app", ["setDrawer", "toggleDrawer"]),
 
-    carregar(id) {
-      if (id == 5){
-        this.width = 0; 
-      }
-      console.log(id)
-    }
+    
   },
 
-  created: function() {
-    this.carregar(1);
-  }
 };
 </script>

@@ -1,17 +1,18 @@
 <template>
   <v-app>
-    <core-app-bar />
-
-    <!-- <core-drawer/> -->
-
-    <core-view />
-
-    <core-footer />
+    
+      <core-drawer/>
+    
   </v-app>
 </template>
 
 <script>
+// Utilities
+
+
 export default {
+  
+
   components: {
     CoreDrawer: () => import("@/components/core/Drawer"),
     CoreFooter: () => import("@/components/core/Footer"),
@@ -19,12 +20,9 @@ export default {
     CoreView: () => import("@/components/core/View")
   },
 
-  data() {
-    return {
-      
-    };
+  created() {
+     
   },
-
   
 };
 </script>
