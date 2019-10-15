@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer
-    id="app-drawer"
+    id="app-drawer-empresa"
     v-model="inputValue"
     :src="image"
     app
@@ -84,38 +84,36 @@ export default {
         text: 'Minhas Cotações'
       },
 
+      // {
+      //   to: "/perfil-usuario-cliente",
+      //   icon: "mdi-account",
+      //   text: "Meus Dados",
+        
+      // },
       {
-        to: "/perfil-usuario-cliente",
-        icon: "mdi-account",
-        text: "Meus Dados",
+        to: "/perfil-usuario-empresa",
+        icon: "mdi-clipboard-outline",
+        text: "Dados da Empresa",
+       
+      },
+      {
+        to: "/cadastro-produto",
+        icon: "mdi-chart-bubble",
+        text: "Produtos",
+       
+      },
+      {
+        to: "/oferta-produto",
+        icon: "mdi-view-dashboard",
+        text: "Oferta de Produtos",
         
       },
-      // {
-      //   to: "/perfil-usuario-empresa",
-      //   icon: "mdi-clipboard-outline",
-      //   text: "Dados da Empresa",
-       
-      // },
-      // {
-      //   to: "/cadastro-produto",
-      //   icon: "mdi-chart-bubble",
-      //   text: "Produtos",
-       
-      // },
-      // {
-      //   to: "/oferta-produto",
-      //   icon: "mdi-view-dashboard",
-      //   text: "Oferta de Produtos",
-        
-      // },
-      // {
-      //   to: "/cadastro-usuario",
-      //   icon: "mdi-view-dashboard",
-      //   text: "Cadastro de Usuario",
-      //   id: 5
-      // }
-
-
+      {
+        to: "/cadastro-usuario",
+        icon: "mdi-view-dashboard",
+        text: "Cadastro de Usuario",
+        id: 5
+      }
       // {
       //   to: '/icons',
       //   icon: 'mdi-chart-bubble',

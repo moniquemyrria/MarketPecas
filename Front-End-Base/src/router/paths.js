@@ -15,14 +15,11 @@ export default [
     name: 'User Profile',
     view: 'UserProfile',
   },
-
-  //teste
   {
     path: '/principal-profile',
     name: 'Principal',
     view: 'Principal',
-  },
-  
+  },  
   {
     path: '/perfil-usuario-cliente',
     name: 'Perfil Usuario',

@@ -1,7 +1,7 @@
 <template>
   <v-app>
     
-      <core-drawer/>
+      <core-drawerEmpresa/>
     
   </v-app>
 </template>

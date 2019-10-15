@@ -5,7 +5,8 @@
 // as explained in the cypress docs
 // https://docs.cypress.io/api/plugins/preprocessors-api.html#Examples
 
-/* eslint-disable import/no-extraneous-dependencies, global-require, arrow-body-style */
+/* eslint-disable */
+// eslint-disable-next-line
 // const webpack = require('@cypress/webpack-preprocessor')
 
 module.exports = (on, config) => {

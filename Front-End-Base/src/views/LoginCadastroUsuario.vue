@@ -732,11 +732,7 @@ export default {
 
               let url = "/principal-profile";
               this.$router.push(url);
-
-
-              //let usuario = sessionStorage.getItem("usuario");
               
-
             } else {
               //sessionStorage.clear();
               this.text = response.data[0].mensagem;

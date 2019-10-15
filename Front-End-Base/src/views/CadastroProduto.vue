@@ -463,6 +463,7 @@ import { mask } from "vue-the-mask";
 
 export default {
   components: {
+    CoreDrawerEmpresa: () => import("@/components/core/DrawerEmpresa"),
     CoreDrawer: () => import("@/components/core/Drawer"),
     CoreFooter: () => import("@/components/core/Footer"),
     CoreAppBar: () => import("@/components/core/AppBar"),

@@ -1,11 +1,6 @@
 
 <template>
- 
-   
     <div id="indexsite">
-    
-      
-      
       <v-container class="fill-height" fluid>
         <v-row justify="center">
           <v-col cols="12" md="8">
@@ -23,6 +18,7 @@
 export default {
 
    components: {
+      CoreDrawerEmpresa: () => import("@/components/core/DrawerEmpresa"),
       CoreDrawer: () => import('@/components/core/Drawer'),
       CoreFooter: () => import('@/components/core/Footer'),
       CoreAppBar: () => import('@/components/core/AppBar'),
