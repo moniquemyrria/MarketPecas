@@ -1,0 +1,934 @@
+<template>
+  <div id="app">
+    <va-appbar-menu-emp />
+    <v-app>
+      <v-container style="float: right; width: 165vh; margin-top: 10vh">
+        <!-- CARREGANDO DADOS -->
+        <v-dialog v-model="dialogCarregandoDados" width="320">
+          <v-card color="primary" dark>
+            <br />
+            <v-card-text>
+              {{ textCarregandoDados }}
+              <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
+
+        <!-- MENSAGEM PERGUNTA EXCLUIR PRODUTO -->
+        <v-dialog v-model="dialogExcluir" max-width="500px">
+          <v-card>
+            <v-card-title>
+              <span>Excluír Produto</span>
+
+              <div class="flex-grow-1" />
+            </v-card-title>
+            <v-card-text>
+              <span>
+                <b>Deseja relamente excluír o produto?</b>
+              </span>
+              <br />
+              <br />
+              <i>
+                <label
+                  style="font-size: 12px;"
+                >*Os produtos excluídos não serão mais listados no MarketPeças</label>
+              </i>
+            </v-card-text>
+            <v-card-actions>
+              <v-col cols="9" sm="12">
+                <v-row style="float: right; ">
+                  <v-btn color="error" text @click="cancelarDeletarItem()">NÃO</v-btn>
+                  <v-btn color="primary" text @click="excluir()">SIM</v-btn>
+                </v-row>
+              </v-col>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        <!-- MENSAGENS -->
+        <div class="text-center ma-2">
+          <v-snackbar
+            v-model="snackbar"
+            :bottom="bottom"
+            :color="color"
+            :left="left"
+            :right="right"
+            :top="top"
+            :timeout="timeout"
+            dark
+          >
+            <v-icon color="white" class="mr-3">mdi-bell-plus</v-icon>
+            <div>
+              <b>{{ text }}</b>
+            </div>
+            <!-- <v-btn icon @click="snackbar = false">
+          <v-icon>mdi-close-circle</v-icon>
+            </v-btn>-->
+          </v-snackbar>
+        </div>
+
+        <!-- CRUDPRODUTO -->
+        <v-row justify="center">
+          <v-col cols="12" md="12">
+            <v-card>
+              <v-card-title style="background: #0277BD;">
+                <h4>
+                  <span class="spanTitulo">CADASTRO |</span>
+                  <b class="bTitulo">PRODUTOS</b>&nbsp;
+                </h4>
+              </v-card-title>
+              <!-- LISTAGEM DE PRODUTOS -->
+              
+                <v-data-table
+                  :headers="headers"
+                  :items="tableProduto"
+                  :search="search"
+                  sort-by="calories"
+                  class="elevation-1"
+                  hide-default-footer
+                  :page.sync="page"
+                  :items-per-page="itemsPerPage"
+                  @page-count="pageCount = $event"
+                  color:black
+                >
+                  <!-- PESQUISA -->
+                  <template v-slot:top>
+                    <br />
+                    <v-toolbar style="height: 100px;" flat >
+                      <v-col cols="9" sm="12">
+                        <v-row style>
+                          <v-col cols="9" sm="10" style>
+                            <v-toolbar-title>
+                              <v-text-field
+                                v-model="search"
+                                style="margin-top: 50px; "
+                                append-icon="search"
+                                label="Pesquisa de Produtos por: Codigo, Descrição, Categoria ou Marca"
+                                class="mx-4"
+                              />
+                            </v-toolbar-title>
+                          </v-col>
+                          <v-col cols="9" sm="2" style>
+                            <v-btn
+                              style="margin-top: 35px"
+                              color="primary"
+                              dark
+                              large
+                              class="mb-2"
+                              @click="novoProduto"
+                            >NOVO PRODUTO</v-btn>
+                          </v-col>
+                        </v-row>
+                      </v-col>
+
+                      <div class="flex-grow-1" />
+
+                      <v-dialog v-model="dialog" fullscreen hide-overlay>
+                        <v-card>
+                          <v-toolbar dark color="primary">
+                            <v-btn icon dark @click="dialog = false">
+                              <v-icon>mdi-close</v-icon>
+                            </v-btn>
+                            <v-toolbar-title>
+                              <span class="headline">{{ formTitle }}</span>
+                            </v-toolbar-title>
+                            <div class="flex-grow-1" />
+                            <v-toolbar-items>
+                              <div class="ma-3">
+                                <v-btn large color="error" @click="close">CANCELAR</v-btn>
+                              </div>
+                              <div class="ma-3">
+                                <v-btn
+                                  style="margin-left: -10px;"
+                                  large
+                                  color="success"
+                                  @click="salvar"
+                                >SALVAR</v-btn>
+                              </div>
+                            </v-toolbar-items>
+                          </v-toolbar>
+                          <v-card-title />
+
+                          <v-card-text style="margin-top: -5vh;">
+                            <v-container>
+                              <v-tabs background-color="white" color="primary" right>
+                                <v-tab>DADOS GERAIS *</v-tab>
+                                <v-tab>MEDIDAS</v-tab>
+
+                                <v-tab-item v-for="n in 2" :key="n">
+                                  <v-card>
+                                    <v-card-text>
+                                      <v-container fluid>
+                                        <v-container v-if="n == 1" style>
+                                          <v-row>
+                                            <v-col cols="9" sm="6" style>
+                                              <v-row>
+                                                <v-col cols="9" sm="6">
+                                                  <v-col cols="9" sm="12">
+                                                    <v-text-field
+                                                      v-model="produto.codigo"
+                                                      label="Código ou Referência *"
+                                                      prepend-icon="crop_free"
+                                                      :counter="20"
+                                                      required
+                                                    />
+                                                  </v-col>
+                                                </v-col>
+
+                                                <v-col cols="9" sm="6">
+                                                  <v-col cols="9" sm="12">
+                                                    <v-menu
+                                                      ref="menu1"
+                                                      v-model="menu1"
+                                                      :close-on-content-click="false"
+                                                      transition="scale-transition"
+                                                      offset-y
+                                                      max-width="290px"
+                                                      min-width="290px"
+                                                    >
+                                                      <template v-slot:activator="{ on }">
+                                                        <v-text-field
+                                                          v-model="dateFormatted"
+                                                          label="Validade"
+                                                          hint="mês/dia/ano"
+                                                          persistent-hint
+                                                          prepend-icon="event"
+                                                          @blur="date = parseDate(dateFormatted)"
+                                                          v-on="on"
+                                                        ></v-text-field>
+                                                      </template>
+                                                      <v-date-picker
+                                                        v-model="date"
+                                                        no-title
+                                                        @input="menu1 = false"
+                                                        locale="pt-br"
+                                                      ></v-date-picker>
+                                                    </v-menu>
+                                                  </v-col>
+                                                </v-col>
+                                              </v-row>
+
+                                              <v-row>
+                                                <v-col cols="9" sm="12">
+                                                  <v-col cols="9" sm="12">
+                                                    <v-text-field
+                                                      v-model="produto.descricao"
+                                                      label="Descrição detalhada *"
+                                                      prepend-icon="create"
+                                                      :counter="100"
+                                                      required
+                                                    />
+                                                  </v-col>
+                                                </v-col>
+                                              </v-row>
+
+                                              <v-row>
+                                                <v-col cols="9" sm="12">
+                                                  <v-col cols="9" sm="12">
+                                                    <v-textarea
+                                                      v-model="produto.aplicacao"
+                                                      name="input-7-1"
+                                                      label="Descreva aqui a aplicação do produto *"
+                                                      hint
+                                                      prepend-icon="notes"
+                                                      :counter="300"
+                                                      required
+                                                    />
+                                                  </v-col>
+                                                </v-col>
+                                              </v-row>
+                                            </v-col>
+
+                                            <v-col cols="9" sm="5" style="margin-left: 10vh; ">
+                                              <v-row>
+                                                <v-col cols="9" sm="12">
+                                                  <v-col cols="9" sm="12">
+                                                    <v-select
+                                                      v-model="produto.categoria"
+                                                      :items="categoriaListagem"
+                                                      label="Selecione a Categoria do Item *"
+                                                      menu-props="auto"
+                                                      hide-details
+                                                      prepend-icon="assignment_turned_in"
+                                                    ></v-select>
+                                                    <!-- <v-autocomplete
+                                                  v-model="produto.categoria"
+                                                  :search-input.sync="pesquisaCategoria"
+                                                  label="Selecione a Categoria do Item *"
+                                                  :items="itemsCategoria"
+                                                  hide-no-data
+                                                  hide-details
+                                                  prepend-icon="assignment_turned_in"
+                                                  :counter="100"
+                                                  required
+                                                  placeholder="Digite o nome da categoria para a pesquisa."
+                                                  item-text="produto.categoria"
+                                                  item-value="produto.categoria"
+                                                    />-->
+                                                  </v-col>
+                                                </v-col>
+                                              </v-row>
+
+                                              <v-row>
+                                                <v-col cols="9" sm="12">
+                                                  <v-col cols="9" sm="12">
+                                                    <v-select
+                                                      v-model="produto.marca"
+                                                      :items="marcaListagem"
+                                                      label="Selecione a Marca do Item *"
+                                                      menu-props="auto"
+                                                      hide-details
+                                                      prepend-icon="assignment_turned_in"
+                                                    ></v-select>
+                                                    <!-- <v-autocomplete
+                                                  v-model="produto.marca"
+                                                  :search-input.sync="pesquisaMarca"
+                                                  label="Selecione a Marca do Item *"
+                                                  :items="itemsMarca"
+                                                  hide-no-data
+                                                  hide-details
+                                                  prepend-icon="assignment_turned_in"
+                                                  :counter="100"
+                                                  required
+                                                  placeholder="Digite o nome da marca para a pesquisa."
+                                                    />-->
+                                                  </v-col>
+                                                </v-col>
+                                              </v-row>
+
+                                              <v-row>
+                                                <v-col cols="9" sm="12">
+                                                  <v-col cols="9" sm="12" style="float: right">
+                                                    <!-- <input 
+                                                  type="file" 
+                                                  ref="files" 
+                                                  @change="gerarArquivoBase64($event)"
+                                                  accept="image/png, image/jpeg, image/bmp"  
+                                                  placeholder="Selecione a Imagem do Produto"
+                                                    >-->
+                                                    <v-file-input
+                                                      @change="gerarArquivoBase64($event)"
+                                                      accept="image/png, image/jpeg, image/bmp"
+                                                      placeholder="Selecione a Imagem do Produto"
+                                                      prepend-icon="mdi-camera"
+                                                      show-size
+                                                      hide-details
+                                                      ref="img"
+                                                      :clearable="limparImg"
+                                                    />
+                                                  </v-col>
+                                                </v-col>
+                                              </v-row>
+
+                                              <v-row>
+                                                <v-col cols="9" sm="12">
+                                                  <v-col cols="9" sm="6" style="float: right">
+                                                    <v-text-field
+                                                      v-model="produto.uniMedida"
+                                                      label="Unidade de Medida *"
+                                                      prepend-icon="scatter_plot"
+                                                      :counter="4"
+                                                      required
+                                                    />
+                                                  </v-col>
+                                                </v-col>
+                                              </v-row>
+
+                                              <v-row>
+                                                <v-col cols="9" sm="12">
+                                                  <v-col cols="9" sm="6" style="float: right; ">
+                                                    <v-text-field
+                                                      v-model="produto.preco"
+                                                      label="Valor de Venda *"
+                                                      v-mask="mask"
+                                                      prefix="R$"
+                                                      prepend-icon="monetization_on"
+                                                    />
+                                                  </v-col>
+                                                </v-col>
+                                              </v-row>
+                                            </v-col>
+                                          </v-row>
+
+                                          <!-- <v-col v-for="i in 6" :key="i" cols="12" md="4">
+                                    <v-img
+                                      :src="`https://picsum.photos/500/300?image=${i * n * 5 + 10}`"
+                                      :lazy-src="`https://picsum.photos/10/6?image=${i * n * 5 + 10}`"
+                                      aspect-ratio="1"
+                                    ></v-img>
+                                          </v-col>-->
+                                        </v-container>
+                                        <v-container v-if="n == 2">
+                                          <v-row>
+                                            <v-col cols="9" sm="6">
+                                              <v-row>
+                                                <v-col cols="9" sm="12">
+                                                  <v-col cols="9" sm="12">
+                                                    <v-text-field
+                                                      v-model="produto.altura"
+                                                      label="Altura do Item"
+                                                      prepend-icon="square_foot"
+                                                    />
+                                                  </v-col>
+                                                </v-col>
+                                              </v-row>
+                                              <v-row>
+                                                <v-col cols="9" sm="12">
+                                                  <v-col cols="9" sm="12">
+                                                    <v-text-field
+                                                      v-model="produto.largura"
+                                                      label="Largura do Item"
+                                                      prepend-icon="square_foot"
+                                                    />
+                                                  </v-col>
+                                                </v-col>
+                                              </v-row>
+                                              <v-row>
+                                                <v-col cols="9" sm="12">
+                                                  <v-col cols="9" sm="12">
+                                                    <v-text-field
+                                                      v-model="produto.comprimento"
+                                                      label="Comprimento do Item"
+                                                      prepend-icon="square_foot"
+                                                    />
+                                                  </v-col>
+                                                </v-col>
+                                              </v-row>
+                                              <v-row>
+                                                <v-col cols="9" sm="12">
+                                                  <v-col cols="9" sm="12">
+                                                    <v-text-field
+                                                      v-model="produto.peso"
+                                                      label="Peso Bruto do Item"
+                                                      prepend-icon="vertical_align_bottom"
+                                                    />
+                                                  </v-col>
+                                                </v-col>
+                                              </v-row>
+                                            </v-col>
+                                            <v-col cols="9" sm="6" />
+                                          </v-row>
+                                        </v-container>
+                                      </v-container>
+                                    </v-card-text>
+                                  </v-card>
+                                </v-tab-item>
+                              </v-tabs>
+                            </v-container>
+                          </v-card-text>
+                        </v-card>
+                      </v-dialog>
+                    </v-toolbar>
+                  </template>
+                  <template v-slot:item.action="{ item }">
+                    <v-btn fab x-small outlined dark color="warning">
+                      <v-icon @click="editar(item)">edit</v-icon>
+                    </v-btn>
+
+                    <v-btn style="margin-left: 10px;" fab x-small outlined dark color="error">
+                      <v-icon @click="deletarItem(item)">delete</v-icon>
+                    </v-btn>
+
+                    <!-- <v-icon small @click="deleteItem(item)">delete</v-icon> -->
+                  </template>
+                  <!-- <template v-slot:no-data>
+                <v-btn color="primary" @click="initialize">Reset</v-btn>
+                  </template>-->
+                </v-data-table>
+                <br />
+                <!-- <v-row>
+              <v-col cols="9" sm="12" style="margin-left: 2vh;">
+                <v-col cols="9" sm="2" style="float: right">-->
+                <v-pagination
+                  v-model="page"
+                  :length="pageCount"
+                  prev-icon="mdi-menu-left"
+                  next-icon="mdi-menu-right"
+                ></v-pagination>
+                <!-- </v-col>
+              </v-col>
+                </v-row>-->
+             
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-app>
+  </div>
+</template>
+
+<script>
+var fileUpload;
+var file;
+import axios from "../axios/client";
+import Vue from "vue";
+import Vuetify from "vuetify";
+import "vuetify/dist/vuetify.css";
+import VANaviBarMenuEmp from "@/components/MenuEmpresa";
+import App from "../App.vue";
+import { mask } from "vue-the-mask";
+
+export default {
+  name: "cadastroProduto",
+  vuetify: new Vuetify(),
+  directives: {
+    mask
+  },
+  vue: new Vue(),
+  data() {
+    return {
+      date: new Date().toISOString().substr(0, 10),
+      dateFormatted: this.formatDate(new Date().toISOString().substr(0, 10)),
+      menu1: false,
+      menu2: false,
+      limparImg: true,
+      page: 1,
+      pageCount: 0,
+      itemsPerPage: 5,
+      mask: "####.##",
+      error: false,
+      file: "",
+      model: "tab-1",
+      timeout: 9000,
+      color: null,
+      colors: ["purple", "info", "success", "warning", "error"],
+      top: true,
+      bottom: false,
+      left: false,
+      right: false,
+      snackbar: false,
+      text: "",
+      search: "",
+      x: null,
+      dialog: false,
+      dialogExcluir: false,
+      dialogCarregandoDados: false,
+      textCarregandoDados: "",
+      headers: [
+        { text: "Codigo", value: "codigo", sortable: true },
+        { text: "Descrição", value: "descricao", sortable: true },
+        { text: "Categoria", value: "categoria", sortable: true },
+        { text: "Marca", value: "marca", sortable: true },
+        { text: "Ação", value: "action", sortable: false }
+      ],
+
+      marcaListagem: [],
+      pesquisaMarca: null,
+      itemsMarca: [],
+
+      categoriaListagem: [],
+      pesquisaCategoria: null,
+      itemsCategoria: [],
+
+      tableProduto: [],
+      editedIndex: -1,
+      produto: {
+        id: "",
+        codigo: "",
+        descricao: "",
+        aplicacao: "",
+        uniMedida: "",
+        altura: "",
+        largura: "",
+        comprimento: "",
+        peso: "",
+        imagem: "",
+        imagemNome: "",
+        imagemTipo: "",
+        preco: "",
+        categoria: "",
+        marca: "",
+        dataCadastro: new Date(),
+        validade: ""
+      },
+
+      files: [],
+      nomeArquivo: "",
+      tipoArquivo: "",
+      foto: ""
+    };
+  },
+
+  components: {
+    "va-appbar-menu-emp": VANaviBarMenuEmp
+  },
+
+  computed: {
+    formTitle() {
+      return this.produto.id == ""
+        ? "Cadastro de Produtos"
+        : "Editando um Item";
+    },
+
+    computedDateFormatted() {
+      return this.formatDate(this.date);
+    }
+  },
+
+  watch: {
+    dialog(val) {
+      val || this.close();
+    },
+
+    pesquisaMarca(val) {
+      val && val !== this.produto.marca && this.queryMarcas(val);
+    },
+
+    pesquisaCategoria(val) {
+      val && val !== this.produto.marca && this.queryCategorias(val);
+    },
+
+    date(val) {
+      this.dateFormatted = this.formatDate(this.date);
+    }
+  },
+
+  created() {
+    this.initialize();
+  },
+
+  methods: {
+    formatDate(date) {
+      if (!date) return null;
+
+      const [year, month, day] = date.split("-");
+      return `${month}/${day}/${year}`;
+    },
+    parseDate(date) {
+      if (!date) return null;
+
+      const [month, day, year] = date.split("/");
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    },
+
+    novoProduto() {
+      this.initialize();
+      this.dialog = true;
+    },
+    gerarArquivoBase64(event) {
+      if (event != null) {
+        //this.produto.imagem = event.target.files[0];
+        fileUpload = "";
+        fileUpload = event; //event.target.files[0];
+        this.nomeArquivo = event.name;
+        this.tipoArquivo = event.type;
+        this.getBase64();
+      }
+    },
+    getBase64: function() {
+      var reader = new FileReader();
+      reader.readAsDataURL(fileUpload);
+      reader.onload = function() {
+        file = reader.result;
+
+        //console.log(this.file);
+        //return file;
+      };
+      reader.onerror = function(error) {
+        console.log("Error: ", error);
+        console.log("Erro ao importar arquivo!");
+        //this.dialogAviso = true;
+        return;
+      };
+    },
+
+    msgAlertCamposPreenchidos() {
+      this.colors = "warning";
+      this.timeout = 5000;
+      this.snack("bottom", "center");
+      this.text =
+        "Ops! Há campos brigatórios não preenchidos, ou algum dado informado está maior que o permitido para o campo.";
+      this.error = true;
+    },
+
+    validacaoCamposPreenchidos() {
+      if (
+        this.produto.codigo == "" ||
+        (this.produto.codigo.length <= 0 || this.produto.codigo.length > 20)
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (this.dateFormatted == "" || this.dateFormatted.length <= 0) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (
+        this.produto.descricao == "" ||
+        (this.produto.descricao.length <= 0 ||
+          this.produto.descricao.length > 100)
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (
+        this.produto.aplicacao == "" ||
+        (this.produto.aplicacao.length <= 0 ||
+          this.produto.aplicacao.length > 300)
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (this.produto.categoria == "" || this.produto.categoria.length <= 0) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (this.produto.marca == "" || this.produto.marca.length <= 0) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (
+        this.produto.uniMedida == "" ||
+        (this.produto.uniMedida.length <= 0 ||
+          this.produto.uniMedida.length > 4)
+      ) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (this.produto.preco == "" || this.produto.preco.length <= 0) {
+        this.msgAlertCamposPreenchidos();
+        return true;
+      }
+    },
+
+    snack(...args) {
+      this.top = false;
+      this.bottom = false;
+      this.left = false;
+      this.right = false;
+
+      for (const loc of args) {
+        this[loc] = true;
+      }
+
+      this.color = this.colors;
+
+      this.snackbar = true;
+    },
+
+    limparCampos() {
+      this.produto.id = "";
+      this.produto.codigo = "";
+      this.produto.descricao = "";
+      this.produto.aplicacao = "";
+      this.produto.uniMedida = "";
+      this.produto.altura = "";
+      this.produto.largura = "";
+      this.produto.comprimento = "";
+      this.produto.peso = "";
+      this.produto.imagem = "";
+      this.produto.imagemNome = "";
+      this.produto.imagemTipo = "";
+      this.produto.preco = "";
+      this.produto.categoria = "";
+      this.produto.marca = "";
+      this.produto.dataCadastro = new Date();
+      fileUpload = null;
+      file = null;
+      this.limparImg = true;
+    },
+
+    initialize() {
+      let dataInicial = new Date();
+      this.dateFormatted = "";
+      this.limparCampos();
+      this.categoria();
+      this.marcas();
+      this.produtos();
+    },
+
+    queryMarcas(v) {
+      this.itemsMarca = this.marcaListagem.filter(e => {
+        return (e || "").toLowerCase().indexOf((v || "").toLowerCase()) > -1;
+      });
+    },
+
+    queryCategorias(v) {
+      this.itemsCategoria = this.categoriaListagem.filter(e => {
+        return (e || "").toLowerCase().indexOf((v || "").toLowerCase()) > -1;
+      });
+    },
+
+    marcas() {
+      axios
+        .get("/marca")
+        .then(response => {
+          this.marcaListagem = [];
+          for (let i = 0; i < response.data.length; i++) {
+            this.marcaListagem.push(response.data[i].descricao);
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+
+    categoria() {
+      axios
+        .get("/categoria")
+        .then(response => {
+          this.categoriaListagem = [];
+          for (let i = 0; i < response.data.length; i++) {
+            this.categoriaListagem.push(response.data[i].descricao);
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+
+    produtos() {
+      axios
+        .get("/produto")
+        .then(response => {
+          this.tableProduto = [];
+          this.tableProduto = response.data;
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+
+    editar(item) {
+      this.dialogCarregandoDados = true;
+      this.textCarregandoDados = "Aguarde ...Carregando dados do Produto.";
+      axios
+        .get("/produtopesquisaid/" + item.id)
+        .then(response => {
+          if (response.data.length > 0) {
+            this.produto = response.data[0];
+            this.produto.preco = parseFloat(response.data[0].preco);
+            (this.dateFormatted = this.formatDate(response.data[0].validade)),
+              console.log(this.produto);
+            // let image = new Image();
+            // image.src = response.data[0].imagem;
+            // this.foto = response.data[0].imagem;;
+            // this.dataUrl();
+
+            //document.body.appendChild(image);
+            this.dialog = true;
+            this.dialogCarregandoDados = false;
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+
+    deletarItem(item) {
+      this.produto.id = item.id;
+      this.dialogExcluir = true;
+    },
+
+    cancelarDeletarItem() {
+      this.produto.id = "";
+      this.dialogExcluir = false;
+    },
+
+    close() {
+      this.dialog = false;
+      this.initialize();
+      // setTimeout(() => {
+      //   this.produto = Object.assign({}, this.defaultItem);
+      //   this.editedIndex = -1;
+      // }, 300);
+    },
+
+    salvar() {
+      if (!this.validacaoCamposPreenchidos()) {
+        this.produto.dataCadastro = new Date();
+        if (this.produto.id == "") {
+          let img = file;
+          this.produto.imagem = String(img);
+          this.produto.imagemNome = this.nomeArquivo;
+          this.produto.imagemTipo = this.tipoArquivo;
+          this.cadastrar();
+        } else {
+          this.alterar();
+        }
+        //this.initialize();
+        //this.close();
+      }
+    },
+
+    cadastrar() {
+      this.produto.dataCadastro = new Date();
+      this.produto.validade = this.dateFormatted;
+      axios
+        .post("/produto", this.produto)
+        .then(response => {
+          if (response.data[0].produto.length > 0) {
+            this.text = response.data[0].mensagem;
+            this.colors = "blue";
+            this.snack("top", "right");
+          }
+          this.close();
+          this.initialize();
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+
+    alterar() {
+      this.produto.validade = new Date(this.dateFormatted);
+      axios
+        .put("/produto", this.produto)
+        .then(response => {
+          //if (response.data[0].produto.length > 0) {
+          this.text = response.data[0].mensagem;
+          this.colors = "blue";
+          this.snack("top", "right");
+          //}
+          this.close();
+          this.initialize();
+          this.id = "";
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+
+    excluir() {
+      axios
+        .delete("/produto/" + this.produto.id)
+        .then(response => {
+          if (response.data[0].produto.length > 0) {
+            this.text = response.data[0].mensagem;
+            this.colors = "blue";
+            this.snack("top", "right");
+          }
+          this.close();
+          this.initialize();
+          this.id = "";
+          this.dialogExcluir = false;
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    }
+  }
+};
+</script>
+
+<style>
+.spanTitulo{
+  color: white; 
+  font-family: 'Roboto-normal',sans-serif;
+  font-size: 15px;
+}
+
+.bTitulo{
+  color: white; 
+  font-family: 'Roboto-bold', sans-serif;  
+  font-weight:bold; font-size: 20px;
+
+}
+</style>

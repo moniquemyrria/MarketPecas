@@ -4,7 +4,7 @@
       <v-container class="fill-height" fluid>
         <v-row justify="center">
           <v-col cols="12" md="8">
-            <material-card color="primary" title="Tela Principal Site" text="Em desenvolvimento" />
+            <material-card color="#1867C0" title="Tela Principal Site" text="Em desenvolvimento" />
           </v-col>
         </v-row>
       </v-container>

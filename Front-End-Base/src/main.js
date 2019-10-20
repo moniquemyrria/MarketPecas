@@ -4,13 +4,16 @@ import IndexSitePrincipal from './views/IndexSite.vue'
 import router from './router'
 import store from './store'
 import './plugins'
-import vuetify from './plugins/vuetify'
+import vuetify from '@/plugins/vuetify'
+import colors from 'vuetify/lib/util/colors'
 import { sync } from 'vuex-router-sync'
 import Vuetify from 'vuetify'
-import 'vuetify/dist/vuetify.min.css'
-import 'material-design-icons-iconfont/dist/material-design-icons.css'
+import "../node_modules/vuetify/dist/vuetify.min.css";
 
-Vue.use(Vuetify)
+
+Vue.use(Vuetify);
+Vue.use(colors);
+
 
 sync(store, router)
 
@@ -29,3 +32,4 @@ new Vue({
 //   vuetify,
 //   render: h => h(IndexSitePrincipal),
 // }).$mount('#indexsite')
+
