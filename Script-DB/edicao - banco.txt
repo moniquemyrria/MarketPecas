@@ -1,0 +1,3 @@
+- incluido um campo em oterta_produto: nome
+
+- incluido um campo em oterta_produto: id_empresa

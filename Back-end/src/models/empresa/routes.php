@@ -18,16 +18,26 @@ $app->post('/empresa', function ($request, $response, $args) {
     return $this->response->withJson($result);
 });
 
-$app->put('/empresa', function ($request, $response, $args) {
-    $modelUsuario = $request->getParsedBody();
-    $usuario = alterarDadosEmpresa($this->db, $modelUsuario);
+$app->get('/validadadosempresa/{idUsuario}', function ($request, $response, $args) {
+    $empresa = validaDadosEmpresa($this->db, $args['idUsuario']);
     $result = array();
     
-    $resultItem = array(
-        "mensagem" => "Seus dados do foram alterado com sucesso."
-    );
-    
-    
+    if (count($empresa)>0){
+        $resultItem = array(
+            "empresa" => $empresa,
+            "mensagem" => "Empresa Localizada."
+        );
+       
+    }else{
+        $resultItem = array(
+            "empresa" => $empresa,
+            "mensagem" => "Empresa não Localizada."
+        );
+    }
+
     array_push($result,$resultItem);
+    
     return $this->response->withJson($result);
 });
+
+

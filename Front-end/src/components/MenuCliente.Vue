@@ -4,7 +4,7 @@
       <v-container mx-auto py-0>
         <v-layout>
           <v-col cols="12" sm="1">
-            <v-img 
+            <v-img
               :src="require('@/assets/logo.png')"
               class="mr-5"
               contain
@@ -14,9 +14,9 @@
             />
           </v-col>
           <v-col cols="12" sm="11" style="margin-top: 30px; margin-left: 30px;">
-            <v-btn text @click="menuPerfilEmpresa">DADOS DA EMPRESA</v-btn>
-            <v-btn text @click="menuProduto">SEUS PRODUTOS</v-btn>
-            <v-btn text @click="menuOfertaProduto">OFERTAS DE PRODUTOS</v-btn>
+            <v-btn text @click="menuDadosCliente">MEUS DADOS</v-btn>
+            <v-btn text @click="menuPerCotacoes">MINHAS COTAÇÕES</v-btn>
+            
           </v-col>
 
           <v-col cols="12" sm="1" style="margin-top: 25px;">
@@ -38,30 +38,22 @@ import Vuetify from "vuetify";
 import "vuetify/dist/vuetify.css";
 
 export default {
-  name: "va-appbar-menu-emp",
+  name: "va-appbar-menu-cli",
   vuetify: new Vuetify(),
   vue: new Vue(),
   data() {
     return {
-      items: [
-        { title: "Dados da Empresa", icon: "mdi-account" },
-        { title: "Produtos", icon: "mdi-account-group-outline" },
-        { title: "Ofertas de Produtos", icon: "mdi-account-group-outline" }
-      ]
+      
     };
   },
 
   methods: {
-    menuProduto() {
-      this.$router.push({ path: "/CadastroProduto" });
+    menuDadosCliente() {
+      this.$router.push({ path: "/PerfilUsuarioCliente" });
     },
 
-    menuPerfilEmpresa() {
-      this.$router.push({ path: "/PerfilUsuarioEmpresa" });
-    },
-
-    menuOfertaProduto() {
-      this.$router.push({ path: "/OfertaProduto" });
+    menuPerCotacoes() {
+      //this.$router.push({ path: "/PerfilUsuarioEmpresa" });
     },
 
     login() {

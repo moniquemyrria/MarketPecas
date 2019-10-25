@@ -31,3 +31,25 @@ $app->put('/cliente', function ($request, $response, $args) {
     array_push($result,$resultItem);
     return $this->response->withJson($result);
 });
+
+$app->get('/validadadoscliente/{idUsuario}', function ($request, $response, $args) {
+    $cliente = validaDadosCliente($this->db, $args['idUsuario']);
+    $result = array();
+    
+    if (count($cliente)>0){
+        $resultItem = array(
+            "cliente" => $cliente,
+            "mensagem" => "Cliente Localizado."
+        );
+       
+    }else{
+        $resultItem = array(
+            "cliente" => $cliente,
+            "mensagem" => "Cliente não Localizado."
+        );
+    }
+
+    array_push($result,$resultItem);
+    
+    return $this->response->withJson($result);
+});

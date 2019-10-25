@@ -78,180 +78,180 @@
                 </h4>
               </v-card-title>
               <!-- LISTAGEM DE PRODUTOS -->
-              
-                <v-data-table
-                  :headers="headers"
-                  :items="tableProduto"
-                  :search="search"
-                  sort-by="calories"
-                  class="elevation-1"
-                  hide-default-footer
-                  :page.sync="page"
-                  :items-per-page="itemsPerPage"
-                  @page-count="pageCount = $event"
-                  color:black
-                >
-                  <!-- PESQUISA -->
-                  <template v-slot:top>
-                    <br />
-                    <v-toolbar style="height: 100px;" flat >
-                      <v-col cols="9" sm="12">
-                        <v-row style>
-                          <v-col cols="9" sm="10" style>
-                            <v-toolbar-title>
-                              <v-text-field
-                                v-model="search"
-                                style="margin-top: 50px; "
-                                append-icon="search"
-                                label="Pesquisa de Produtos por: Codigo, Descrição, Categoria ou Marca"
-                                class="mx-4"
-                              />
-                            </v-toolbar-title>
-                          </v-col>
-                          <v-col cols="9" sm="2" style>
-                            <v-btn
-                              style="margin-top: 35px"
-                              color="primary"
-                              dark
-                              large
-                              class="mb-2"
-                              @click="novoProduto"
-                            >NOVO PRODUTO</v-btn>
-                          </v-col>
-                        </v-row>
-                      </v-col>
 
-                      <div class="flex-grow-1" />
+              <v-data-table
+                :headers="headers"
+                :items="tableProduto"
+                :search="search"
+                sort-by="calories"
+                class="elevation-1"
+                hide-default-footer
+                :page.sync="page"
+                :items-per-page="itemsPerPage"
+                @page-count="pageCount = $event"
+                color:black
+              >
+                <!-- PESQUISA -->
+                <template v-slot:top>
+                  <br />
+                  <v-toolbar style="height: 100px;" flat>
+                    <v-col cols="9" sm="12">
+                      <v-row style>
+                        <v-col cols="9" sm="10" style>
+                          <v-toolbar-title>
+                            <v-text-field
+                              v-model="search"
+                              style="margin-top: 50px; "
+                              append-icon="search"
+                              label="Pesquisa de Produtos por: Codigo, Descrição, Categoria ou Marca"
+                              class="mx-4"
+                            />
+                          </v-toolbar-title>
+                        </v-col>
+                        <v-col cols="9" sm="2" style>
+                          <v-btn
+                            style="margin-top: 35px"
+                            color="primary"
+                            dark
+                            large
+                            class="mb-2"
+                            @click="novoProduto"
+                          >NOVO PRODUTO</v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-col>
 
-                      <v-dialog v-model="dialog" fullscreen hide-overlay>
-                        <v-card>
-                          <v-toolbar dark color="primary">
-                            <v-btn icon dark @click="dialog = false">
-                              <v-icon>mdi-close</v-icon>
-                            </v-btn>
-                            <v-toolbar-title>
-                              <span class="headline">{{ formTitle }}</span>
-                            </v-toolbar-title>
-                            <div class="flex-grow-1" />
-                            <v-toolbar-items>
-                              <div class="ma-3">
-                                <v-btn large color="error" @click="close">CANCELAR</v-btn>
-                              </div>
-                              <div class="ma-3">
-                                <v-btn
-                                  style="margin-left: -10px;"
-                                  large
-                                  color="success"
-                                  @click="salvar"
-                                >SALVAR</v-btn>
-                              </div>
-                            </v-toolbar-items>
-                          </v-toolbar>
-                          <v-card-title />
+                    <div class="flex-grow-1" />
 
-                          <v-card-text style="margin-top: -5vh;">
-                            <v-container>
-                              <v-tabs background-color="white" color="primary" right>
-                                <v-tab>DADOS GERAIS *</v-tab>
-                                <v-tab>MEDIDAS</v-tab>
+                    <v-dialog v-model="dialog" fullscreen hide-overlay>
+                      <v-card>
+                        <v-toolbar dark color="primary">
+                          <v-btn icon dark @click="dialog = false">
+                            <v-icon>mdi-close</v-icon>
+                          </v-btn>
+                          <v-toolbar-title>
+                            <span class="headline">{{ formTitle }}</span>
+                          </v-toolbar-title>
+                          <div class="flex-grow-1" />
+                          <v-toolbar-items>
+                            <div class="ma-3">
+                              <v-btn large color="error" @click="close">CANCELAR</v-btn>
+                            </div>
+                            <div class="ma-3">
+                              <v-btn
+                                style="margin-left: -10px;"
+                                large
+                                color="success"
+                                @click="salvar"
+                              >SALVAR</v-btn>
+                            </div>
+                          </v-toolbar-items>
+                        </v-toolbar>
+                        <v-card-title />
 
-                                <v-tab-item v-for="n in 2" :key="n">
-                                  <v-card>
-                                    <v-card-text>
-                                      <v-container fluid>
-                                        <v-container v-if="n == 1" style>
-                                          <v-row>
-                                            <v-col cols="9" sm="6" style>
-                                              <v-row>
-                                                <v-col cols="9" sm="6">
-                                                  <v-col cols="9" sm="12">
-                                                    <v-text-field
-                                                      v-model="produto.codigo"
-                                                      label="Código ou Referência *"
-                                                      prepend-icon="crop_free"
-                                                      :counter="20"
-                                                      required
-                                                    />
-                                                  </v-col>
-                                                </v-col>
+                        <v-card-text style="margin-top: -5vh;">
+                          <v-container>
+                            <v-tabs background-color="white" color="primary" right>
+                              <v-tab>DADOS GERAIS *</v-tab>
+                              <v-tab>MEDIDAS</v-tab>
 
-                                                <v-col cols="9" sm="6">
-                                                  <v-col cols="9" sm="12">
-                                                    <v-menu
-                                                      ref="menu1"
-                                                      v-model="menu1"
-                                                      :close-on-content-click="false"
-                                                      transition="scale-transition"
-                                                      offset-y
-                                                      max-width="290px"
-                                                      min-width="290px"
-                                                    >
-                                                      <template v-slot:activator="{ on }">
-                                                        <v-text-field
-                                                          v-model="dateFormatted"
-                                                          label="Validade"
-                                                          hint="mês/dia/ano"
-                                                          persistent-hint
-                                                          prepend-icon="event"
-                                                          @blur="date = parseDate(dateFormatted)"
-                                                          v-on="on"
-                                                        ></v-text-field>
-                                                      </template>
-                                                      <v-date-picker
-                                                        v-model="date"
-                                                        no-title
-                                                        @input="menu1 = false"
-                                                        locale="pt-br"
-                                                      ></v-date-picker>
-                                                    </v-menu>
-                                                  </v-col>
-                                                </v-col>
-                                              </v-row>
-
-                                              <v-row>
+                              <v-tab-item v-for="n in 2" :key="n">
+                                <v-card>
+                                  <v-card-text>
+                                    <v-container fluid>
+                                      <v-container v-if="n == 1" style>
+                                        <v-row>
+                                          <v-col cols="9" sm="6" style>
+                                            <v-row>
+                                              <v-col cols="9" sm="6">
                                                 <v-col cols="9" sm="12">
-                                                  <v-col cols="9" sm="12">
-                                                    <v-text-field
-                                                      v-model="produto.descricao"
-                                                      label="Descrição detalhada *"
-                                                      prepend-icon="create"
-                                                      :counter="100"
-                                                      required
-                                                    />
-                                                  </v-col>
+                                                  <v-text-field
+                                                    v-model="produto.codigo"
+                                                    label="Código ou Referência *"
+                                                    prepend-icon="crop_free"
+                                                    :counter="20"
+                                                    required
+                                                  />
                                                 </v-col>
-                                              </v-row>
+                                              </v-col>
 
-                                              <v-row>
+                                              <v-col cols="9" sm="6">
                                                 <v-col cols="9" sm="12">
-                                                  <v-col cols="9" sm="12">
-                                                    <v-textarea
-                                                      v-model="produto.aplicacao"
-                                                      name="input-7-1"
-                                                      label="Descreva aqui a aplicação do produto *"
-                                                      hint
-                                                      prepend-icon="notes"
-                                                      :counter="300"
-                                                      required
-                                                    />
-                                                  </v-col>
+                                                  <v-menu
+                                                    ref="menu1"
+                                                    v-model="menu1"
+                                                    :close-on-content-click="false"
+                                                    transition="scale-transition"
+                                                    offset-y
+                                                    max-width="290px"
+                                                    min-width="290px"
+                                                  >
+                                                    <template v-slot:activator="{ on }">
+                                                      <v-text-field
+                                                        v-model="dateFormatted"
+                                                        label="Validade"
+                                                        hint="mês/dia/ano"
+                                                        persistent-hint
+                                                        prepend-icon="event"
+                                                        @blur="date = parseDate(dateFormatted)"
+                                                        v-on="on"
+                                                      ></v-text-field>
+                                                    </template>
+                                                    <v-date-picker
+                                                      v-model="date"
+                                                      no-title
+                                                      @input="menu1 = false"
+                                                      locale="pt-br"
+                                                    ></v-date-picker>
+                                                  </v-menu>
                                                 </v-col>
-                                              </v-row>
-                                            </v-col>
+                                              </v-col>
+                                            </v-row>
 
-                                            <v-col cols="9" sm="5" style="margin-left: 10vh; ">
-                                              <v-row>
+                                            <v-row>
+                                              <v-col cols="9" sm="12">
                                                 <v-col cols="9" sm="12">
-                                                  <v-col cols="9" sm="12">
-                                                    <v-select
-                                                      v-model="produto.categoria"
-                                                      :items="categoriaListagem"
-                                                      label="Selecione a Categoria do Item *"
-                                                      menu-props="auto"
-                                                      hide-details
-                                                      prepend-icon="assignment_turned_in"
-                                                    ></v-select>
-                                                    <!-- <v-autocomplete
+                                                  <v-text-field
+                                                    v-model="produto.descricao"
+                                                    label="Descrição detalhada *"
+                                                    prepend-icon="create"
+                                                    :counter="100"
+                                                    required
+                                                  />
+                                                </v-col>
+                                              </v-col>
+                                            </v-row>
+
+                                            <v-row>
+                                              <v-col cols="9" sm="12">
+                                                <v-col cols="9" sm="12">
+                                                  <v-textarea
+                                                    v-model="produto.aplicacao"
+                                                    name="input-7-1"
+                                                    label="Descreva aqui a aplicação do produto *"
+                                                    hint
+                                                    prepend-icon="notes"
+                                                    :counter="300"
+                                                    required
+                                                  />
+                                                </v-col>
+                                              </v-col>
+                                            </v-row>
+                                          </v-col>
+
+                                          <v-col cols="9" sm="5" style="margin-left: 10vh; ">
+                                            <v-row>
+                                              <v-col cols="9" sm="12">
+                                                <v-col cols="9" sm="12">
+                                                  <v-select
+                                                    v-model="produto.categoria"
+                                                    :items="categoriaListagem"
+                                                    label="Selecione a Categoria do Item *"
+                                                    menu-props="auto"
+                                                    hide-details
+                                                    prepend-icon="assignment_turned_in"
+                                                  ></v-select>
+                                                  <!-- <v-autocomplete
                                                   v-model="produto.categoria"
                                                   :search-input.sync="pesquisaCategoria"
                                                   label="Selecione a Categoria do Item *"
@@ -264,23 +264,23 @@
                                                   placeholder="Digite o nome da categoria para a pesquisa."
                                                   item-text="produto.categoria"
                                                   item-value="produto.categoria"
-                                                    />-->
-                                                  </v-col>
+                                                  />-->
                                                 </v-col>
-                                              </v-row>
+                                              </v-col>
+                                            </v-row>
 
-                                              <v-row>
+                                            <v-row>
+                                              <v-col cols="9" sm="12">
                                                 <v-col cols="9" sm="12">
-                                                  <v-col cols="9" sm="12">
-                                                    <v-select
-                                                      v-model="produto.marca"
-                                                      :items="marcaListagem"
-                                                      label="Selecione a Marca do Item *"
-                                                      menu-props="auto"
-                                                      hide-details
-                                                      prepend-icon="assignment_turned_in"
-                                                    ></v-select>
-                                                    <!-- <v-autocomplete
+                                                  <v-select
+                                                    v-model="produto.marca"
+                                                    :items="marcaListagem"
+                                                    label="Selecione a Marca do Item *"
+                                                    menu-props="auto"
+                                                    hide-details
+                                                    prepend-icon="assignment_turned_in"
+                                                  ></v-select>
+                                                  <!-- <v-autocomplete
                                                   v-model="produto.marca"
                                                   :search-input.sync="pesquisaMarca"
                                                   label="Selecione a Marca do Item *"
@@ -291,164 +291,153 @@
                                                   :counter="100"
                                                   required
                                                   placeholder="Digite o nome da marca para a pesquisa."
-                                                    />-->
-                                                  </v-col>
+                                                  />-->
                                                 </v-col>
-                                              </v-row>
+                                              </v-col>
+                                            </v-row>
 
-                                              <v-row>
-                                                <v-col cols="9" sm="12">
-                                                  <v-col cols="9" sm="12" style="float: right">
-                                                    <!-- <input 
+                                            <v-row>
+                                              <v-col cols="9" sm="12">
+                                                <v-col cols="9" sm="12" style="float: right">
+                                                  <!-- <input 
                                                   type="file" 
                                                   ref="files" 
                                                   @change="gerarArquivoBase64($event)"
                                                   accept="image/png, image/jpeg, image/bmp"  
                                                   placeholder="Selecione a Imagem do Produto"
-                                                    >-->
-                                                    <v-file-input
-                                                      @change="gerarArquivoBase64($event)"
-                                                      accept="image/png, image/jpeg, image/bmp"
-                                                      placeholder="Selecione a Imagem do Produto"
-                                                      prepend-icon="mdi-camera"
-                                                      show-size
-                                                      hide-details
-                                                      ref="img"
-                                                      :clearable="limparImg"
-                                                    />
-                                                  </v-col>
+                                                  >-->
+                                                  <v-file-input
+                                                    @change="gerarArquivoBase64($event)"
+                                                    accept="image/png, image/jpeg, image/bmp"
+                                                    placeholder="Selecione a Imagem do Produto"
+                                                    prepend-icon="mdi-camera"
+                                                    show-size
+                                                    hide-details
+                                                    ref="img"
+                                                    :clearable="limparImg"
+                                                  />
                                                 </v-col>
-                                              </v-row>
+                                              </v-col>
+                                            </v-row>
 
-                                              <v-row>
-                                                <v-col cols="9" sm="12">
-                                                  <v-col cols="9" sm="6" style="float: right">
-                                                    <v-text-field
-                                                      v-model="produto.uniMedida"
-                                                      label="Unidade de Medida *"
-                                                      prepend-icon="scatter_plot"
-                                                      :counter="4"
-                                                      required
-                                                    />
-                                                  </v-col>
+                                            <v-row>
+                                              <v-col cols="9" sm="12">
+                                                <v-col cols="9" sm="6" style="float: right">
+                                                  <v-text-field
+                                                    v-model="produto.uniMedida"
+                                                    label="Unidade de Medida *"
+                                                    prepend-icon="scatter_plot"
+                                                    :counter="4"
+                                                    required
+                                                  />
                                                 </v-col>
-                                              </v-row>
+                                              </v-col>
+                                            </v-row>
 
-                                              <v-row>
-                                                <v-col cols="9" sm="12">
-                                                  <v-col cols="9" sm="6" style="float: right; ">
-                                                    <v-text-field
-                                                      v-model="produto.preco"
-                                                      label="Valor de Venda *"
-                                                      v-mask="mask"
-                                                      prefix="R$"
-                                                      prepend-icon="monetization_on"
-                                                    />
-                                                  </v-col>
+                                            <v-row>
+                                              <v-col cols="9" sm="12">
+                                                <v-col cols="9" sm="6" style="float: right; ">
+                                                  <v-text-field
+                                                    v-model="produto.preco"
+                                                    label="Valor de Venda *"
+                                                    v-mask="mask"
+                                                    prefix="R$"
+                                                    prepend-icon="monetization_on"
+                                                  />
                                                 </v-col>
-                                              </v-row>
-                                            </v-col>
-                                          </v-row>
+                                              </v-col>
+                                            </v-row>
+                                          </v-col>
+                                        </v-row>
 
-                                          <!-- <v-col v-for="i in 6" :key="i" cols="12" md="4">
+                                        <!-- <v-col v-for="i in 6" :key="i" cols="12" md="4">
                                     <v-img
                                       :src="`https://picsum.photos/500/300?image=${i * n * 5 + 10}`"
                                       :lazy-src="`https://picsum.photos/10/6?image=${i * n * 5 + 10}`"
                                       aspect-ratio="1"
                                     ></v-img>
-                                          </v-col>-->
-                                        </v-container>
-                                        <v-container v-if="n == 2">
-                                          <v-row>
-                                            <v-col cols="9" sm="6">
-                                              <v-row>
-                                                <v-col cols="9" sm="12">
-                                                  <v-col cols="9" sm="12">
-                                                    <v-text-field
-                                                      v-model="produto.altura"
-                                                      label="Altura do Item"
-                                                      prepend-icon="square_foot"
-                                                    />
-                                                  </v-col>
-                                                </v-col>
-                                              </v-row>
-                                              <v-row>
-                                                <v-col cols="9" sm="12">
-                                                  <v-col cols="9" sm="12">
-                                                    <v-text-field
-                                                      v-model="produto.largura"
-                                                      label="Largura do Item"
-                                                      prepend-icon="square_foot"
-                                                    />
-                                                  </v-col>
-                                                </v-col>
-                                              </v-row>
-                                              <v-row>
-                                                <v-col cols="9" sm="12">
-                                                  <v-col cols="9" sm="12">
-                                                    <v-text-field
-                                                      v-model="produto.comprimento"
-                                                      label="Comprimento do Item"
-                                                      prepend-icon="square_foot"
-                                                    />
-                                                  </v-col>
-                                                </v-col>
-                                              </v-row>
-                                              <v-row>
-                                                <v-col cols="9" sm="12">
-                                                  <v-col cols="9" sm="12">
-                                                    <v-text-field
-                                                      v-model="produto.peso"
-                                                      label="Peso Bruto do Item"
-                                                      prepend-icon="vertical_align_bottom"
-                                                    />
-                                                  </v-col>
-                                                </v-col>
-                                              </v-row>
-                                            </v-col>
-                                            <v-col cols="9" sm="6" />
-                                          </v-row>
-                                        </v-container>
+                                        </v-col>-->
                                       </v-container>
-                                    </v-card-text>
-                                  </v-card>
-                                </v-tab-item>
-                              </v-tabs>
-                            </v-container>
-                          </v-card-text>
-                        </v-card>
-                      </v-dialog>
-                    </v-toolbar>
-                  </template>
-                  <template v-slot:item.action="{ item }">
-                    <v-btn fab x-small outlined dark color="warning">
-                      <v-icon @click="editar(item)">edit</v-icon>
-                    </v-btn>
+                                      <v-container v-if="n == 2">
+                                        <v-row>
+                                          <v-col cols="9" sm="6">
+                                            <v-row>
+                                              <v-col cols="9" sm="12">
+                                                <v-col cols="9" sm="12">
+                                                  <v-text-field
+                                                    v-model="produto.altura"
+                                                    label="Altura do Item"
+                                                    prepend-icon="square_foot"
+                                                  />
+                                                </v-col>
+                                              </v-col>
+                                            </v-row>
+                                            <v-row>
+                                              <v-col cols="9" sm="12">
+                                                <v-col cols="9" sm="12">
+                                                  <v-text-field
+                                                    v-model="produto.largura"
+                                                    label="Largura do Item"
+                                                    prepend-icon="square_foot"
+                                                  />
+                                                </v-col>
+                                              </v-col>
+                                            </v-row>
+                                            <v-row>
+                                              <v-col cols="9" sm="12">
+                                                <v-col cols="9" sm="12">
+                                                  <v-text-field
+                                                    v-model="produto.comprimento"
+                                                    label="Comprimento do Item"
+                                                    prepend-icon="square_foot"
+                                                  />
+                                                </v-col>
+                                              </v-col>
+                                            </v-row>
+                                            <v-row>
+                                              <v-col cols="9" sm="12">
+                                                <v-col cols="9" sm="12">
+                                                  <v-text-field
+                                                    v-model="produto.peso"
+                                                    label="Peso Bruto do Item"
+                                                    prepend-icon="vertical_align_bottom"
+                                                  />
+                                                </v-col>
+                                              </v-col>
+                                            </v-row>
+                                          </v-col>
+                                          <v-col cols="9" sm="6" />
+                                        </v-row>
+                                      </v-container>
+                                    </v-container>
+                                  </v-card-text>
+                                </v-card>
+                              </v-tab-item>
+                            </v-tabs>
+                          </v-container>
+                        </v-card-text>
+                      </v-card>
+                    </v-dialog>
+                  </v-toolbar>
+                </template>
+                <template v-slot:item.action="{ item }">
+                  <v-btn fab x-small outlined dark color="warning">
+                    <v-icon @click="editar(item)">edit</v-icon>
+                  </v-btn>
 
-                    <v-btn style="margin-left: 10px;" fab x-small outlined dark color="error">
-                      <v-icon @click="deletarItem(item)">delete</v-icon>
-                    </v-btn>
+                  <v-btn style="margin-left: 10px;" fab x-small outlined dark color="error">
+                    <v-icon @click="deletarItem(item)">delete</v-icon>
+                  </v-btn>
+                </template>
+              </v-data-table>
+              <br />
 
-                    <!-- <v-icon small @click="deleteItem(item)">delete</v-icon> -->
-                  </template>
-                  <!-- <template v-slot:no-data>
-                <v-btn color="primary" @click="initialize">Reset</v-btn>
-                  </template>-->
-                </v-data-table>
-                <br />
-                <!-- <v-row>
-              <v-col cols="9" sm="12" style="margin-left: 2vh;">
-                <v-col cols="9" sm="2" style="float: right">-->
-                <v-pagination
-                  v-model="page"
-                  :length="pageCount"
-                  prev-icon="mdi-menu-left"
-                  next-icon="mdi-menu-right"
-                ></v-pagination>
-                <!-- </v-col>
-              </v-col>
-                </v-row>-->
-             
+              <v-pagination
+                v-model="page"
+                :length="pageCount"
+                prev-icon="mdi-menu-left"
+                next-icon="mdi-menu-right"
+              ></v-pagination>
             </v-card>
           </v-col>
         </v-row>
@@ -488,7 +477,7 @@ export default {
       mask: "####.##",
       error: false,
       file: "",
-      model: "tab-1",
+      model: "tab-0",
       timeout: 9000,
       color: null,
       colors: ["purple", "info", "success", "warning", "error"],
@@ -523,6 +512,7 @@ export default {
       tableProduto: [],
       editedIndex: -1,
       produto: {
+        idEmpresa: null,
         id: "",
         codigo: "",
         descricao: "",
@@ -545,7 +535,9 @@ export default {
       files: [],
       nomeArquivo: "",
       tipoArquivo: "",
-      foto: ""
+      foto: "",
+
+      dadosUsuLogado: []
     };
   },
 
@@ -736,6 +728,8 @@ export default {
     },
 
     initialize() {
+      this.dadosUsuLogado = JSON.parse(sessionStorage.getItem("usuario"));
+      this.produto.idEmpresa = this.dadosUsuLogado[0].idEmpresa;
       let dataInicial = new Date();
       this.dateFormatted = "";
       this.limparCampos();
@@ -786,7 +780,7 @@ export default {
 
     produtos() {
       axios
-        .get("/produto")
+        .get("/produto/" + this.produto.idEmpresa)
         .then(response => {
           this.tableProduto = [];
           this.tableProduto = response.data;
@@ -844,6 +838,7 @@ export default {
     salvar() {
       if (!this.validacaoCamposPreenchidos()) {
         this.produto.dataCadastro = new Date();
+        this.produto.validade = new Date();
         if (this.produto.id == "") {
           let img = file;
           this.produto.imagem = String(img);
@@ -861,6 +856,7 @@ export default {
     cadastrar() {
       this.produto.dataCadastro = new Date();
       this.produto.validade = this.dateFormatted;
+      this.produto.validade = new Date(this.dateFormatted);
       axios
         .post("/produto", this.produto)
         .then(response => {
@@ -919,16 +915,16 @@ export default {
 </script>
 
 <style>
-.spanTitulo{
-  color: white; 
-  font-family: 'Roboto-normal',sans-serif;
+.spanTitulo {
+  color: white;
+  font-family: "Roboto-normal", sans-serif;
   font-size: 15px;
 }
 
-.bTitulo{
-  color: white; 
-  font-family: 'Roboto-bold', sans-serif;  
-  font-weight:bold; font-size: 20px;
-
+.bTitulo {
+  color: white;
+  font-family: "Roboto-bold", sans-serif;
+  font-weight: bold;
+  font-size: 20px;
 }
 </style>

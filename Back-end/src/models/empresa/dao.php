@@ -137,5 +137,18 @@ function verificaCheck($value){
     }
 }
 
+function validaDadosEmpresa($db, $idUsuario){
+
+    $str = $db->prepare(
+        "SELECT e.id as idEmpresa, u.id as idUsuario, u.email, u.tipo_pessoa, u.ativo from usuario u with(nolock)
+        inner join empresa e with(nolock) on (e.id_usuario = u.id)
+        where u.id = :id
+    ");
+    $str->bindParam("id", $idUsuario);
+    $str->execute();
+    return $str->fetchAll();
+}
+
+
 
 

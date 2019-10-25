@@ -315,6 +315,8 @@ export default {
       password: "Password",
       itemsOferta: ["SIM", "NÃO"],
 
+      dadosUsuLogado: [],
+
       usuario: {
         ativo: "",
         bairro: "",
@@ -439,8 +441,10 @@ export default {
     },
 
     carregarTela() {
+      this.dadosUsuLogado = JSON.parse(sessionStorage.getItem('usuario'));
+        console.log(this.dadosUsuLogado)
       axios
-        .get("/pesquisaUsuarioEmpresaId/" + 1)
+        .get("/pesquisaUsuarioEmpresaId/" + this.dadosUsuLogado[0].idUsuario)
         .then(response => {
           this.usuario = response.data[0];
           console.log(this.usuario);

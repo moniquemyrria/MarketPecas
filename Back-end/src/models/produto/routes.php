@@ -6,8 +6,8 @@ use Slim\Http\Response;
 require 'dao.php';
 // Routes
 
-$app->get('/produto', function ($request, $response, $args) {
-    $produto = listarProduto($this->db);
+$app->get('/produto/{idEmpresa}', function ($request, $response, $args) {
+    $produto = listarProduto($this->db, $args['idEmpresa']);
     return $this->response->withJson($produto);
 });
 

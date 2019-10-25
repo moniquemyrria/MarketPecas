@@ -683,6 +683,7 @@ export default {
       },
 
       usuario: {
+        id: null,
         email: null,
         senha: null
       }
@@ -736,7 +737,7 @@ export default {
 
     acessar() {
       if (!this.validacaoCamposPreenchidosUsuario()) {
-        //sessionStorage.clear();
+        sessionStorage.clear();
         axios
           .post("/validaUsuario", this.usuario)
           .then(response => {
@@ -744,12 +745,16 @@ export default {
               this.text = response.data[0].mensagem;
               this.colors = "green";
               this.snack("top", "center");
-
-              //sessionStorage.clear();
-              sessionStorage.setItem("usuario", response.data[0].usuario[0].id);
-              sessionStorage.setItem("drawer", 1);
-
-              this.$router.push({ path: "/MenuEmpresa" });
+             
+              this.usuario.id = response.data[0].usuario[0].id;
+              
+               if (response.data[0].usuario[0].tipo_pessoa == 'F'){
+                 this.acessaMenuCliente();
+               }else{
+                 this.acessaMenuEmpresa();
+              }
+              
+              
             } else {
               //sessionStorage.clear();
               this.text = response.data[0].mensagem;
@@ -762,6 +767,41 @@ export default {
           });
       }
     },
+
+    acessaMenuEmpresa(){
+       axios
+        .get("/validadadosempresa/" + this.usuario.id)
+        .then(response => {
+          if (response.data[0].empresa.length > 0){
+            sessionStorage.clear();
+            sessionStorage.setItem("usuario", JSON.stringify(response.data[0].empresa));
+            this.$router.push({ path: "/PerfilUsuarioEmpresa" });
+          }
+          
+        })
+        .catch(e => {
+          console.log(e);
+        });
+      
+    },
+
+    acessaMenuCliente(){
+       axios
+        .get("/validadadoscliente/" + this.usuario.id)
+        .then(response => {
+          if (response.data[0].cliente.length > 0){
+            sessionStorage.clear();
+            sessionStorage.setItem("usuario", JSON.stringify(response.data[0].cliente));
+            this.$router.push({ path: "/PerfilUsuarioCliente" });
+          }
+          
+        })
+        .catch(e => {
+          console.log(e);
+        });
+      
+    },
+
     snack(...args) {
       this.top = false;
       this.bottom = false;

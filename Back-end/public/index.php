@@ -55,6 +55,8 @@ require __DIR__ . '/../src/models/endereco/routes.php';
 
 require __DIR__ . '/../src/models/contato/routes.php';
 
+require __DIR__ . '/../src/models/oferta/routes.php';
+
 
 // Run app
 $app->run();

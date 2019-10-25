@@ -63,3 +63,14 @@ function alterarDadosCliente($db, $usuario){
     return;
 }
 
+function validaDadosCliente($db, $idUsuario){
+
+    $str = $db->prepare(
+        "SELECT c.id as idCliente, u.id as idUsuario, u.email, u.tipo_pessoa, u.ativo from usuario u with(nolock)
+        inner join cliente c with(nolock) on (c.id_usuario = u.id)
+        where u.id = :id
+    ");
+    $str->bindParam("id", $idUsuario);
+    $str->execute();
+    return $str->fetchAll();
+}

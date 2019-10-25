@@ -1,6 +1,6 @@
 <?php
 
-function listarProduto($db){
+function listarProduto($db, $idEmpresa){
 
     $str = $db->prepare(
         "SELECT m.descricao as marca, c.descricao as categoria,
@@ -8,7 +8,9 @@ function listarProduto($db){
         inner join marca m with(nolock) on (m.id = p.id_marca)
         inner join categoria c with(nolock) on (c.id = p.id_categoria)
         and p.deletado = 'N'
+        and p.id_empresa = :idEmpresa
     ");
+    $str->bindParam("idEmpresa", $idEmpresa);
     $str->execute();
     return $str->fetchAll();
 }
@@ -65,7 +67,7 @@ function cadastrarProduto($db, $produto){
         VALUES( 
             :idCategoria
             , :idMarca
-            , 1
+            , :idEmpresa
             , :codigo
             , :descricao
             , :aplicacao
@@ -83,7 +85,7 @@ function cadastrarProduto($db, $produto){
      ");
     $str->bindParam("idCategoria", $idCategoria);
     $str->bindParam("idMarca", $idMarca);
-    //$str->bindParam("idEmpresa", $produto["idEmpresa"]);
+    $str->bindParam("idEmpresa", $produto["idEmpresa"]);
     $str->bindParam("codigo", $produto["codigo"]);
     $str->bindParam("descricao", $produto["descricao"]);
     $str->bindParam("aplicacao", $produto["aplicacao"]);
