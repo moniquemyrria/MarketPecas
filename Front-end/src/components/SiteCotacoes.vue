@@ -135,37 +135,58 @@
       <v-row style="margin-top: -10px">
         <v-col cols="12" sm="3">
           <v-card flat class="mx-auto" max-width="500">
-            <v-list>
+            <v-list color="#ECEFF1">
               <v-list-item-group color="primary">
+                <v-menu  offset-x :close-on-content-click="false" transition="scale-transition">
+                  <template v-slot:activator="{ on }">
+                    <v-list-item>
+                      <v-list-item-icon>
+                        <v-icon>group_work</v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-content>
+                        <v-list-item-title @click="todosProdutos" v-on="on">Todos os Produtos</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </template>
+                  
+                </v-menu>
                 <v-menu offset-x :close-on-content-click="false" transition="scale-transition">
                   <template v-slot:activator="{ on }">
                     <v-list-item>
                       <v-list-item-icon>
-                        <v-icon>done</v-icon>
+                        <v-icon>directions_car</v-icon>
                       </v-list-item-icon>
                       <v-list-item-content>
-                        <v-list-item-title v-on="on">Teste</v-list-item-title>
+                        <v-list-item-title v-on="on">Categorias</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </template>
+                  <v-list>
+                    <v-list-item v-for="item in categoria" :key="item" v-model="on" @click="listarItemCategoria(item.descricao)">
+                      <v-list-item-title>{{item.descricao}}</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+                <!-- <v-menu offset-x :close-on-content-click="false" transition="scale-transition">
+                  <template v-slot:activator="{ on }">
+                    <v-list-item>
+                      <v-list-item-icon>
+                        <v-icon>emoji_objects</v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-content>
+                        <v-list-item-title v-on="on">Marcas</v-list-item-title>
                       </v-list-item-content>
                     </v-list-item>
                   </template>
                   <v-list>
                     <v-list-item v-model="on" @click>
-                      <v-list-item-title></v-list-item-title>
+                      <v-list-item-title>Menu 1</v-list-item-title>
                     </v-list-item>
                     <v-list-item>
                       <v-list-item-title>Teste Submenu 2</v-list-item-title>
                     </v-list-item>
                   </v-list>
-                </v-menu>
-
-                <v-list-item>
-                  <v-list-item-icon>
-                    <v-icon>done</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>Teste 2</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
+                </v-menu>-->
 
                 <!-- <v-list-item v-for="(item, i) in itemsMenu" :key="i">
                   <v-list-item-icon>
@@ -179,8 +200,68 @@
             </v-list>
           </v-card>
         </v-col>
-        <v-col cols="12" sm="4"></v-col>
-        <v-col cols="12" sm="4"></v-col>
+        <v-col cols="12" sm="8">
+          <v-row>
+            <v-col v-for="item in produtosTodos" :key="item" cols="12" sm="3">
+              <v-card class="mx-auto" min-width="220">
+                <v-img class="white--text align-end" height="150px" :src="item.imagem"></v-img>
+                <v-card-title>{{ item.descricao}}</v-card-title>
+
+                <v-card-subtitle class="pb-0">{{'R$: ' + item.preco}}</v-card-subtitle>
+
+                <v-card-text class="text--primary">
+                  <div>{{'Cod: '+ item.codigo}}</div>
+
+                  <div>{{ 'Loja: ' + item.empresa}}</div>
+                </v-card-text>
+                <v-divider class="mx-4"></v-divider>
+
+                <v-card-text>
+                  <div>{{ 'Categoria: ' + item.categoria}}</div>
+                  <div>{{ 'Marca: ' + item.marca}}</div>
+                </v-card-text>
+                <v-card-actions>
+                  <v-btn color="primary" text>ADCIONAR COTAÇÃO</v-btn>
+
+                  <v-spacer></v-spacer>
+
+                  <v-btn icon @click="show = !show">
+                    <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+                  </v-btn>
+                </v-card-actions>
+
+                <v-expand-transition>
+                  <div v-show="show">
+                    <v-divider></v-divider>
+
+                    <v-card-text>
+                      <div>
+                        <b>Aplicação:</b>
+                        {{item.aplicacao}}
+                      </div>
+                      <div>
+                        <b>Altura:</b>
+                        {{item.altura}}
+                      </div>
+                      <div>
+                        <b>Largura:</b>
+                        {{item.largura}}
+                      </div>
+                      <div>
+                        <b>Comprimento:</b>
+                        {{item.comprimento}}
+                      </div>
+                      <div>
+                        <b>Peso:</b>
+                        {{item.peso}}
+                      </div>
+                    </v-card-text>
+                  </div>
+                </v-expand-transition>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-col>
       </v-row>
     </v-app>
   </div>
@@ -201,10 +282,15 @@ export default {
   vue: new Vue(),
   data() {
     return {
+      show: false,
       dialogSobreMkt: false,
       dialogTeamDev: false,
       dialogContato: false,
       dialogSubMenu: false,
+
+      produtosTodos: [],
+      categoria: [],
+
       itemsMenu: [
         {
           icon: "mdi-inbox",
@@ -253,7 +339,54 @@ export default {
 
     login() {
       this.$router.push({ path: "/LoginCadastroUsuario" });
+    },
+
+    todosProdutos() {
+      axios
+        .get("/produtotodos")
+        .then(response => {
+          if (response.data.length > 0) {
+            this.produtosTodos = response.data;
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+
+    listarCategoria() {
+      axios
+        .get("/categoria")
+        .then(response => {
+          this.categoria = [];
+
+          this.categoria = response.data;
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+
+    listarItemCategoria(categoria) {
+      console.log(categoria)
+       axios
+        .post("/produtocategoria",{categoria: categoria})
+        .then(response => {
+          this.produtosTodos = [];
+          this.produtosTodos = response.data;
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+
+    initialize() {
+      this.todosProdutos();
+      this.listarCategoria();
     }
+  },
+  created() {
+    this.initialize();
   }
 };
 </script>

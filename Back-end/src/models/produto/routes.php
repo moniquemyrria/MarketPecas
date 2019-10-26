@@ -11,6 +11,19 @@ $app->get('/produto/{idEmpresa}', function ($request, $response, $args) {
     return $this->response->withJson($produto);
 });
 
+$app->get('/produtotodos', function ($request, $response, $args) {
+    $produto = listarProdutoTodos($this->db);
+    return $this->response->withJson($produto);
+});
+
+$app->post('/produtocategoria', function ($request, $response, $args) {
+    $categoria = $request->getParsedBody();
+    //print_r($categoria);
+    //return;
+    $produto = listarProdutoCategoria($this->db, $categoria);
+    return $this->response->withJson($produto);
+});
+
 $app->get('/produtopesquisaid/{id}', function ($request, $response, $args) {
     $produto = pesquisaProdutoId($this->db, $args['id']);
     return $this->response->withJson($produto);

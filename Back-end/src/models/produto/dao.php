@@ -15,6 +15,42 @@ function listarProduto($db, $idEmpresa){
     return $str->fetchAll();
 }
 
+function listarProdutoTodos($db){
+
+    $str = $db->prepare(
+        "SELECT p.codigo, p.descricao, p.aplicacao, p.unidade_medida as un,
+        p.altura, p.largura, p.comprimento, p.peso, p.preco,
+        m.descricao as marca, c.descricao as categoria, e.nome_fantasia as empresa, p.imagem
+        FROM produto p with(nolock)
+        inner join marca m with(nolock) on (m.id = p.id_marca)
+        inner join categoria c with(nolock) on (c.id = p.id_categoria)
+        inner join empresa e with(nolock) on (e.id = p.id_empresa)
+        where deletado = 'N'
+        order by p.id desc
+    ");
+    $str->execute();
+    return $str->fetchAll();
+}
+
+function listarProdutoCategoria($db, $categoria){
+
+    $str = $db->prepare(
+        "SELECT p.codigo, p.descricao, p.aplicacao, p.unidade_medida as un,
+        p.altura, p.largura, p.comprimento, p.peso, p.preco,
+        m.descricao as marca, c.descricao as categoria, e.nome_fantasia as empresa, p.imagem
+        FROM produto p with(nolock)
+        inner join marca m with(nolock) on (m.id = p.id_marca)
+        inner join categoria c with(nolock) on (c.id = p.id_categoria)
+        inner join empresa e with(nolock) on (e.id = p.id_empresa)
+        where deletado = 'N'
+        and c.descricao = :categoria
+        order by p.id desc
+    ");
+    $str->bindParam("categoria", $categoria['categoria']);
+    $str->execute();
+    return $str->fetchAll();
+}
+
 function pesquisaProdutoId($db, $id){
 
     $str = $db->prepare(
