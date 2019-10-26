@@ -602,6 +602,7 @@
       </v-container>
     </v-app>
     <router-view />
+    <va-footer />
   </div>
 </template>
 
@@ -610,6 +611,7 @@ import axios from "../axios/client";
 import Vue from "vue";
 import Vuetify from "vuetify";
 import "vuetify/dist/vuetify.css";
+import VAFooter from "@/components/Footer";
 Vue.component("reverse", {
   // ...
   //template: '<p v-html="reverseMessage(msgreverse)"></p>'  // DON'T DO THIS
@@ -620,6 +622,9 @@ export default {
   name: "teste",
   vuetify: new Vuetify(),
   vue: new Vue(),
+  components: {
+    "va-footer": VAFooter
+  },
   data() {
     return {
       color: "#673AB7",

@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <router-view />
-    <va-footer />
+    <!-- <va-footer /> -->
   </div>
 </template>
 

@@ -10,6 +10,7 @@ import CadastroProduto from '@/components/CadastroProduto'
 import PerfilUsuarioEmpresa from '@/components/PerfilUsuarioEmpresa'
 import PerfilUsuarioCliente from '@/components/PerfilUsuarioCliente'
 import OfertaProduto from '@/components/OfertaProduto'
+import SiteCotacoes from '@/components/SiteCotacoes'
 
 Vue.use(Router)
 
@@ -17,6 +18,11 @@ export default new Router({
   mode: 'history',
   routes: [{
     path: '/',
+    name: 'SiteCotacoes',
+    component: SiteCotacoes,
+  },
+  {
+    path: '/LoginCadastroUsuario',
     name: 'LoginCadastroUsuario',
     component: LoginCadastroUsuario,
   },

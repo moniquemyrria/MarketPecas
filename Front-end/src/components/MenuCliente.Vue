@@ -57,7 +57,7 @@ export default {
     },
 
     login() {
-      this.$router.push({ path: "/" });
+      this.$router.push({ path: "/LoginCadastroUsuario" });
     }
   }
 };

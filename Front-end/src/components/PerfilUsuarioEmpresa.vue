@@ -279,6 +279,7 @@
         </v-row>
       </v-container>
     </v-app>
+     <va-footer />
   </div>
 </template>
 
@@ -288,6 +289,7 @@ import Vue from "vue";
 import Vuetify from "vuetify";
 import "vuetify/dist/vuetify.css";
 import VANaviBarMenuEmp from "@/components/MenuEmpresa";
+import VAFooter from "@/components/Footer";
 import App from "../App.vue";
 import { mask } from "vue-the-mask";
 
@@ -349,7 +351,8 @@ export default {
   },
 
   components: {
-    "va-appbar-menu-emp": VANaviBarMenuEmp
+    "va-appbar-menu-emp": VANaviBarMenuEmp,
+    "va-footer": VAFooter
   },
 
   methods: {

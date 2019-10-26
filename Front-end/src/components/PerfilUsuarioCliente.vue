@@ -112,6 +112,7 @@
         </v-row>
       </v-container>
     </v-app>
+    <va-footer />
   </div>
 </template>
 
@@ -121,6 +122,7 @@ import Vue from "vue";
 import Vuetify from "vuetify";
 import "vuetify/dist/vuetify.css";
 import VANaviBarMenuCli from "@/components/MenuCliente";
+import VAFooter from "@/components/Footer";
 import App from "../App.vue";
 import { mask } from "vue-the-mask";
 
@@ -164,7 +166,8 @@ export default {
   },
 
   components: {
-    "va-appbar-menu-cli": VANaviBarMenuCli
+    "va-appbar-menu-cli": VANaviBarMenuCli,
+    "va-footer": VAFooter
   },
 
   methods: {

@@ -18,20 +18,20 @@
         <v-dialog v-model="dialogExcluir" max-width="500px">
           <v-card>
             <v-card-title>
-              <span>Excluír Produto</span>
+              <span>Excluír Oferta</span>
 
               <div class="flex-grow-1" />
             </v-card-title>
             <v-card-text>
               <span>
-                <b>Deseja relamente excluír o produto?</b>
+                <b>Deseja relamente excluír a Oferta?</b>
               </span>
               <br />
               <br />
               <i>
                 <label
                   style="font-size: 12px;"
-                >*Os produtos excluídos não serão mais listados no MarketPeças</label>
+                >*As ofertas excluídas não serão mais listados no MarketPeças</label>
               </i>
             </v-card-text>
             <v-card-actions>
@@ -61,10 +61,10 @@
 
               <v-row>
                 <v-col cols="9" sm="12">
-                  <v-col cols="9" sm="6" style="float: right; ">
+                  <v-col cols="9" sm="7" style="float: right; ">
                     <v-text-field
                       v-model="valorProdoferta"
-                      label="Valor Produto *"
+                      label="Valor Produto Oferta *"
                       v-mask="mask"
                       prefix="R$"
                       prepend-icon="monetization_on"
@@ -300,6 +300,7 @@
         </v-row>
       </v-container>
     </v-app>
+    <va-footer />
   </div>
 </template>
 
@@ -311,6 +312,7 @@ import Vue from "vue";
 import Vuetify from "vuetify";
 import "vuetify/dist/vuetify.css";
 import VANaviBarMenuEmp from "@/components/MenuEmpresa";
+import VAFooter from "@/components/Footer";
 import App from "../App.vue";
 import { mask } from "vue-the-mask";
 
@@ -361,10 +363,12 @@ export default {
         // { text: "Ação", value: "action", sortable: false }
       ],
       tableItens: [],
+      idOfertaDelete: null,
 
       tableOfertaProduto: [],
       editedIndex: -1,
       itemSelecionado: [],
+      itemAddAlterar: [],
       ofertaProduto: {
         id: null,
         idEmpresa: null,
@@ -378,7 +382,8 @@ export default {
   },
 
   components: {
-    "va-appbar-menu-emp": VANaviBarMenuEmp
+    "va-appbar-menu-emp": VANaviBarMenuEmp,
+    "va-footer": VAFooter
   },
 
   computed: {
@@ -417,17 +422,32 @@ export default {
     },
 
     modalAddPerco() {
-      if (this.itemSelecionado == "" || this.itemSelecionado == null) {
-        this.colors = "warning";
-        this.timeout = 5000;
-        this.snack("bottom", "center");
-        this.text = "Ops! É selecionar um produto no campo de Pesquisa.";
-        this.error = true;
-        return;
-      }
+      if (!this.verificaItensInseridosOferta()) {
+        if (this.itemSelecionado == "" || this.itemSelecionado == null) {
+          this.colors = "warning";
+          this.timeout = 5000;
+          this.snack("bottom", "center");
+          this.text = "Ops! É selecionar um produto no campo de Pesquisa.";
+          this.error = true;
+          return;
+        }
 
-      this.valorProdoferta = null;
-      this.dialogNovoPrecoProduto = true;
+        this.valorProdoferta = null;
+        this.dialogNovoPrecoProduto = true;
+      }
+    },
+
+    verificaItensInseridosOferta() {
+      for (let i = 0; i < this.tableItens.length; i++) {
+        if (parseInt(this.tableItens[i].id) == parseInt(this.itemSelecionado)) {
+          this.colors = "warning";
+          this.timeout = 5000;
+          this.snack("bottom", "center");
+          this.text = "Ops! Item já inserido a Oferta.";
+          this.error = true;
+          return true;
+        }
+      }
     },
 
     addProdutoOferta() {
@@ -453,6 +473,7 @@ export default {
 
             response.data[0].preco = this.valorProdoferta;
             this.tableItens.push(response.data[0]);
+            this.itemAddAlterar.push(response.data[0]);
             this.dialogNovoPrecoProduto = false;
             this.itemSelecionado = "";
           }
@@ -508,6 +529,7 @@ export default {
       this.ofertaProduto.id = "";
       this.ofertaProduto.nome = "";
       this.ofertaProduto.itensOferta = null;
+      this.itemAddAlterar = [];
     },
 
     initialize() {
@@ -525,7 +547,7 @@ export default {
         .get("/oferta/" + this.ofertaProduto.idEmpresa)
         .then(response => {
           this.tableOfertaProduto = [];
-          this.tableOfertaProduto= response.data;
+          this.tableOfertaProduto = response.data;
         })
         .catch(e => {
           console.log(e);
@@ -571,36 +593,31 @@ export default {
     editar(item) {
       this.dialogCarregandoDados = true;
       this.textCarregandoDados = "Aguarde ...Carregando dados do Produto.";
-      // axios
-      //   .get("/produtopesquisaid/" + item.id)
-      //   .then(response => {
-      //     if (response.data.length > 0) {
-      //       this.produto = response.data[0];
-      //       this.produto.preco = parseFloat(response.data[0].preco);
-      //       (this.dateFormatted = this.formatDate(response.data[0].validade)),
-      //         console.log(this.produto);
-      //       // let image = new Image();
-      //       // image.src = response.data[0].imagem;
-      //       // this.foto = response.data[0].imagem;;
-      //       // this.dataUrl();
 
-      //       //document.body.appendChild(image);
-      //       this.dialog = true;
-      //       this.dialogCarregandoDados = false;
-      //     }
-      //   })
-      //   .catch(e => {
-      //     console.log(e);
-      //   });
+      axios
+        .get("/ofertapesquisaid/" + item.id)
+        .then(response => {
+          //if (response.data.length > 0) {
+          console.table(response.data);
+          this.ofertaProduto.nome = response.data.nome;
+          this.ofertaProduto.id = response.data.idOfertaProduto;
+          this.tableItens = response.data.itensOferta;
+          this.dialog = true;
+          this.dialogCarregandoDados = false;
+          //}
+        })
+        .catch(e => {
+          console.log(e);
+        });
     },
 
     deletarItem(item) {
-      this.ofertaProduto.id = item.id;
+      this.idOfertaDelete = item.id;
       this.dialogExcluir = true;
     },
 
     cancelarDeletarItem() {
-      this.produto.id = "";
+      this.idOfertaDelete = null;
       this.dialogExcluir = false;
     },
 
@@ -616,7 +633,6 @@ export default {
         } else {
           this.alterar();
         }
-        
       }
     },
 
@@ -640,40 +656,40 @@ export default {
     },
 
     alterar() {
-      // axios
-      //   .put("/produto", this.produto)
-      //   .then(response => {
-      //     //if (response.data[0].produto.length > 0) {
-      //     this.text = response.data[0].mensagem;
-      //     this.colors = "blue";
-      //     this.snack("top", "right");
-      //     //}
-      //     this.close();
-      //     this.initialize();
-      //     this.id = "";
-      //   })
-      //   .catch(e => {
-      //     console.log(e);
-      //   });
+      this.ofertaProduto.itensOferta = this.itemAddAlterar;
+      axios
+        .put("/oferta", this.ofertaProduto)
+        .then(response => {
+          //if (response.data[0].produto.length > 0) {
+          this.text = response.data[0].mensagem;
+          this.colors = "blue";
+          this.snack("top", "right");
+          //}
+          this.close();
+          this.initialize();
+          this.id = "";
+        })
+        .catch(e => {
+          console.log(e);
+        });
     },
 
     excluir() {
-      // axios
-      //   .delete("/produto/" + this.produto.id)
-      //   .then(response => {
-      //     if (response.data[0].produto.length > 0) {
-      //       this.text = response.data[0].mensagem;
-      //       this.colors = "blue";
-      //       this.snack("top", "right");
-      //     }
-      //     this.close();
-      //     this.initialize();
-      //     this.id = "";
-      //     this.dialogExcluir = false;
-      //   })
-      //   .catch(e => {
-      //     console.log(e);
-      //   });
+      axios
+        .delete("/oferta/" + this.idOfertaDelete)
+        .then(response => {
+          this.text = response.data[0].mensagem;
+          this.colors = "blue";
+          this.snack("top", "right");
+
+          this.idOfertaDelete = null;
+          this.dialogExcluir = false;
+
+          this.initialize();
+        })
+        .catch(e => {
+          console.log(e);
+        });
     }
   }
 };

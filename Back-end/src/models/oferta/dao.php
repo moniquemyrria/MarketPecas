@@ -57,6 +57,45 @@ function cadastrarOferta($db, $produtoOferta){
     return $produtoOferta;
 }
 
+function alterarOferta($db, $produtoOferta){ 
+    
+    $str = $db->prepare(
+        "UPDATE OFERTA_PRODUTO SET nome = :nome 
+        WHERE id = :idOfertaProduto
+        and id_empresa = :idEmpresa
+    ");
+    
+    $str->bindParam("nome",             $produtoOferta["nome"]);
+    $str->bindParam("idOfertaProduto",  $produtoOferta["idOfertaProduto"]);
+    $str->bindParam("idEmpresa",        $produtoOferta["idEmpresa"]);
+    $str->execute();
+    
+    //print_r($idOferta);
+
+    foreach($produtoOferta['itensOferta'] as $key => $item){
+        $sth = $db->prepare(
+            "INSERT INTO itens_oferta_produto(
+                id_oferta_produto
+                , id_produto
+                , preco
+            )
+            VALUES( 
+                :idOferta
+                , :idProduto
+                , :preco
+            )
+         ");
+        
+        $sth->bindParam("idOferta",     $produtoOferta["id"]);
+        $sth->bindParam("idProduto",    $item["id"]);
+        $sth->bindParam("preco",        $item["preco"]);
+        $sth->execute();
+
+    }
+
+    return $produtoOferta;
+}
+
 function pesquisaOfertaId($db, $id){
 
     $str = $db->prepare(
@@ -70,28 +109,44 @@ function pesquisaOfertaId($db, $id){
         and op.id = '" .$id. "'
     ");
     $str->execute();
-
     $oferta = $str->fetchAll();
     
-    $arrayG = array();
+    $arrayItens = array();
     $arrayItens = array();
     foreach($oferta as $key => $item){
     
         $arrayAux = array(
             "id" => $item['idProduto'],
-            "codigo" => $item['idProduto'],
-            "descricao" => $item['idProduto'],
-            "marca" => $item['idProduto'],
-            "categoria" => $item['idProduto'],
-            "preco" => $item['idProduto'],
+            "codigo" => $item['codigo'],
+            "descricao" => $item['descricao'],
+            "marca" => $item['marca'],
+            "categoria" => $item['categoria'],
+            "preco" => $item['preco'],
         );
 
         array_push($arrayItens, $arrayAux);
     }
 
+    $arrayG = array(
+        "idOfertaProduto"=> $oferta[0]['idOfertaProduto'],
+        "nome"=> $oferta[0]['nome'],
+        "itensOferta"=>$arrayItens
+    );
 
 
-    return ;
+    return $arrayG;
+}
 
+function excluirOferta($db, $id){   
+    
+    $str = $db->prepare(
+        "UPDATE oferta_produto SET
+            ativa = 'N'
+        WHERE id = :id
+     ");
 
+    $str->bindParam("id", $id);
+    $str->execute();
+
+    return $id;
 }
