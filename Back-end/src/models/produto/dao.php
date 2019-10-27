@@ -18,9 +18,10 @@ function listarProduto($db, $idEmpresa){
 function listarProdutoTodos($db){
 
     $str = $db->prepare(
-        "SELECT p.codigo, p.descricao, p.aplicacao, p.unidade_medida as un,
+        "SELECT p.id, p.codigo, p.descricao, p.aplicacao, p.unidade_medida as un,
         p.altura, p.largura, p.comprimento, p.peso, p.preco,
-        m.descricao as marca, c.descricao as categoria, e.nome_fantasia as empresa, p.imagem
+        m.descricao as marca, c.descricao as categoria, e.nome_fantasia as empresa, p.imagem,
+        0 as quantidade
         FROM produto p with(nolock)
         inner join marca m with(nolock) on (m.id = p.id_marca)
         inner join categoria c with(nolock) on (c.id = p.id_categoria)
@@ -35,9 +36,10 @@ function listarProdutoTodos($db){
 function listarProdutoCategoria($db, $categoria){
 
     $str = $db->prepare(
-        "SELECT p.codigo, p.descricao, p.aplicacao, p.unidade_medida as un,
+        "SELECT p.id, p.codigo, p.descricao, p.aplicacao, p.unidade_medida as un,
         p.altura, p.largura, p.comprimento, p.peso, p.preco,
-        m.descricao as marca, c.descricao as categoria, e.nome_fantasia as empresa, p.imagem
+        m.descricao as marca, c.descricao as categoria, e.nome_fantasia as empresa, p.imagem,
+        0 as quantidade
         FROM produto p with(nolock)
         inner join marca m with(nolock) on (m.id = p.id_marca)
         inner join categoria c with(nolock) on (c.id = p.id_categoria)
@@ -54,9 +56,10 @@ function listarProdutoCategoria($db, $categoria){
 function listarProdutoMarca($db, $marca){
 
     $str = $db->prepare(
-        "SELECT p.codigo, p.descricao, p.aplicacao, p.unidade_medida as un,
+        "SELECT p.id, p.codigo, p.descricao, p.aplicacao, p.unidade_medida as un,
         p.altura, p.largura, p.comprimento, p.peso, p.preco,
-        m.descricao as marca, c.descricao as categoria, e.nome_fantasia as empresa, p.imagem
+        m.descricao as marca, c.descricao as categoria, e.nome_fantasia as empresa, p.imagem,
+        0 as quantidade
         FROM produto p with(nolock)
         inner join marca m with(nolock) on (m.id = p.id_marca)
         inner join categoria c with(nolock) on (c.id = p.id_categoria)
@@ -73,9 +76,10 @@ function listarProdutoMarca($db, $marca){
 function listarProdutoOferta($db){
 
     $str = $db->prepare(
-        "SELECT p.codigo, p.descricao, p.aplicacao, p.unidade_medida as un,
+        "SELECT p.id, p.codigo, p.descricao, p.aplicacao, p.unidade_medida as un,
         p.altura, p.largura, p.comprimento, p.peso, p.preco,
-        m.descricao as marca, c.descricao as categoria, e.nome_fantasia as empresa, p.imagem
+        m.descricao as marca, c.descricao as categoria, e.nome_fantasia as empresa, p.imagem,
+        0 as quantidade
         from itens_oferta_produto iop with(nolock)
         inner join oferta_produto op with(nolock) on (op.id = iop.id_oferta_produto)
         inner join produto p with(nolock) on (p.id = iop.id_produto)

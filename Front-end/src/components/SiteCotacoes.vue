@@ -12,21 +12,166 @@
     </v-dialog>
 
     <!-- MODAL COTAÇÕES -->
-    <v-dialog v-model="dialogoCotacoes" width="1300px">
-      <template v-slot:activator="{ on }">
-        <v-btn color="primary" dark v-on="on">Open Dialog</v-btn>
-      </template>
+    <v-dialog
+      v-model="dialogoCotacoes"
+      scrollable
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+    >
       <v-card>
-        <v-img class="white--text align-end" height="170px" :src="require('@/assets/cotacao.jpg')">
-          <v-card-title>PRODUTOS PARA COTAÇÃO</v-card-title>
-        </v-img>
+        <v-toolbar flat style="height: -25px" dark color="primary">
+          <v-img
+            :src="require('@/assets/LOGO_2.png')"
+            class="mr-5"
+            contain
+            height="50"
+            width="50"
+            max-width="50"
+          />
 
-        <v-card-text style="height: 300px;">TESTE</v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions>
-          <v-btn color="blue darken-1" text @click="dialog = false">Close</v-btn>
-          <v-btn color="blue darken-1" text @click="dialog = false">Save</v-btn>
-        </v-card-actions>
+          <v-toolbar-title>
+            <span class="headline">
+              <b>MarketPeças</b> | Suas cotações online
+            </span>
+          </v-toolbar-title>
+          <div class="flex-grow-1" />
+          <v-toolbar-items style="margin-top: -10px;">
+            <div class="ma-3">
+              <v-btn icon dark @click="dialogoCotacoes = false">
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </div>
+          </v-toolbar-items>
+        </v-toolbar>
+
+        <v-card-text style="height: 100vh;">
+          <v-row>
+            <v-col cols="12" sm="7">
+              <v-card :elevation="0" class="mx-auto">
+                <div class="overline mb-2">
+                  <b>MEUS PRODUTOS SELECIONADOS</b>
+                </div>
+
+                <!-- PRODUTOS SELECIONADOS -->
+                <v-row>
+                  <v-col v-for="item in produtosCotacao" :key="item.id" cols="12" sm="12">
+                    <v-card class="mx-auto" outlined style="height: 160px">
+                      <v-list-item three-line>
+                        <v-list-item-content>
+                          <v-col cols="10" sm="8">
+                            <div class="overline mb-4">
+                              <b>Codigo:</b>
+                              {{item.codigo}}
+                            </div>
+                            <v-list-item-title class="headline mb-1">{{item.descricao}}</v-list-item-title>
+                            <v-list-item-subtitle>
+                              <input
+                                disabled
+                                v-model="item.aplicacao"
+                                style="width: 300px;"
+                                type="text"
+                                maxlength="100"
+                              />
+                            </v-list-item-subtitle>
+                          </v-col>
+
+                          <v-col cols="10" sm="3" style="margin-left: -55px">
+                            <div style="margin-top: 10px; margin-left: 25px" class="overline mb-4">
+                              <b>Quantidade</b>
+                            </div>
+
+                            <v-text-field
+                              v-model="item.quantidade"
+                              type="number"
+                              append-outer-icon="add"
+                              @click:append-outer="increment(item)"
+                              prepend-icon="remove"
+                              @click:prepend="decrement(item)"
+                            ></v-text-field>
+
+                            <v-list-item-subtitle></v-list-item-subtitle>
+                          </v-col>
+                        </v-list-item-content>
+
+                        <v-list-item-avatar
+                          sclass="profile"
+                          color="grey"
+                          size="80"
+                          style="border: 2px groove; margin-top: 30px"
+                        >
+                          <v-img class="white--text align-end" :src="item.imagem"></v-img>
+                        </v-list-item-avatar>
+                      </v-list-item>
+
+                      <v-card-actions>
+                        <v-col cols="9" sm="12">
+                          <v-row style="float: right; margin-top: -55px">
+                            <v-btn @click="removerItemCotacao(item)" color="red" text>Remover</v-btn>
+                          </v-row>
+                        </v-col>
+                      </v-card-actions>
+                    </v-card>
+                  </v-col>
+                </v-row>
+              </v-card>
+            </v-col>
+            <v-col cols="12" sm="5">
+              <v-card :elevation="0" class="mx-auto">
+                <div class="overline mb-4">
+                  <b>COTAÇÕES DE PRODUTOS</b>
+                </div>
+                <v-tabs background-color="white" color="primary">
+                  <v-tab>MENOR PREÇO</v-tab>
+                  <v-tab>CATEGORIA</v-tab>
+                  <v-tab>MARCA</v-tab>
+
+                  <v-tab-item v-for="n in 3" :key="n">
+                    <v-card :elevation="0" class="mx-auto">
+                      <v-card-text>
+                        <v-container fluid>
+                          <v-container v-if="n == 1" style>
+                            <v-card color="#385F73" dark>
+                              <v-card-title class="headline">Unlimited music now</v-card-title>
+
+                              <v-card-subtitle>Listen to your favorite artists and albums whenever and wherever, online and offline.</v-card-subtitle>
+
+                              <v-card-actions>
+                                <v-btn text>Listen Now</v-btn>
+                              </v-card-actions>
+                            </v-card>
+                          </v-container>
+                          <v-container v-if="n == 2">
+                            <v-card color="#1F7087" dark>
+                              <v-card-title class="headline">Unlimited music now</v-card-title>
+
+                              <v-card-subtitle>Listen to your favorite artists and albums whenever and wherever, online and offline.</v-card-subtitle>
+
+                              <v-card-actions>
+                                <v-btn text>Listen Now</v-btn>
+                              </v-card-actions>
+                            </v-card>
+                          </v-container>
+                          <v-container v-if="n == 3">
+                            <v-card color="#006064" dark>
+                              <v-card-title class="headline">Unlimited music now</v-card-title>
+
+                              <v-card-subtitle>Listen to your favorite artists and albums whenever and wherever, online and offline.</v-card-subtitle>
+
+                              <v-card-actions>
+                                <v-btn text>Listen Now</v-btn>
+                              </v-card-actions>
+                            </v-card>
+                          </v-container>
+                        </v-container>
+                      </v-card-text>
+                    </v-card>
+                  </v-tab-item>
+                </v-tabs>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-card-text>
       </v-card>
     </v-dialog>
 
@@ -109,6 +254,25 @@
       </v-card>
     </v-dialog>
     <v-app>
+      <!-- MENSAGENS -->
+      <div class="text-center ma-2">
+        <v-snackbar
+          v-model="snackbar"
+          :bottom="bottom"
+          :color="color"
+          :left="left"
+          :right="right"
+          :top="top"
+          :timeout="timeout"
+          dark
+        >
+          <v-icon color="white" class="mr-3">shopping_basket</v-icon>
+          <div>
+            <b>{{ text }}</b>
+          </div>
+        </v-snackbar>
+      </div>
+
       <v-app-bar app flat color="#F5F5F5" height="100">
         <v-container mx-auto py-0>
           <v-layout>
@@ -131,7 +295,12 @@
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-btn v-on="on" class="mx-1" fab dark @click="cotacoes" color="#0277BD">
-                    <v-icon>shopping_basket</v-icon>
+                    <v-badge color="black" right>
+                      <template v-slot:badge>
+                        <span>{{produtosCotacao.length}}</span>
+                      </template>
+                      <v-icon>shopping_basket</v-icon>
+                    </v-badge>
                   </v-btn>
                 </template>
                 <span>Itens para Cotação</span>
@@ -196,7 +365,7 @@
                   <template v-slot:activator="{ on }">
                     <v-list-item>
                       <v-list-item-icon>
-                        <v-icon>notification_important</v-icon>
+                        <v-icon>notifications</v-icon>
                       </v-list-item-icon>
                       <v-list-item-content>
                         <v-list-item-title @click="produtosOferta" v-on="on">Produtos em Oferta</v-list-item-title>
@@ -274,7 +443,7 @@
                   <div>{{ 'Marca: ' + item.marca}}</div>
                 </v-card-text>
                 <v-card-actions>
-                  <v-btn @click="addCotacao(item)" color="primary" text>ADCIONAR COTAÇÃO</v-btn>
+                  <v-btn @click="addProdutoCotacao(item)" color="primary" text>ADCIONAR COTAÇÃO</v-btn>
 
                   <v-spacer></v-spacer>
 
@@ -335,6 +504,18 @@ export default {
   vue: new Vue(),
   data() {
     return {
+      timeout: 9000,
+      color: null,
+      colors: ["purple", "info", "success", "warning", "error"],
+      top: true,
+      bottom: false,
+      left: false,
+      right: false,
+      snackbar: false,
+      text: "",
+      search: "",
+      x: null,
+
       show: false,
       dialogSobreMkt: false,
       dialogTeamDev: false,
@@ -345,6 +526,7 @@ export default {
       produtosTodos: [],
       categoria: [],
       marca: [],
+      produtosCotacao: [],
 
       dialogCarregandoDados: false,
       textCarregandoDados: "",
@@ -388,11 +570,101 @@ export default {
   },
 
   methods: {
-    cotacoes() {
-      this.dialogoCotacoes = true;
+    increment(item) {
+      for (let i = 0; i < this.produtosCotacao.length; i++) {
+        if (parseInt(item.id) == parseInt(this.produtosCotacao[i].id)) {
+          this.produtosCotacao[i].quantidade =
+            parseInt(this.produtosCotacao[i].quantidade, 10) + 1;
+        }
+      }
     },
-    addCotacao(item) {
-      console.log(item);
+    decrement(item) {
+      for (let i = 0; i < this.produtosCotacao.length; i++) {
+        if (parseInt(item.id) == parseInt(this.produtosCotacao[i].id)) {
+          this.produtosCotacao[i].quantidade =
+            parseInt(this.produtosCotacao[i].quantidade, 10) - 1;
+        }
+      }
+    },
+
+    cotacoes() {
+      if (this.produtosCotacao.length == 0) {
+        this.colors = "info";
+        this.timeout = 2000;
+        this.snack("bottom", "center");
+        this.text = "Ops. Ainda Não há produtos inseridos a cotação.";
+        this.error = true;
+      } else {
+        this.dialogoCotacoes = true;
+      }
+    },
+
+    verificaProdutosInseridosCotacao(item) {
+      for (let i = 0; i < this.produtosCotacao.length; i++) {
+        if (parseInt(item.id) == parseInt(this.produtosCotacao[i].id)) {
+          return true;
+        }
+      }
+    },
+
+    removerItemCotacao(item) {
+      for (let i = 0; i < this.produtosCotacao.length; i++) {
+        if (this.produtosCotacao[i].id === item.id) {
+          this.produtosCotacao.splice(i, 1);
+        }
+      }
+
+      this.colors = "info";
+      this.timeout = 2000;
+      this.snack("bottom", "center");
+      this.text = "Produto excluído da cotação.";
+      this.error = true;
+
+      if (this.produtosCotacao.length == 0) {
+        this.dialogoCotacoes = false;
+      }
+    },
+
+    addProdutoCotacao(item) {
+      console.log(this.verificaProdutosInseridosCotacao(item));
+      if (this.verificaProdutosInseridosCotacao(item) == true) {
+        console.log("entrou");
+        for (let i = 0; i < this.produtosCotacao.length; i++) {
+          if (parseInt(item.id) == parseInt(this.produtosCotacao[i].id)) {
+            this.produtosCotacao[i].quantidade =
+              parseInt(this.produtosCotacao[i].quantidade) + 1;
+          }
+        }
+      } else {
+        item.quantidade = parseInt(item.quantidade) + 1;
+        this.produtosCotacao.push(item);
+      }
+
+      if (this.produtosCotacao.length == 0) {
+        item.quantidade = parseInt(item.quantidade) + 1;
+        this.produtosCotacao.push(item);
+      }
+
+      this.colors = "info";
+      this.timeout = 2000;
+      this.snack("bottom", "center");
+      this.text = "Produto adicionado com sucesso a cotação.";
+      this.error = true;
+    },
+
+    snack(...args) {
+      this.top = false;
+      this.bottom = false;
+      this.left = false;
+      this.right = false;
+
+      for (const loc of args) {
+        this[loc] = true;
+      }
+
+      this.color = this.colors;
+
+      this.snackbar = true;
     },
     sobreMktpecas() {
       this.dialogSobreMkt = true;
