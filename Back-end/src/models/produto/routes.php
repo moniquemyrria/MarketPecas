@@ -24,11 +24,28 @@ $app->post('/produtocategoria', function ($request, $response, $args) {
     return $this->response->withJson($produto);
 });
 
+
 $app->get('/produtopesquisaid/{id}', function ($request, $response, $args) {
     $produto = pesquisaProdutoId($this->db, $args['id']);
     return $this->response->withJson($produto);
 });
 
+$app->get('/produtooferta', function ($request, $response, $args) {
+    $produtoOferta = listarProdutoOferta($this->db);
+    return $this->response->withJson($produtoOferta);
+});
+
+$app->post('/produtomarca', function ($request, $response, $args) {
+    $marca = $request->getParsedBody();
+    $produto = listarProdutoMarca($this->db, $marca);
+    return $this->response->withJson($produto);
+});
+
+$app->post('/buscarproduto', function ($request, $response, $args) {
+    $busca = $request->getParsedBody();
+    $produto = buscarProduto($this->db, $busca['busca']);
+    return $this->response->withJson($produto);
+});
 
 $app->post('/produto', function ($request, $response, $args) {
     $modelProduto = $request->getParsedBody();

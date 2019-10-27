@@ -51,6 +51,47 @@ function listarProdutoCategoria($db, $categoria){
     return $str->fetchAll();
 }
 
+function listarProdutoMarca($db, $marca){
+
+    $str = $db->prepare(
+        "SELECT p.codigo, p.descricao, p.aplicacao, p.unidade_medida as un,
+        p.altura, p.largura, p.comprimento, p.peso, p.preco,
+        m.descricao as marca, c.descricao as categoria, e.nome_fantasia as empresa, p.imagem
+        FROM produto p with(nolock)
+        inner join marca m with(nolock) on (m.id = p.id_marca)
+        inner join categoria c with(nolock) on (c.id = p.id_categoria)
+        inner join empresa e with(nolock) on (e.id = p.id_empresa)
+        where deletado = 'N'
+        and m.descricao = :marca
+        order by p.id desc
+    ");
+    $str->bindParam("marca", $marca['marca']);
+    $str->execute();
+    return $str->fetchAll();
+}
+
+function listarProdutoOferta($db){
+
+    $str = $db->prepare(
+        "SELECT p.codigo, p.descricao, p.aplicacao, p.unidade_medida as un,
+        p.altura, p.largura, p.comprimento, p.peso, p.preco,
+        m.descricao as marca, c.descricao as categoria, e.nome_fantasia as empresa, p.imagem
+        from itens_oferta_produto iop with(nolock)
+        inner join oferta_produto op with(nolock) on (op.id = iop.id_oferta_produto)
+        inner join produto p with(nolock) on (p.id = iop.id_produto)
+        inner join marca m with(nolock) on (m.id = p.id_marca)
+        inner join categoria c with(nolock) on (c.id = p.id_categoria)
+        inner join empresa e with(nolock) on (e.id = p.id_empresa)
+        where p.deletado = 'N'
+        and op.ativa = 'S'
+        order by op.id desc
+        
+    ");
+    $str->execute();
+    return $str->fetchAll();
+}
+
+
 function pesquisaProdutoId($db, $id){
 
     $str = $db->prepare(
@@ -63,6 +104,32 @@ function pesquisaProdutoId($db, $id){
         where p.id = '" .$id. "'
         and p.deletado = 'N'
     ");
+    $str->execute();
+    return $str->fetchAll();
+}
+
+function buscarProduto($db, $busca){
+
+    $str = $db->prepare(
+        "Declare @busca varchar(MAX);
+        Set @busca = :busca
+        SELECT p.codigo, p.descricao, p.aplicacao, p.unidade_medida as un,
+        p.altura, p.largura, p.comprimento, p.peso, p.preco,
+        m.descricao as marca, c.descricao as categoria, e.nome_fantasia as empresa, p.imagem
+        FROM produto p with(nolock)
+        inner join marca m with(nolock) on (m.id = p.id_marca)
+        inner join categoria c with(nolock) on (c.id = p.id_categoria)
+        inner join empresa e with(nolock) on (e.id = p.id_empresa)
+        where p.deletado = 'N'
+        and m.descricao like @busca
+        or c.descricao like @busca
+        or p.descricao like @busca
+        or p.codigo like @busca
+        or p.aplicacao like @busca
+        order by p.id desc
+    ");
+    $like = "%" . $busca . "%";
+    $str->bindParam("busca", $like); 
     $str->execute();
     return $str->fetchAll();
 }

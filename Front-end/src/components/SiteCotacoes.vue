@@ -1,5 +1,17 @@
 <template>
   <div id="app">
+
+     <!-- CARREGANDO DADOS -->
+        <v-dialog v-model="dialogCarregandoDados" width="320">
+          <v-card color="primary" dark>
+            <br />
+            <v-card-text>
+              {{ textCarregandoDados }}
+              <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
+
     <!-- SOBRE O MARKETPEÇAS -->
     <v-dialog v-model="dialogSobreMkt" max-width="500px">
       <v-card class="mx-auto">
@@ -137,7 +149,7 @@
           <v-card flat class="mx-auto" max-width="500">
             <v-list color="#ECEFF1">
               <v-list-item-group color="primary">
-                <v-menu  offset-x :close-on-content-click="false" transition="scale-transition">
+                <v-menu offset-x :close-on-content-click="false" transition="scale-transition">
                   <template v-slot:activator="{ on }">
                     <v-list-item>
                       <v-list-item-icon>
@@ -148,7 +160,18 @@
                       </v-list-item-content>
                     </v-list-item>
                   </template>
-                  
+                </v-menu>
+                <v-menu offset-x :close-on-content-click="false" transition="scale-transition">
+                  <template v-slot:activator="{ on }">
+                    <v-list-item>
+                      <v-list-item-icon>
+                        <v-icon>notification_important</v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-content>
+                        <v-list-item-title @click="produtosOferta" v-on="on">Produtos em Oferta</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </template>
                 </v-menu>
                 <v-menu offset-x :close-on-content-click="false" transition="scale-transition">
                   <template v-slot:activator="{ on }">
@@ -162,12 +185,18 @@
                     </v-list-item>
                   </template>
                   <v-list>
-                    <v-list-item v-for="item in categoria" :key="item" v-model="on" @click="listarItemCategoria(item.descricao)">
+                    <v-list-item
+                      v-for="item in categoria"
+                      :key="item.id"
+                      v-model="on"
+                      @click="listarItemCategoria(item.descricao)"
+                    >
                       <v-list-item-title>{{item.descricao}}</v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-menu>
-                <!-- <v-menu offset-x :close-on-content-click="false" transition="scale-transition">
+
+                <v-menu offset-x :close-on-content-click="false" transition="scale-transition">
                   <template v-slot:activator="{ on }">
                     <v-list-item>
                       <v-list-item-icon>
@@ -179,30 +208,24 @@
                     </v-list-item>
                   </template>
                   <v-list>
-                    <v-list-item v-model="on" @click>
-                      <v-list-item-title>Menu 1</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-title>Teste Submenu 2</v-list-item-title>
+                    <v-list-item
+                      v-for="item in marca"
+                      :key="item.id"
+                      v-model="on"
+                      @click="listarItemMarca(item.descricao)"
+                    >
+                      <v-list-item-title>{{item.descricao}}</v-list-item-title>
                     </v-list-item>
                   </v-list>
-                </v-menu>-->
-
-                <!-- <v-list-item v-for="(item, i) in itemsMenu" :key="i">
-                  <v-list-item-icon>
-                    <v-icon v-text="item.icon"></v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title v-text="item.text"></v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>-->
+                </v-menu>
+                
               </v-list-item-group>
             </v-list>
           </v-card>
         </v-col>
         <v-col cols="12" sm="8">
           <v-row>
-            <v-col v-for="item in produtosTodos" :key="item" cols="12" sm="3">
+            <v-col v-for="item in produtosTodos" :key="item.id" cols="12" sm="3">
               <v-card class="mx-auto" min-width="220">
                 <v-img class="white--text align-end" height="150px" :src="item.imagem"></v-img>
                 <v-card-title>{{ item.descricao}}</v-card-title>
@@ -290,6 +313,10 @@ export default {
 
       produtosTodos: [],
       categoria: [],
+      marca: [],
+
+      dialogCarregandoDados: false,
+      textCarregandoDados: '',
 
       itemsMenu: [
         {
@@ -342,17 +369,37 @@ export default {
     },
 
     todosProdutos() {
+     
       axios
         .get("/produtotodos")
         .then(response => {
           if (response.data.length > 0) {
+            this.produtosTodos = [];
             this.produtosTodos = response.data;
+            
           }
         })
         .catch(e => {
           console.log(e);
         });
     },
+
+    produtosOferta(){
+      axios
+        .get("/produtooferta")
+        .then(response => {
+          if (response.data.length > 0) {
+            this.produtosTodos = [];
+            this.produtosTodos = response.data;
+           
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
+
+    },
+
 
     listarCategoria() {
       axios
@@ -367,10 +414,37 @@ export default {
         });
     },
 
+    listarMarca() {
+      axios
+        .get("/marca")
+        .then(response => {
+          this.marca = [];
+
+          this.marca = response.data;
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+
     listarItemCategoria(categoria) {
-      console.log(categoria)
-       axios
-        .post("/produtocategoria",{categoria: categoria})
+      
+      axios
+        .post("/produtocategoria", { categoria: categoria })
+        .then(response => {
+          this.produtosTodos = [];
+          this.produtosTodos = response.data;
+           this.dialogCarregandoDados = false;
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+
+    listarItemMarca(marca) {
+      
+      axios
+        .post("/produtomarca", { marca: marca })
         .then(response => {
           this.produtosTodos = [];
           this.produtosTodos = response.data;
@@ -383,6 +457,7 @@ export default {
     initialize() {
       this.todosProdutos();
       this.listarCategoria();
+      this.listarMarca();
     }
   },
   created() {
