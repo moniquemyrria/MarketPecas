@@ -1,16 +1,34 @@
 <template>
   <div id="app">
+    <!-- CARREGANDO DADOS -->
+    <v-dialog v-model="dialogCarregandoDados" width="320">
+      <v-card color="primary" dark>
+        <br />
+        <v-card-text>
+          {{ textCarregandoDados }}
+          <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
 
-     <!-- CARREGANDO DADOS -->
-        <v-dialog v-model="dialogCarregandoDados" width="320">
-          <v-card color="primary" dark>
-            <br />
-            <v-card-text>
-              {{ textCarregandoDados }}
-              <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
-            </v-card-text>
-          </v-card>
-        </v-dialog>
+    <!-- MODAL COTAÇÕES -->
+    <v-dialog v-model="dialogoCotacoes" width="1300px">
+      <template v-slot:activator="{ on }">
+        <v-btn color="primary" dark v-on="on">Open Dialog</v-btn>
+      </template>
+      <v-card>
+        <v-img class="white--text align-end" height="170px" :src="require('@/assets/cotacao.jpg')">
+          <v-card-title>PRODUTOS PARA COTAÇÃO</v-card-title>
+        </v-img>
+
+        <v-card-text style="height: 300px;">TESTE</v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-btn color="blue darken-1" text @click="dialog = false">Close</v-btn>
+          <v-btn color="blue darken-1" text @click="dialog = false">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     <!-- SOBRE O MARKETPEÇAS -->
     <v-dialog v-model="dialogSobreMkt" max-width="500px">
@@ -109,7 +127,18 @@
               <v-btn @click="teamDev" color="#6D6D6D" text class="my-1">TEAM DEV</v-btn>
               <v-btn @click="contato" color="#6D6D6D" text class="my-1">CONTATO</v-btn>
             </v-col>
-            <v-col cols="12" sm="6" style="margin-top: 60px;">
+            <v-col cols="12" sm="1" style="margin-top: 50px; margin-left: -75px">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn v-on="on" class="mx-1" fab dark @click="cotacoes" color="#0277BD">
+                    <v-icon>shopping_basket</v-icon>
+                  </v-btn>
+                </template>
+                <span>Itens para Cotação</span>
+              </v-tooltip>
+            </v-col>
+
+            <v-col cols="12" sm="6" style="margin-top: 60px; ">
               <v-btn @click="login" text>Entre ou Cadastre-se</v-btn>
             </v-col>
           </v-layout>
@@ -117,7 +146,7 @@
       </v-app-bar>
       <br />
 
-      <v-carousel cycle height="450" hide-delimiter-background :show-arrows="false">
+      <v-carousel cycle interval="8000" height="350" hide-delimiter-background :show-arrows="false">
         <v-carousel-item
           v-for="(item,i) in items"
           :key="i"
@@ -135,7 +164,9 @@
         <v-col class="primary lighten-1 py-1" cols="8" style="height: 65px;">
           <v-col cols="8" style="margin-top: -7px">
             <v-text-field
-              label="Código, descrição, marca ou categoria"
+              v-model="busca"
+              @input="listarItemBusca"
+              label="Código, descrição, aplicação, marca ou categoria"
               append-icon="search"
               text
               solo
@@ -218,7 +249,6 @@
                     </v-list-item>
                   </v-list>
                 </v-menu>
-                
               </v-list-item-group>
             </v-list>
           </v-card>
@@ -244,7 +274,7 @@
                   <div>{{ 'Marca: ' + item.marca}}</div>
                 </v-card-text>
                 <v-card-actions>
-                  <v-btn color="primary" text>ADCIONAR COTAÇÃO</v-btn>
+                  <v-btn @click="addCotacao(item)" color="primary" text>ADCIONAR COTAÇÃO</v-btn>
 
                   <v-spacer></v-spacer>
 
@@ -310,13 +340,16 @@ export default {
       dialogTeamDev: false,
       dialogContato: false,
       dialogSubMenu: false,
+      dialogoCotacoes: false,
 
       produtosTodos: [],
       categoria: [],
       marca: [],
 
       dialogCarregandoDados: false,
-      textCarregandoDados: '',
+      textCarregandoDados: "",
+
+      busca: "",
 
       itemsMenu: [
         {
@@ -339,19 +372,28 @@ export default {
       model: 1,
       items: [
         {
-          src: require("@/assets/SLD1.jpg")
+          src: require("@/assets/SLD1.jpg"),
+          text: "TESTE"
         },
         {
-          src: require("@/assets/SLD2.jpg")
+          src: require("@/assets/SLD2.jpg"),
+          text: "TESTE"
         },
         {
-          src: require("@/assets/SLD3.jpg")
+          src: require("@/assets/SLD3.jpg"),
+          text: "TESTE"
         }
       ]
     };
   },
 
   methods: {
+    cotacoes() {
+      this.dialogoCotacoes = true;
+    },
+    addCotacao(item) {
+      console.log(item);
+    },
     sobreMktpecas() {
       this.dialogSobreMkt = true;
     },
@@ -369,14 +411,12 @@ export default {
     },
 
     todosProdutos() {
-     
       axios
         .get("/produtotodos")
         .then(response => {
           if (response.data.length > 0) {
             this.produtosTodos = [];
             this.produtosTodos = response.data;
-            
           }
         })
         .catch(e => {
@@ -384,22 +424,19 @@ export default {
         });
     },
 
-    produtosOferta(){
+    produtosOferta() {
       axios
         .get("/produtooferta")
         .then(response => {
           if (response.data.length > 0) {
             this.produtosTodos = [];
             this.produtosTodos = response.data;
-           
           }
         })
         .catch(e => {
           console.log(e);
         });
-
     },
-
 
     listarCategoria() {
       axios
@@ -428,13 +465,25 @@ export default {
     },
 
     listarItemCategoria(categoria) {
-      
       axios
         .post("/produtocategoria", { categoria: categoria })
         .then(response => {
           this.produtosTodos = [];
           this.produtosTodos = response.data;
-           this.dialogCarregandoDados = false;
+          this.dialogCarregandoDados = false;
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+
+    listarItemBusca() {
+      axios
+        .post("/buscarproduto", { busca: this.busca })
+        .then(response => {
+          this.produtosTodos = [];
+          this.produtosTodos = response.data;
+          this.dialogCarregandoDados = false;
         })
         .catch(e => {
           console.log(e);
@@ -442,7 +491,6 @@ export default {
     },
 
     listarItemMarca(marca) {
-      
       axios
         .post("/produtomarca", { marca: marca })
         .then(response => {
