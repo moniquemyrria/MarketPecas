@@ -121,6 +121,18 @@
                 <div class="overline mb-4">
                   <b>COTAÇÕES DE PRODUTOS</b>
                 </div>
+
+                <v-row>
+                  <v-col cols="12" sm="12">
+                    <v-btn
+                      style="width: 100%"
+                      large
+                      color="primary"
+                      @click="gerarCotacao"
+                    >GERAR COTAÇÃO</v-btn>
+                  </v-col>
+                </v-row>
+
                 <v-tabs background-color="white" color="primary">
                   <v-tab>MENOR PREÇO</v-tab>
                   <v-tab>CATEGORIA</v-tab>
@@ -504,6 +516,8 @@ export default {
   vue: new Vue(),
   data() {
     return {
+      cotacaoDados: [],
+
       timeout: 9000,
       color: null,
       colors: ["purple", "info", "success", "warning", "error"],
@@ -570,6 +584,43 @@ export default {
   },
 
   methods: {
+    gerarCotacao() {
+      this.dialogCarregandoDados = true;
+
+      let cotacao = "";
+      let produtosCot = [];
+
+      for (let i = 0; i < this.produtosCotacao.length; i++) {
+        if (i < this.produtosCotacao.length - 1) {
+          cotacao = cotacao.concat(
+            "'" + this.produtosCotacao[i].descricao + "',"
+          );
+        } else {
+          cotacao = cotacao.concat(
+            "'" + this.produtosCotacao[i].descricao + "'"
+          );
+        }
+      }
+
+      produtosCot.push({
+        descricao: cotacao
+      });
+      //console.log(produtosCot);
+      //return;
+
+      axios
+        .post("/cotacao", produtosCot)
+        .then(response => {
+          console.log(response.data);
+          this.cotacaoDados = [];
+          this.cotacaoDados = response.data;
+          this.dialogCarregandoDados = false;
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+
     increment(item) {
       for (let i = 0; i < this.produtosCotacao.length; i++) {
         if (parseInt(item.id) == parseInt(this.produtosCotacao[i].id)) {

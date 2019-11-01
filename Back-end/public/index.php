@@ -57,6 +57,8 @@ require __DIR__ . '/../src/models/contato/routes.php';
 
 require __DIR__ . '/../src/models/oferta/routes.php';
 
+require __DIR__ . '/../src/models/cotacao/routes.php';
+
 
 // Run app
 $app->run();
