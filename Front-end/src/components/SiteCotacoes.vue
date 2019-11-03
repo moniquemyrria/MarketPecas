@@ -1,5 +1,110 @@
 <template>
   <div id="app">
+    <!-- MENSAGEM PERGUNTA EXCLUIR PRODUTO -->
+    <v-dialog v-model="dialogExcluir" max-width="500px">
+      <v-card>
+        <v-card-title>
+          <span>Excluír Produto</span>
+
+          <div class="flex-grow-1" />
+        </v-card-title>
+        <v-card-text>
+          <span>
+            <b>Deseja relamente excluír todos os produto da Cotação?</b>
+          </span>
+          <br />
+        </v-card-text>
+        <v-card-actions>
+          <v-col cols="9" sm="12">
+            <v-row style="float: right; ">
+              <v-btn color="error" text @click="dialogExcluir = false">NÃO</v-btn>
+              <v-btn color="primary" text @click="cancelarCotacao">SIM</v-btn>
+            </v-row>
+          </v-col>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- MENSAGEM PERGUNTA VERIFICA USUARIO LOGADO -->
+    <v-dialog v-model="dialogSemUsuario" max-width="500px">
+      <v-card>
+        <v-card-title>
+          <span>É PRECISO REALIZAR LOGIN</span>
+
+          <div class="flex-grow-1" />
+        </v-card-title>
+        <v-card-text>
+          <span>
+            <b>Ops! Para salvar a cotação é necessário estar logado. Deseja realizar o Login no Marketpeças?</b>
+          </span>
+          <br />
+        </v-card-text>
+        <v-card-actions>
+          <v-col cols="9" sm="12">
+            <v-row style="float: right; ">
+              <v-btn color="error" text @click="dialogSemUsuario = false">NÃO</v-btn>
+              <v-btn color="primary" text @click="dialogLogin = true">SIM</v-btn>
+            </v-row>
+          </v-col>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- LOGIN CLIENTE -->
+    <v-dialog v-model="dialogLogin" max-width="500px">
+      <v-card style="height: 500px">
+        <v-card-title style="background: #0277BD; height: 160px">
+          
+          <h4>
+            <span class="spanTitulo">JÁ SOU USUÁRIO DO MARKETPEÇAS</span>
+            <br />
+            <b class="bTitulo">Olá :) ... Seja bem-vindo(a) mais uma vez!</b>&nbsp;
+          </h4>
+         
+        </v-card-title>
+        <v-card-text>
+          <v-form>
+            <v-container>
+              <v-row>
+                <v-col xl="12" sm="12">
+                  <v-row class="d-flex justify-sm-center">
+                    <v-col xl="9" sm="6">
+                      <v-text-field v-model="usuario.email" label="E-mail de acesso" outlined></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row style="margin-top: -5vh;" class="d-flex justify-sm-center">
+                    <v-col xl="9" sm="6">
+                      <v-text-field
+                        v-model="usuario.senha"
+                        label="Senha de acesso"
+                        outlined
+                        :append-icon="show1 ? 'visibility' : 'visibility_off'"
+                        :type="show1 ? 'text' : 'password'"
+                        name="input-10-1"
+                        @click:append="show1 = !show1"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                
+                  <v-row style="margin-top: -5vh;" class="d-flex justify-sm-center">
+                    <v-col xl="9" sm="6">
+                      <v-btn
+                        large
+                        min-width="310px"
+                        class="mt-12"
+                        @click="acessar"
+                        color="primary"
+                      >Acessar</v-btn>
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-form>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
     <!-- CARREGANDO DADOS -->
     <v-dialog v-model="dialogCarregandoDados" width="320">
       <v-card color="primary" dark>
@@ -18,8 +123,9 @@
       fullscreen
       hide-overlay
       transition="dialog-bottom-transition"
+      style="color: #FAFAFA"
     >
-      <v-card>
+      <v-card color="#FAFAFA">
         <v-toolbar flat style="height: -25px" dark color="primary">
           <v-img
             :src="require('@/assets/LOGO_2.png')"
@@ -47,8 +153,8 @@
 
         <v-card-text style="height: 100vh;">
           <v-row>
-            <v-col cols="12" sm="7">
-              <v-card :elevation="0" class="mx-auto">
+            <v-col cols="12" sm="6">
+              <v-card :elevation="0" class="mx-auto" color="#FAFAFA">
                 <div class="overline mb-2">
                   <b>MEUS PRODUTOS SELECIONADOS</b>
                 </div>
@@ -76,8 +182,8 @@
                             </v-list-item-subtitle>
                           </v-col>
 
-                          <v-col cols="10" sm="3" style="margin-left: -55px">
-                            <div style="margin-top: 10px; margin-left: 25px" class="overline mb-4">
+                          <v-col cols="10" sm="4" style="margin-left: -55px">
+                            <div style="margin-top: 10px; margin-left: 35px" class="overline mb-4">
                               <b>Quantidade</b>
                             </div>
 
@@ -116,70 +222,134 @@
                 </v-row>
               </v-card>
             </v-col>
-            <v-col cols="12" sm="5">
-              <v-card :elevation="0" class="mx-auto">
+            <v-col cols="12" sm="6">
+              <v-card :elevation="0" class="mx-auto" color="#FAFAFA">
                 <div class="overline mb-4">
-                  <b>COTAÇÕES DE PRODUTOS</b>
+                  <b>COTAÇÕES DE PRODUTOS ORDENADOS PELO MENOR VALOR TOTAL</b>
                 </div>
 
                 <v-row>
                   <v-col cols="12" sm="12">
                     <v-btn
-                      style="width: 100%"
+                      style="margin-left: 245px;"
+                      large
+                      color="error"
+                      @click="dialogExcluir = true"
+                    >CANCELAR COTAÇÃO</v-btn>
+                    <v-btn
+                      style="float: right;"
                       large
                       color="primary"
-                      @click="gerarCotacao"
-                    >GERAR COTAÇÃO</v-btn>
+                      @click="salvarCotacao"
+                    >SALVAR COTAÇÃO</v-btn>
                   </v-col>
                 </v-row>
 
-                <v-tabs background-color="white" color="primary">
-                  <v-tab>MENOR PREÇO</v-tab>
-                  <v-tab>CATEGORIA</v-tab>
-                  <v-tab>MARCA</v-tab>
+                <!-- v-for="(produtos, index) in produtosCommitTabela" :key="index" -->
+                <v-card
+                  v-for="(cotacao, index) in cotacaoDados"
+                  :key="index"
+                  :elevation="0"
+                  class="mx-auto"
+                  color="#FAFAFA"
+                >
+                  <v-card-text style="margin-left: -20px">
+                    <v-card class="mx-auto" min-width="630">
+                      <v-card-title>
+                        <v-row>
+                          <v-col cols="12" sm="10">{{'Loja ' + cotacao.nomeFant}}</v-col>
+                          <v-col v-if="cotacao.cobreOferta == 'S'" cols="11" sm="2">
+                            <v-row>
+                              <v-icon color="yellow darken-2">mdi-star-outline</v-icon>
+                              <div small class="grey--text align-end">
+                                <b style="font-size: 12px;">Cobre Oferta</b>
+                              </div>
+                            </v-row>
+                          </v-col>
+                        </v-row>
+                      </v-card-title>
 
-                  <v-tab-item v-for="n in 3" :key="n">
-                    <v-card :elevation="0" class="mx-auto">
                       <v-card-text>
-                        <v-container fluid>
-                          <v-container v-if="n == 1" style>
-                            <v-card color="#385F73" dark>
-                              <v-card-title class="headline">Unlimited music now</v-card-title>
+                        <div v-if="cotacao.whatsapp != ''" class="grey--text align-end">
+                          <v-icon color="green">mdi-whatsapp</v-icon>
+                          <b>{{ cotacao.whatsapp}}</b>
+                        </div>
+                        <div v-if="cotacao.facebook != ''" class="grey--text align-end">
+                          <v-icon color="primary">mdi-facebook</v-icon>
+                          <b>{{ cotacao.facebook}}</b>
+                        </div>
 
-                              <v-card-subtitle>Listen to your favorite artists and albums whenever and wherever, online and offline.</v-card-subtitle>
+                        <div class="grey--text align-end">
+                          <v-icon color="purple darken-2">mdi-domain</v-icon>
+                          <b>Endereço:</b>
+                          {{ ' ' + cotacao.logradouro + ' • Nº: ' + cotacao.numero + ' • Bairro: ' + cotacao.bairro }}
+                        </div>
 
-                              <v-card-actions>
-                                <v-btn text>Listen Now</v-btn>
-                              </v-card-actions>
-                            </v-card>
-                          </v-container>
-                          <v-container v-if="n == 2">
-                            <v-card color="#1F7087" dark>
-                              <v-card-title class="headline">Unlimited music now</v-card-title>
+                        <div>
+                          <v-icon color="blue-grey darken-2">mdi-credit-card</v-icon>
+                          <b>{{'Formas de Pagamentos: ' }}</b>
+                        </div>
+                        <div v-if="cotacao.fpDinheiro == 'S'">A Vista</div>
+                        <div v-if="cotacao.fpCredito == 'S'">Cartões de Créditos</div>
+                        <div v-if="cotacao.fpDebito == 'S'">Cartões de Débito</div>
+                        <div v-if="cotacao.fpBoleto == 'S'">Boletos</div>
+                        <div v-if="cotacao.fpCrediario == 'S'">Crediário Próprio</div>
+                      </v-card-text>
 
-                              <v-card-subtitle>Listen to your favorite artists and albums whenever and wherever, online and offline.</v-card-subtitle>
+                      <v-divider class="mx-4"></v-divider>
 
-                              <v-card-actions>
-                                <v-btn text>Listen Now</v-btn>
-                              </v-card-actions>
-                            </v-card>
-                          </v-container>
-                          <v-container v-if="n == 3">
-                            <v-card color="#006064" dark>
-                              <v-card-title class="headline">Unlimited music now</v-card-title>
+                      <v-card-title>Peças Selecionadas</v-card-title>
 
-                              <v-card-subtitle>Listen to your favorite artists and albums whenever and wherever, online and offline.</v-card-subtitle>
-
-                              <v-card-actions>
-                                <v-btn text>Listen Now</v-btn>
-                              </v-card-actions>
-                            </v-card>
-                          </v-container>
-                        </v-container>
+                      <v-card-text>
+                        <v-row>
+                          <v-col cols="6" sm="4">
+                            <b style="font-size: 12px;">DESCRIÇÃO</b>
+                          </v-col>
+                          <v-col cols="6" sm="2">
+                            <b style="font-size: 12px;">MARCA</b>
+                          </v-col>
+                          <v-col cols="6" sm="2">
+                            <b style="font-size: 12px;">QTDE</b>
+                          </v-col>
+                          <v-col cols="6" sm="2">
+                            <b style="font-size: 12px;">PREÇO (R$)</b>
+                          </v-col>
+                          <v-col cols="6" sm="2">
+                            <b style="font-size: 12px;">TOTAL (R$)</b>
+                          </v-col>
+                        </v-row>
+                        <v-row
+                          v-for="(cotacaoItem, index2) in cotacao.produtosCotacao"
+                          :key="index2"
+                        >
+                          <v-col cols="6" sm="4">{{cotacaoItem.descProduto}}</v-col>
+                          <v-col cols="6" sm="2">{{cotacaoItem.marca}}</v-col>
+                          <v-col cols="6" sm="2" class="--text align-end">{{cotacaoItem.quantidade}}</v-col>
+                          <v-col
+                            cols="6"
+                            sm="2"
+                          >{{cotacaoItem.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}}</v-col>
+                          <v-col
+                            cols="6"
+                            sm="2"
+                          >{{cotacaoItem.totalProduto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}}</v-col>
+                        </v-row>
+                        <br />
+                        <v-row>
+                          <v-col cols="6" sm="4"></v-col>
+                          <v-col cols="6" sm="2"></v-col>
+                          <v-col cols="6" sm="1"></v-col>
+                          <v-col cols="6" sm="3">
+                            <b style="font-size: 12px;">VALOR TOTAL (R$):</b>
+                          </v-col>
+                          <v-col cols="6" sm="2" style="font-size: 12px;">
+                            <b>{{cotacao.totalProdutosCotacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}}</b>
+                          </v-col>
+                        </v-row>
                       </v-card-text>
                     </v-card>
-                  </v-tab-item>
-                </v-tabs>
+                  </v-card-text>
+                </v-card>
               </v-card>
             </v-col>
           </v-row>
@@ -296,6 +466,7 @@
                 height="160"
                 width="160"
                 max-width="160"
+                @click="login"
               />
             </v-col>
             <v-col cols="12" sm="8" style="margin-top: 55px; margin-left: 140px;">
@@ -536,6 +707,9 @@ export default {
       dialogContato: false,
       dialogSubMenu: false,
       dialogoCotacoes: false,
+      dialogExcluir: false,
+      dialogSemUsuario: false,
+      dialogLogin: false,
 
       produtosTodos: [],
       categoria: [],
@@ -579,46 +753,142 @@ export default {
           src: require("@/assets/SLD3.jpg"),
           text: "TESTE"
         }
-      ]
+      ],
+
+      dadosUsuLogado: [],
+      usuario: {
+        id: null,
+        email: null,
+        senha: null
+      }
     };
   },
 
   methods: {
-    gerarCotacao() {
-      this.dialogCarregandoDados = true;
-
-      let cotacao = "";
-      let produtosCot = [];
-
+    on() {},
+    verificaQuantidadeProdutos: function() {
       for (let i = 0; i < this.produtosCotacao.length; i++) {
-        if (i < this.produtosCotacao.length - 1) {
-          cotacao = cotacao.concat(
-            "'" + this.produtosCotacao[i].descricao + "',"
-          );
-        } else {
-          cotacao = cotacao.concat(
-            "'" + this.produtosCotacao[i].descricao + "'"
-          );
+        //cotacao
+        for (let j = 0; j < this.cotacaoDados.length; j++) {
+          //produtos cotacao
+          for (
+            let k = 0;
+            k < this.cotacaoDados[j].produtosCotacao.length;
+            k++
+          ) {
+            if (
+              this.produtosCotacao[i].descricao ==
+              this.cotacaoDados[j].produtosCotacao[k].descProduto
+            ) {
+              this.cotacaoDados[j].produtosCotacao[
+                k
+              ].quantidade = this.produtosCotacao[i].quantidade;
+            }
+          }
         }
       }
+    },
+    somaTotalCotacaoProduto() {
+      for (let j = 0; j < this.cotacaoDados.length; j++) {
+        //produtos cotacao
+        for (let k = 0; k < this.cotacaoDados[j].produtosCotacao.length; k++) {
+          this.cotacaoDados[j].produtosCotacao[k].totalProduto =
+            parseFloat(this.cotacaoDados[j].produtosCotacao[k].quantidade) *
+            parseFloat(this.cotacaoDados[j].produtosCotacao[k].valor);
 
-      produtosCot.push({
-        descricao: cotacao
+          this.cotacaoDados[j].totalProdutosCotacao =
+            parseFloat(this.cotacaoDados[j].totalProdutosCotacao) +
+            parseFloat(this.cotacaoDados[j].produtosCotacao[k].valor);
+        }
+      }
+    },
+
+    ordenarCotacaoMenorValor() {
+      this.cotacaoDados.sort(function(a, b) {
+        if (a.totalProdutosCotacao > b.totalProdutosCotacao) {
+          return 1;
+        }
+        if (a.totalProdutosCotacao < b.totalProdutosCotacao) {
+          return -1;
+        }
+        // a must be equal to b
+        return 0;
       });
-      //console.log(produtosCot);
-      //return;
+    },
+    gerarCotacao() {
+      if (this.produtosCotacao.length > 0) {
+        this.dialogCarregandoDados = true;
+        this.textCarregandoDados = "Gerando cotação dos Produtos selecionados.";
 
-      axios
-        .post("/cotacao", produtosCot)
-        .then(response => {
-          console.log(response.data);
-          this.cotacaoDados = [];
-          this.cotacaoDados = response.data;
-          this.dialogCarregandoDados = false;
-        })
-        .catch(e => {
-          console.log(e);
+        let cotacao = "";
+        let produtosCot = [];
+
+        for (let i = 0; i < this.produtosCotacao.length; i++) {
+          if (i < this.produtosCotacao.length - 1) {
+            cotacao = cotacao.concat(
+              "'" + this.produtosCotacao[i].descricao + "',"
+            );
+          } else {
+            cotacao = cotacao.concat(
+              "'" + this.produtosCotacao[i].descricao + "'"
+            );
+          }
+        }
+
+        produtosCot.push({
+          descricao: cotacao
         });
+
+        axios
+          .post("/cotacao", produtosCot)
+          .then(response => {
+            this.cotacaoDados = [];
+            this.cotacaoDados = response.data;
+            this.dialogCarregandoDados = false;
+
+            this.verificaQuantidadeProdutos();
+            this.somaTotalCotacaoProduto();
+            this.ordenarCotacaoMenorValor();
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      }
+    },
+
+    salvarCotacao() {
+      this.dadosUsuLogado = JSON.parse(sessionStorage.getItem("usuario"));
+      console.log(this.dadosUsuLogado);
+      if (this.dadosUsuLogado == null) {
+        this.dialogSemUsuario = true;
+      }
+
+      //console.log(this.cotacaoDados);
+      // axios
+      //   .post("/cotacao", this.produto)
+      //   .then(response => {
+      //     if (response.data[0].produto.length > 0) {
+      //       this.text = response.data[0].mensagem;
+      //       this.colors = "blue";
+      //       this.snack("top", "right");
+      //     }
+      //     this.close();
+      //     this.initialize();
+      //   })
+      //   .catch(e => {
+      //     console.log(e);
+      //   });
+    },
+    cancelarCotacao() {
+      this.produtosCotacao = [];
+      this.cotacaoDados = [];
+      this.colors = "info";
+      this.timeout = 2000;
+      this.snack("bottom", "center");
+      this.text = "Todos os produtos foram excluídos da Cotação.";
+      this.error = true;
+      this.dialogoCotacoes = false;
+      this.dialogExcluir = false;
     },
 
     increment(item) {
@@ -647,6 +917,7 @@ export default {
         this.error = true;
       } else {
         this.dialogoCotacoes = true;
+        this.gerarCotacao();
       }
     },
 
@@ -671,15 +942,15 @@ export default {
       this.text = "Produto excluído da cotação.";
       this.error = true;
 
+      this.gerarCotacao();
+
       if (this.produtosCotacao.length == 0) {
         this.dialogoCotacoes = false;
       }
     },
 
     addProdutoCotacao(item) {
-      console.log(this.verificaProdutosInseridosCotacao(item));
       if (this.verificaProdutosInseridosCotacao(item) == true) {
-        console.log("entrou");
         for (let i = 0; i < this.produtosCotacao.length; i++) {
           if (parseInt(item.id) == parseInt(this.produtosCotacao[i].id)) {
             this.produtosCotacao[i].quantidade =
