@@ -289,6 +289,7 @@
                                       placeholder="Informe o telefone"
                                       :counter="14"
                                       required
+                                      v-mask="maskTel"
                                     />
                                   </v-col>
                                 </v-row>
@@ -303,6 +304,7 @@
                                       placeholder="Informe o What's App"
                                       :counter="14"
                                       required
+                                      v-mask="maskTel"
                                     />
                                   </v-col>
                                 </v-row>
@@ -470,10 +472,41 @@
                 <v-row class="d-flex justify-sm-center" style="margin-top: -3vh;">
                   <v-col cols="9" sm="10" style="margin-top: -3vh;">
                     <v-text-field
+                      v-model="cliente.emailConfirmacao"
+                      style="margin-top: 50px; "
+                      prepend-icon="email"
+                      label="Confirmação de E-mail *"
+                      class="mx-4"
+                      placeholder="seuemail@email.com"
+                      :counter="50"
+                      required
+                    />
+                  </v-col>
+                </v-row>
+
+                <v-row class="d-flex justify-sm-center">
+                  <v-col cols="9" sm="10" style="margin-top: -5vh;">
+                    <v-text-field
+                      v-model="cliente.telefone"
+                      style="margin-top: 50px; "
+                      prepend-icon="phone"
+                      label="Telefone"
+                      class="mx-4"
+                      placeholder="Informe o nº de seu Celular"
+                      :counter="14"
+                      required
+                      v-mask="maskTel"
+                    />
+                  </v-col>
+                </v-row>
+
+                <v-row class="d-flex justify-sm-center" style="margin-top: -3vh;">
+                  <v-col cols="9" sm="10" style="margin-top: -3vh;">
+                    <v-text-field
                       v-model="cliente.senha"
                       style="margin-top: 50px; "
                       prepend-icon="vpn_key"
-                      label="Normal with hint text"
+                      label="Senha"
                       class="mx-4"
                       placeholder="Informe uma senha para acesso"
                       :counter="20"
@@ -493,7 +526,7 @@
                       <v-select
                         v-model="cliente.notificacao"
                         :items="itemsOferta"
-                        label="Deseja receber Notificações de ofertas no aplicativo? *"
+                        label="Deseja receber Notificações de ofertas por e-mail e SMS? *"
                         menu-props="auto"
                         hide-details
                         prepend-icon="assignment_turned_in"
@@ -612,6 +645,7 @@ import Vue from "vue";
 import Vuetify from "vuetify";
 import "vuetify/dist/vuetify.css";
 import VAFooter from "@/components/Footer";
+import { mask } from "vue-the-mask";
 Vue.component("reverse", {
   // ...
   //template: '<p v-html="reverseMessage(msgreverse)"></p>'  // DON'T DO THIS
@@ -625,8 +659,14 @@ export default {
   components: {
     "va-footer": VAFooter
   },
+  directives: {
+    mask
+  },
   data() {
     return {
+      maskTel: "(##)#####-####",
+      maskCep: "#####-###",
+
       color: "#673AB7",
       show1: false,
       show2: true,
@@ -655,9 +695,14 @@ export default {
         nome: "",
         sobrenome: "",
         email: "",
+        emailConfirmacao: "",
         senha: "",
         notificacao: null,
-        idUsuario: null
+        idUsuario: null,
+        telefone: null,
+        wapp: null,
+        fb: null,
+        idContato: null
       },
 
       empresa: {
@@ -750,16 +795,14 @@ export default {
               this.text = response.data[0].mensagem;
               this.colors = "green";
               this.snack("top", "center");
-             
+
               this.usuario.id = response.data[0].usuario[0].id;
-              
-               if (response.data[0].usuario[0].tipo_pessoa == 'F'){
-                 this.acessaMenuCliente();
-               }else{
-                 this.acessaMenuEmpresa();
+
+              if (response.data[0].usuario[0].tipo_pessoa == "F") {
+                this.acessaMenuCliente();
+              } else {
+                this.acessaMenuEmpresa();
               }
-              
-              
             } else {
               //sessionStorage.clear();
               this.text = response.data[0].mensagem;
@@ -773,38 +816,40 @@ export default {
       }
     },
 
-    acessaMenuEmpresa(){
-       axios
+    acessaMenuEmpresa() {
+      axios
         .get("/validadadosempresa/" + this.usuario.id)
         .then(response => {
-          if (response.data[0].empresa.length > 0){
+          if (response.data[0].empresa.length > 0) {
             sessionStorage.clear();
-            sessionStorage.setItem("usuario", JSON.stringify(response.data[0].empresa));
+            sessionStorage.setItem(
+              "usuario",
+              JSON.stringify(response.data[0].empresa)
+            );
             this.$router.push({ path: "/PerfilUsuarioEmpresa" });
           }
-          
         })
         .catch(e => {
           console.log(e);
         });
-      
     },
 
-    acessaMenuCliente(){
-       axios
+    acessaMenuCliente() {
+      axios
         .get("/validadadoscliente/" + this.usuario.id)
         .then(response => {
-          if (response.data[0].cliente.length > 0){
+          if (response.data[0].cliente.length > 0) {
             sessionStorage.clear();
-            sessionStorage.setItem("usuario", JSON.stringify(response.data[0].cliente));
+            sessionStorage.setItem(
+              "usuario",
+              JSON.stringify(response.data[0].cliente)
+            );
             this.$router.push({ path: "/PerfilUsuarioCliente" });
           }
-          
         })
         .catch(e => {
           console.log(e);
         });
-      
     },
 
     snack(...args) {
@@ -843,7 +888,7 @@ export default {
       if (
         this.usuario.email == "" ||
         this.usuario.email == null ||
-        (this.usuario.email.length <= 0 || this.usuario.email.length > 20)
+        this.usuario.email.length <= 0
       ) {
         this.msgAlertCamposPreenchidosUsuario();
         return true;
@@ -852,7 +897,7 @@ export default {
       if (
         this.usuario.senha == "" ||
         this.usuario.senha == null ||
-        (this.usuario.senha.length <= 0 || this.usuario.senha.length > 20)
+        this.usuario.senha.length <= 0
       ) {
         this.msgAlertCamposPreenchidosUsuario();
         return true;
@@ -884,6 +929,7 @@ export default {
         this.msgAlertCamposPreenchidos();
         return true;
       }
+
       if (
         this.cliente.senha == "" ||
         (this.cliente.senha.length <= 0 || this.cliente.senha.length > 20)
@@ -897,6 +943,16 @@ export default {
         this.cliente.notificacao.length <= 0
       ) {
         this.msgAlertCamposPreenchidos();
+        return true;
+      }
+
+      if (this.cliente.email != this.cliente.emailConfirmacao) {
+        this.colors = "warning";
+        this.timeout = 5000;
+        this.snack("bottom", "center");
+        this.text =
+          "Ops! O e-mail e e-mail de confirmação informados não são correspondentes.";
+        this.error = true;
         return true;
       }
     },
@@ -1095,14 +1151,25 @@ export default {
                 if (response.data[0].idUsuario.length > 0) {
                   this.cliente.idUsuario = response.data[0].idUsuario;
                   axios
-                    .post("/cliente", this.cliente)
+                    .post("/contato", this.cliente)
                     .then(response => {
-                      if (response.data.length > 0) {
-                        this.text = response.data[0].mensagem;
-                        this.colors = "green";
-                        this.snack("top", "center");
-                        this.closeDialogCliente();
-                        this.limpaCamposCliente();
+                      if (response.data[0].idContato.length > 0) {
+                        this.cliente.idContato = response.data[0].idContato;
+
+                        axios
+                          .post("/cliente", this.cliente)
+                          .then(response => {
+                            if (response.data.length > 0) {
+                              this.text = response.data[0].mensagem;
+                              this.colors = "green";
+                              this.snack("top", "center");
+                              this.closeDialogCliente();
+                              this.limpaCamposCliente();
+                            }
+                          })
+                          .catch(e => {
+                            console.log(error);
+                          });
                       }
                     })
                     .catch(e => {

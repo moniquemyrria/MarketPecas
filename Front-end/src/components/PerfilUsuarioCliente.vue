@@ -34,33 +34,45 @@
                 <v-row>
                   <v-col cols="9" sm="6">
                     <v-col cols="12" sm="12">
+                      <h4
+                        class="title font-weight-light"
+                      >{{ usuario.nome + ' ' + usuario.sobrenome}}</h4>
 
-                        <h4
-                          class="title font-weight-light"
-                        >{{ usuario.nome + ' ' + usuario.sobrenome}}</h4>
+                      <p class="category d-inline-flex font-weight-light">
+                        <v-icon color="grey" small>mdi-email</v-icon>
+                        <span class="grey--text">{{ ' ' + usuario.email}}</span>
+                        &nbsp;
+                      </p>
 
-                        <p class="category d-inline-flex font-weight-light">
-                          <v-icon color="grey" small>mdi-email</v-icon>
-                          <span class="grey--text">{{ ' ' + usuario.email}}</span>
-                          &nbsp;
-                        </p>
-
-                        <template v-slot:actions>
-                          <span
-                            class="caption grey--text font-weight-light"
-                          >Obrigada por acessar o MarketPeças</span>
-                        </template>
-
+                      <template v-slot:actions>
+                        <span
+                          class="caption grey--text font-weight-light"
+                        >Obrigada por acessar o MarketPeças</span>
+                      </template>
                     </v-col>
                   </v-col>
                   <v-col cols="9" sm="5" style="margin-left: 10px;">
                     Dados para Edição
                     <v-row>
-                      <v-col cols="9" sm="12" style="margin-top: 0vh;">
+                      <v-col cols="9" sm="12">
+                        <v-col cols="9" sm="12">
+                          <v-text-field
+                            v-model="usuario.telefone"
+                            prepend-icon="phone"
+                            label="Telefone"
+                            placeholder="Informe o telefone"
+                            :counter="14"
+                            required
+                            v-mask="maskTel"
+                          />
+                        </v-col>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="9" sm="12" style="margin-top: -6vh;">
                         <v-col cols="9" sm="12">
                           <v-text-field
                             v-model="usuario.senha"
-                            style="margin-top: 50px; "
                             prepend-icon="vpn_key"
                             label="Senha"
                             placeholder="Informe uma senha para acesso"
@@ -130,9 +142,13 @@ export default {
   name: "nome",
   vuetify: new Vuetify(),
   vue: new Vue(),
+  directives: {
+    mask
+  },
   data() {
     return {
       show1: false,
+      maskTel: "(##)#####-####",
 
       timeout: 9000,
       color: null,
@@ -154,13 +170,18 @@ export default {
       usuario: {
         idUsuario: null,
         idCliente: null,
+        idContato: null,
         email: null,
         senha: null,
         tipo_pessoa: null,
         ativo: null,
         oferta_app: null,
         nome: null,
-        sobrenome: null
+        sobrenome: null,
+        telefone: null,
+        wapp: null,
+        fb: null,
+        idContato: null
       }
     };
   },
@@ -198,7 +219,7 @@ export default {
         });
     },
     carregarTela() {
-      this.dadosUsuLogado = JSON.parse(sessionStorage.getItem('usuario'));
+      this.dadosUsuLogado = JSON.parse(sessionStorage.getItem("usuario"));
       axios
         .get("/pesquisaUsuarioClienteId/" + this.dadosUsuLogado[0].idUsuario)
         .then(response => {

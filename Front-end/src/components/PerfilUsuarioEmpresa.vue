@@ -164,8 +164,9 @@
                           label="Telefone"
                           class="mx-4"
                           placeholder="Informe o telefone"
-                          :counter="14"
+                          :counter="13"
                           required
+                          v-mask="maskTel"
                         />
                       </v-col>
                     </v-row>
@@ -180,6 +181,7 @@
                           placeholder="Informe o What's App"
                           :counter="14"
                           required
+                          v-mask="maskCel"
                         />
                       </v-col>
                     </v-row>
@@ -297,10 +299,15 @@ export default {
   name: "perfilUsuarioEmpresa",
   vuetify: new Vuetify(),
   vue: new Vue(),
+  directives: {
+    mask
+  },
   data() {
     return {
       show1: false,
       password: "Password",
+      maskTel: "(##)####-####",
+      maskCel: "(##)#####-####",
 
       timeout: 9000,
       color: null,

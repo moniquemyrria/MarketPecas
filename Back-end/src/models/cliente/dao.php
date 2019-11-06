@@ -16,18 +16,21 @@ function cadastrarCliente($db, $cliente){
             , id_usuario
             , nome
             , sobrenome
+            , id_contato
         )
         VALUES(
             :notificacao
             , :idUsuario
             , :nome
             , :sobrenome
+            , :idContato
         )
     ");
     $str->bindParam("notificacao", $notificacao);
     $str->bindParam("idUsuario", $cliente["idUsuario"]);
     $str->bindParam("nome", $cliente["nome"]);
     $str->bindParam("sobrenome", $cliente["sobrenome"]);
+    $str->bindParam("idContato", $cliente["idContato"]);
     $str->execute();
     
     return $cliente;
@@ -59,6 +62,14 @@ function alterarDadosCliente($db, $usuario){
     $strr->bindParam("id", $usuario["idUsuario"]);
     $strr->bindParam("ofertaApp", $notificacao);
     $strr->execute();
+
+    $strrr = $db->prepare(
+        "UPDATE contato SET telefone = :telefone
+        where id = :id
+    ");
+    $strrr->bindParam("id", $usuario["idContato"]);
+    $strrr->bindParam("telefone", $usuario["telefone"]);
+    $strrr->execute();
 
     return;
 }

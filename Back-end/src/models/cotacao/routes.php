@@ -13,8 +13,12 @@ $app->post('/cotacao', function ($request, $response, $args) {
 });
 
 $app->post('/cotacaoregistrar', function ($request, $response, $args) {
-    $modelCotacao = $request->getParsedBody();
-    $cotacao = cadastrarCotacao($this->db, $modelCotacao);
+    $modelDadosCotacao = $request->getParsedBody();
+    $dadosCliente = $modelDadosCotacao['cliente'];
+    $dadosCotacao = $modelDadosCotacao['cotacao'];
+
+    
+    $cotacao = cadastrarCotacao($this->db,  $dadosCliente, $dadosCotacao);
     $result = array();
     $resultItem = array(
         "cotacao" => $cotacao,

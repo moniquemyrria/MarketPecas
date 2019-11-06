@@ -54,13 +54,11 @@
     <v-dialog v-model="dialogLogin" max-width="500px">
       <v-card style="height: 500px">
         <v-card-title style="background: #0277BD; height: 160px">
-          
           <h4>
             <span class="spanTitulo">JÁ SOU USUÁRIO DO MARKETPEÇAS</span>
             <br />
             <b class="bTitulo">Olá :) ... Seja bem-vindo(a) mais uma vez!</b>&nbsp;
           </h4>
-         
         </v-card-title>
         <v-card-text>
           <v-form>
@@ -85,7 +83,7 @@
                       ></v-text-field>
                     </v-col>
                   </v-row>
-                
+
                   <v-row style="margin-top: -5vh;" class="d-flex justify-sm-center">
                     <v-col xl="9" sm="6">
                       <v-btn
@@ -486,7 +484,7 @@
                     </v-badge>
                   </v-btn>
                 </template>
-                <span>Itens para Cotação</span>
+                <span>Realizar Cotação</span>
               </v-tooltip>
             </v-col>
 
@@ -612,7 +610,9 @@
                 <v-img class="white--text align-end" height="150px" :src="item.imagem"></v-img>
                 <v-card-title>{{ item.descricao}}</v-card-title>
 
-                <v-card-subtitle class="pb-0">{{'R$: ' + item.preco}}</v-card-subtitle>
+                <v-card-subtitle class="error--text pb-0">
+                  <b>{{'R$: ' + item.preco}}</b>
+                </v-card-subtitle>
 
                 <v-card-text class="text--primary">
                   <div>{{'Cod: '+ item.codigo}}</div>
@@ -702,6 +702,7 @@ export default {
       x: null,
 
       show: false,
+      show1: false,
       dialogSobreMkt: false,
       dialogTeamDev: false,
       dialogContato: false,
@@ -759,13 +760,95 @@ export default {
       usuario: {
         id: null,
         email: null,
-        senha: null
+        senha: null,
+        idCliente: null,
+        nome: null,
+        sobrenome: null
       }
     };
   },
 
   methods: {
     on() {},
+    msgAlertCamposPreenchidos() {
+      this.colors = "warning";
+      this.timeout = 5000;
+      this.snack("bottom", "center");
+      this.text =
+        "Ops! Há campos brigatórios não preenchidos, ou algum dado informado está maior que o permitido para o campo.";
+      this.error = true;
+    },
+
+    msgAlertCamposPreenchidosUsuario() {
+      this.colors = "warning";
+      this.timeout = 5000;
+      this.snack("bottom", "center");
+      this.text = "Ops! Informe seu e-email e senha para realizar o login.";
+      this.error = true;
+    },
+
+    validacaoCamposPreenchidosUsuario() {
+      if (
+        this.usuario.email == "" ||
+        this.usuario.email == null ||
+        (this.usuario.email.length <= 0 || this.usuario.email.length > 20)
+      ) {
+        this.msgAlertCamposPreenchidosUsuario();
+        return true;
+      }
+
+      if (
+        this.usuario.senha == "" ||
+        this.usuario.senha == null ||
+        (this.usuario.senha.length <= 0 || this.usuario.senha.length > 20)
+      ) {
+        this.msgAlertCamposPreenchidosUsuario();
+        return true;
+      }
+    },
+
+    acessar: function() {
+      if (!this.validacaoCamposPreenchidosUsuario()) {
+        sessionStorage.clear();
+        axios
+          .post("/validaUsuario", this.usuario)
+          .then(response => {
+            if (response.data[0].usuario.length > 0) {
+              if (response.data[0].usuario[0].tipo_pessoa == "F") {
+                this.text = response.data[0].mensagem;
+                this.colors = "green";
+                this.snack("top", "center");
+                sessionStorage.clear();
+                sessionStorage.setItem(
+                  "usuario",
+                  JSON.stringify(response.data[0].usuario)
+                );
+                this.usuario.id = response.data[0].usuario[0].id;
+                this.carregarDadosCliente();
+                this.dialogLogin = false;
+                this.dialogSemUsuario = false;
+              } else {
+                this.colors = "error";
+                this.timeout = 2000;
+                this.snack("bottom", "center");
+                this.text =
+                  "Usuário informado invalido ou não é um cliente cadastrado.";
+                this.error = true;
+                sessionStorage.clear();
+                return;
+              }
+            } else {
+              sessionStorage.clear();
+              this.text = response.data[0].mensagem;
+              this.colors = "red";
+              this.snack("bottom", "center");
+            }
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      }
+    },
     verificaQuantidadeProdutos: function() {
       for (let i = 0; i < this.produtosCotacao.length; i++) {
         //cotacao
@@ -858,26 +941,51 @@ export default {
 
     salvarCotacao() {
       this.dadosUsuLogado = JSON.parse(sessionStorage.getItem("usuario"));
-      console.log(this.dadosUsuLogado);
       if (this.dadosUsuLogado == null) {
         this.dialogSemUsuario = true;
-      }
+        this.acessar();
+      } else {
+        this.dadosUsuLogado = JSON.parse(sessionStorage.getItem("usuario"));
+        this.usuario.id = this.dadosUsuLogado[0].id;
 
-      //console.log(this.cotacaoDados);
-      // axios
-      //   .post("/cotacao", this.produto)
-      //   .then(response => {
-      //     if (response.data[0].produto.length > 0) {
-      //       this.text = response.data[0].mensagem;
-      //       this.colors = "blue";
-      //       this.snack("top", "right");
-      //     }
-      //     this.close();
-      //     this.initialize();
-      //   })
-      //   .catch(e => {
-      //     console.log(e);
-      //   });
+        axios
+          .get("/pesquisaUsuarioClienteId/" + this.dadosUsuLogado[0].id)
+          .then(response => {
+            this.usuario.email = this.dadosUsuLogado[0].email;
+            this.usuario.idCliente = response.data[0].idCliente;
+            this.usuario.nome = response.data[0].nome;
+            this.usuario.senha = null;
+            this.usuario.sobrenome = response.data[0].sobrenome;
+            axios
+              .post("/cotacaoregistrar", {
+                cliente: this.usuario,
+                cotacao: this.cotacaoDados
+              })
+              .then(response => {
+                this.dialogoCotacoes = false;
+                this.dialogExcluir = false;
+                this.cotacaoDados = [];
+                this.produtosCotacao = [];
+
+                this.colors = "green";
+                this.timeout = 2000;
+                this.snack("bottom", "center");
+                this.text = "Cotação Salva com sucesso.";
+                this.error = true;
+                // if (response.data[0].produto.length > 0) {
+                //   this.text = response.data[0].mensagem;
+                //   this.colors = "blue";
+                //   this.snack("top", "right");
+                // }
+              })
+              .catch(e => {
+                console.log(e);
+              });
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      }
     },
     cancelarCotacao() {
       this.produtosCotacao = [];
@@ -910,7 +1018,7 @@ export default {
 
     cotacoes() {
       if (this.produtosCotacao.length == 0) {
-        this.colors = "info";
+        this.colors = "warning";
         this.timeout = 2000;
         this.snack("bottom", "center");
         this.text = "Ops. Ainda Não há produtos inseridos a cotação.";
@@ -1012,6 +1120,20 @@ export default {
             this.produtosTodos = [];
             this.produtosTodos = response.data;
           }
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+
+    carregarDadosCliente() {
+      axios
+        .get("/pesquisaUsuarioClienteId/" + this.usuario.id)
+        .then(response => {
+          this.usuario.idCliente = response.data[0].idCliente;
+          this.usuario.nome = response.data[0].nome;
+          this.usuario.senha = null;
+          this.usuario.sobrenome = response.data[0].sobrenome;
         })
         .catch(e => {
           console.log(e);

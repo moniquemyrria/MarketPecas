@@ -18,6 +18,18 @@ $app->post('/empresa', function ($request, $response, $args) {
     return $this->response->withJson($result);
 });
 
+$app->put('/empresa', function ($request, $response, $args) {
+    $modelEmpresa = $request->getParsedBody();
+    $empresa = alterarDadosEmpresa($this->db, $modelEmpresa);
+    $result = array();
+    $resultItem = array(
+        "empresa" => $empresa,
+        "mensagem" => "Os dados de sua Empresa foram alterados com sucesso. Obrigada por escolher o MarketPlace. Você já pode realizar seu Login."
+    );
+    array_push($result,$resultItem);
+    return $this->response->withJson($result);
+});
+
 $app->get('/validadadosempresa/{idUsuario}', function ($request, $response, $args) {
     $empresa = validaDadosEmpresa($this->db, $args['idUsuario']);
     $result = array();

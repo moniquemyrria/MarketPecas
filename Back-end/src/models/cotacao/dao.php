@@ -108,25 +108,67 @@ function listarCotacaoMenorPreco($db, $produtos){
     
 }
 
-function cadastrarCotacao($db, $cotacao){  
+function cadastrarCotacao($db, $dadosCliente, $dadosCotacao){  
 
-   
+    //salvando dados cotacao
     $str = $db->prepare(
         "INSERT INTO COTACAO(
-            id_usuario
-            , valor_total_cotacao
+            id_cliente
         )
         VALUES( 
-            :idUsuario
-            , :valorTotalCotacao
+            :idCliente
         )
-     ");
-   
-    $str->bindParam("idEmpresa", $cotacao["valorTotalCotacao"]);
-    $str->bindParam("valorTotalCotacao", $cotacao["valorTotalCotacao"]);
+        ");
+
+    $str->bindParam("idCliente", $dadosCliente["idCliente"]);
     $str->execute();
     $idCotacao = $db->lastInsertid();
 
-    return $cotacao;
+    foreach($dadosCotacao as $key => $item){
+
+        $strr = $db->prepare(
+            "INSERT INTO EMPRESA_COTACAO(
+                id_cotacao
+                , id_empresa
+                , valor_total_cotacao
+            )
+            VALUES( 
+                :idCotacao
+                , :idEmpresa
+                , :valorTotalCotacao
+            )
+        ");
+        $strr->bindParam("idCotacao",           $idCotacao);
+        $strr->bindParam("idEmpresa",           $item["idEmpresa"]);
+        $strr->bindParam("valorTotalCotacao",   $item["totalProdutosCotacao"]);
+        $strr->execute();
+        $idEmpresaCotacao = $db->lastInsertid();
+        
+        //itens da cotacao - produtos
+        foreach($item['produtosCotacao'] as $key => $itemP){
+            $strrr = $db->prepare(
+                "INSERT INTO ITENS_COTACAO(
+                    id_empresa_cotacao
+                    , id_produto
+                    , quantidade
+                    , valor_total_produto
+                )
+                VALUES( 
+                    :idEmpresaCotacao
+                    , :idProduto
+                    , :quantidade
+                    , :valorTotalProduto
+                )
+            ");
+            $strrr->bindParam("idEmpresaCotacao",   $idEmpresaCotacao);
+            $strrr->bindParam("idProduto",          $itemP["idProduto"]);
+            $strrr->bindParam("quantidade",         $itemP["quantidade"]);
+            $strrr->bindParam("valorTotalProduto",  $itemP["totalProduto"]);
+            $strrr->execute();
+        }
+
+    }
+
+    return "";//$cotacao;
 }
 
