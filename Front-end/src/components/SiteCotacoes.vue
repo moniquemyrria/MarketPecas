@@ -702,6 +702,7 @@ export default {
       x: null,
 
       show: false,
+      show1: false,
       dialogSobreMkt: false,
       dialogTeamDev: false,
       dialogContato: false,
