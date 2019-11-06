@@ -148,6 +148,7 @@
                           </v-toolbar-title>
                         </v-col>
                         <v-col cols="9" sm="2" style>
+
                           <v-btn
                             style="margin-top: 35px"
                             color="primary"
@@ -156,6 +157,14 @@
                             class="mb-2"
                             @click="novoProduto"
                           >NOVA OFERTA</v-btn>
+                          <v-btn
+                            style="margin-top: 35px"
+                            color="primary"
+                            dark
+                            large
+                            class="mb-2"
+                            @click="smsOfertaEnvio()"
+                          >OFERTA SMS</v-btn>
                         </v-col>
                       </v-row>
                     </v-col>
@@ -305,6 +314,38 @@
 </template>
 
 <script>
+const AWS = require('aws-sdk');
+
+const credentials = {
+    id: 'AKIAXAR4XEUNVZCYTQ7U',
+    secret: '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'
+}
+
+// Set region
+AWS.config.update({
+    region: 'us-east-1',
+    accessKeyId: credentials.id,
+    secretAccessKey: credentials.secret
+
+});
+// Create publish parameters
+
+let params = {
+    Message: 'hehe, somos fodas!', /* required */
+    PhoneNumber: '+5592981526525',
+};
+
+function sendSMS(params) {
+    var publishTextPromise = new AWS.SNS().publish(params).promise();
+    // Handle promise's fulfilled/rejected states
+    publishTextPromise.then(function (data) {
+        console.log("MessageID is " + data.MessageId);
+    }).catch(function (err) {
+        console.error(err, err.stack);
+    });
+}
+
+//sendSMS(params);
 var fileUpload;
 var file;
 import axios from "../axios/client";
@@ -395,6 +436,7 @@ export default {
   },
 
   watch: {
+    
     dialog(val) {
       val || this.close();
     },
@@ -417,6 +459,9 @@ export default {
   },
 
   methods: {
+    smsOfertaEnvio(){
+      sendSMS(params);
+    },
     cancelarProdutoOferta() {
       this.dialogNovoPrecoProduto = false;
     },
