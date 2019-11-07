@@ -32,5 +32,17 @@ function cadastrarContato($db, $contato){
     return $result;
 }
 
+function listarContatosSMSOferta($db)
+{
+    $str = $db->prepare(
+        "SELECT '+55'+ replace(replace(replace((co.telefone),'(',''),')',''),'-','') as PhoneNumber  from cliente c
+        inner join contato co on (co.id = c.id_contato)
+        where co.telefone is not null
+        and c.oferta_app = 'S'
+    ");
+    $str->execute();
+    return $str->fetchAll();
+}
+
 
 

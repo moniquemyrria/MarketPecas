@@ -2,6 +2,7 @@
   <div id="app">
     <va-appbar-menu-emp />
     <v-app>
+      
       <v-container style="float: right; width: 165vh; margin-top: 10vh">
         <!-- CARREGANDO DADOS -->
         <v-dialog v-model="dialogCarregandoDados" width="320">
@@ -148,7 +149,6 @@
                           </v-toolbar-title>
                         </v-col>
                         <v-col cols="9" sm="2" style>
-
                           <v-btn
                             style="margin-top: 35px"
                             color="primary"
@@ -157,14 +157,7 @@
                             class="mb-2"
                             @click="novoProduto"
                           >NOVA OFERTA</v-btn>
-                          <v-btn
-                            style="margin-top: 35px"
-                            color="primary"
-                            dark
-                            large
-                            class="mb-2"
-                            @click="smsOfertaEnvio()"
-                          >OFERTA SMS</v-btn>
+                          
                         </v-col>
                       </v-row>
                     </v-col>
@@ -294,6 +287,10 @@
                   <v-btn style="margin-left: 10px;" fab x-small outlined dark color="error">
                     <v-icon @click="deletarItem(item)">delete</v-icon>
                   </v-btn>
+
+                  <v-btn style="margin-left: 10px;" fab x-small outlined dark color="primary">
+                    <v-icon @click="smsOfertaEnvio()">mdi-android-messages</v-icon>
+                  </v-btn>
                 </template>
               </v-data-table>
               <br />
@@ -314,34 +311,35 @@
 </template>
 
 <script>
-const AWS = require('aws-sdk');
+const AWS = require("aws-sdk");
 
 const credentials = {
-    id: 'AKIAXAR4XEUNVZCYTQ7U',
-    secret: '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'
-}
+  id: "AKIAXAR4XEUNVZCYTQ7U",
+  secret: "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"
+};
 
 // Set region
 AWS.config.update({
-    region: 'us-east-1',
-    accessKeyId: credentials.id,
-    secretAccessKey: credentials.secret
-
+  region: "us-east-1",
+  accessKeyId: credentials.id,
+  secretAccessKey: credentials.secret
 });
 // Create publish parameters
 
 let params = {
-    Message: 'hehe, somos fodas!', /* required */
-    PhoneNumber: '+5592981526525',
+  //Message: 'hehe!', /* required */
+  //PhoneNumber: '+5592981526525',
 };
 
 function sendSMS(params) {
-    var publishTextPromise = new AWS.SNS().publish(params).promise();
-    // Handle promise's fulfilled/rejected states
-    publishTextPromise.then(function (data) {
-        console.log("MessageID is " + data.MessageId);
-    }).catch(function (err) {
-        console.error(err, err.stack);
+  var publishTextPromise = new AWS.SNS().publish(params).promise();
+  // Handle promise's fulfilled/rejected states
+  publishTextPromise
+    .then(function(data) {
+      console.log("MessageID is " + data.MessageId);
+    })
+    .catch(function(err) {
+      console.error(err, err.stack);
     });
 }
 
@@ -436,7 +434,6 @@ export default {
   },
 
   watch: {
-    
     dialog(val) {
       val || this.close();
     },
@@ -459,8 +456,47 @@ export default {
   },
 
   methods: {
-    smsOfertaEnvio(){
-      sendSMS(params);
+    smsOfertaEnvio() {
+      this.textCarregandoDados = 'Enviando SMS aos clientes informando sobre ofertas.' ;
+      this.dialogCarregandoDados = true;
+      this.dadosUsuLogado = JSON.parse(sessionStorage.getItem("usuario"));
+      axios
+        .get("/dadosempresa/" + this.dadosUsuLogado[0].idEmpresa)
+        .then(response => {
+          if (response.data.length > 0) {
+            let nomeFantasia = "";
+            nomeFantasia = response.data[0].nome_fantasia;
+
+            axios
+              .get("/listarcontatossmsoferta")
+              .then(response => {
+                if (response.data.length > 0) {
+                  for (let i = 0; i < response.data.length; i++) {
+                    params = {
+                      Message:
+                        "Olá, já conferiu o Marketpeças hoje?A Loja " +
+                        nomeFantasia +
+                        " acaba de cadastrar uma super oferta para você." /* required */,
+                      PhoneNumber: response.data[i].PhoneNumber
+                    };
+                    sendSMS(params);
+                  }
+                }
+                this.dialogCarregandoDados = false;
+              })
+              .catch(e => {
+                console.log(e);
+              });
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
+
+      //let params = {
+
+      //};
+      //sendSMS(params);
     },
     cancelarProdutoOferta() {
       this.dialogNovoPrecoProduto = false;

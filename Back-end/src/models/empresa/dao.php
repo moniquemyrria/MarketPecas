@@ -149,6 +149,18 @@ function validaDadosEmpresa($db, $idUsuario){
     return $str->fetchAll();
 }
 
+function dadosEmpresa($db, $idEmpresa){
+
+    $str = $db->prepare(
+        "SELECT * from empresa with(nolock)
+        where id = :id
+    ");
+    $str->bindParam("id", $idEmpresa);
+    $str->execute();
+    return $str->fetchAll();
+}
+
+
 
 
 

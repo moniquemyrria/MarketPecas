@@ -10,3 +10,8 @@ $app->post('/contato', function ($request, $response, $args) {
     $contato = cadastrarContato($this->db, $modelContato);
     return $this->response->withJson($contato);
 });
+
+$app->get('/listarcontatossmsoferta', function ($request, $response, $args) {
+    $contatoSms = listarContatosSMSOferta($this->db);
+    return $this->response->withJson($contatoSms);
+});

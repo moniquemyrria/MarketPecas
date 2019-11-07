@@ -52,4 +52,9 @@ $app->get('/validadadosempresa/{idUsuario}', function ($request, $response, $arg
     return $this->response->withJson($result);
 });
 
+$app->get('/dadosempresa/{idEmpresa}', function ($request, $response, $args) {
+    $empresa = dadosEmpresa($this->db, $args['idEmpresa']);
+    return $this->response->withJson($empresa);
+});
+
 
