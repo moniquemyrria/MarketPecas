@@ -82,19 +82,20 @@
                   <v-tab>ENDEREÇO E CONTATO</v-tab>
 
                   <v-tab-item v-for="n in 2" :key="n">
-                    <v-card style="height: 85vh;">
+                    <v-card style="height: 100vh;">
                       <v-card-text>
                         <v-container fluid>
                           <v-container v-if="n == 1">
                             <v-row>
                               <v-col cols="9" sm="6">
                                 Dados de Acesso e Empresa
-                                <v-row style="margin-top: -5vh;">
+
+                                <v-row style="margin-top: -55px;">
                                   <v-col
                                     cols="9"
                                     sm="11"
                                     class="d-flex justify-sm-end"
-                                    style="margin-top: -3vh; margin-left: -12px;"
+                                   
                                   >
                                     <v-checkbox
                                       v-model="empresa.checkboxOfertaPraca"
@@ -102,8 +103,9 @@
                                     ></v-checkbox>
                                   </v-col>
                                 </v-row>
+                                
                                 <v-row class="d-flex justify-sm-center">
-                                  <v-col cols="9" sm="10" style="margin-top: -11vh;">
+                                  <v-col cols="9" sm="10" style="margin-top: -7vh;">
                                     <v-text-field
                                       v-model="empresa.email"
                                       style="margin-top: 50px; "
@@ -147,6 +149,8 @@
                                       placeholder="Informe o CNPJ de sua empresa"
                                       :counter="18"
                                       required
+                                      v-mask="maskCnpj"
+                                    
                                     />
                                   </v-col>
                                 </v-row>
@@ -185,7 +189,7 @@
                                   <v-col
                                     cols="9"
                                     sm="10"
-                                    style="margin-left: -15vh; margin-top: -2vh"
+                                    style="margin-left: -15vh; margin-top: 3vh"
                                   >
                                     <span>Escolha as forma de pagamentos aceitos pela sua Loja:</span>
                                   </v-col>
@@ -226,7 +230,7 @@
                                         ></v-checkbox>
                                       </v-col>
                                     </v-row>
-                                    <v-divider></v-divider>
+                                    <v-divider style="margin-top: -16px"></v-divider>
                                     <v-row
                                       class="d-flex justify-sm-center"
                                       style="margin-top: 25px;"
@@ -340,6 +344,7 @@
                                       placeholder="CEP da Rua"
                                       :counter="9"
                                       required
+                                      v-mask="maskCep"
                                     />
                                   </v-col>
                                   <v-col cols="9" sm="5" style="margin-top: -5vh;">
@@ -666,6 +671,7 @@ export default {
     return {
       maskTel: "(##)#####-####",
       maskCep: "#####-###",
+      maskCnpj: "##.###.###/####-##",
 
       color: "#673AB7",
       show1: false,

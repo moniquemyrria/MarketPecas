@@ -366,12 +366,15 @@
           <v-card-title>SOBRE O MARKETPEÇAS</v-card-title>
         </v-img>
 
-        <v-card-subtitle class="pb-0">Number 10</v-card-subtitle>
-
+        <v-card-subtitle class="pb-0">SUAS COTAÇÕES ONLINE</v-card-subtitle>
+        <br />
         <v-card-text class="text--primary">
-          <div>Whitehaven Beach</div>
-
-          <div>Whitsunday Island, Whitsunday Islands</div>
+          <div class="text-center">
+            O MarketPeças é um site desenvolvido, idealizado, e projetado por duas desenvolvedoras,
+            em novembro de 2019 por Gabrielle Maciel e Monique Rocha, com o intuito de proprocionar
+            agilidade e facilidade aos clientes que compram peças automotivas, visando assim a praticidade e comodidade
+            na cotação de peças em apenas alguns cliques.
+          </div>
         </v-card-text>
 
         <v-card-actions>
@@ -391,12 +394,19 @@
           <v-card-title>DESENVOLVEDORAS</v-card-title>
         </v-img>
 
-        <v-card-subtitle class="pb-0">Number 10</v-card-subtitle>
+        <v-card-subtitle class="pb-0"></v-card-subtitle>
 
         <v-card-text class="text--primary">
-          <div>Whitehaven Beach</div>
-
-          <div>Whitsunday Island, Whitsunday Islands</div>
+          <div>
+            <b>Developer and CEO</b>
+          </div>
+          <div>Gabrielle Maciel (e-mail: gabriellemacieel@gmail.com)</div>
+        </v-card-text>
+        <v-card-text class="text--primary">
+          <div>
+            <b>Developer and PO</b>
+          </div>
+          <div>Monique Rocha (e-mail: moniquermyrria@gmail.com)</div>
         </v-card-text>
 
         <v-card-actions>
@@ -413,15 +423,36 @@
     <v-dialog v-model="dialogContato" max-width="500px">
       <v-card class="mx-auto">
         <v-img class="white--text align-end" height="200px" :src="require('@/assets/CONTATO.jpg')">
-          <v-card-title>CONTATOS</v-card-title>
+          <v-card-title>REDES SOCIAIS</v-card-title>
         </v-img>
 
-        <v-card-subtitle class="pb-0">Number 10</v-card-subtitle>
+        <v-card-subtitle class="pb-0">Acesse nossas Redes Sociais para Informações</v-card-subtitle>
 
         <v-card-text class="text--primary">
-          <div>Whitehaven Beach</div>
+          
+          <div class="text-center">
+            <br>
+            <v-btn color="primary" icon dark>
+              <v-icon>mdi-facebook</v-icon>
+            </v-btn>
+             <v-btn color="purple" icon dark>
+              <v-icon>mdi-instagram</v-icon>
+            </v-btn>
 
-          <div>Whitsunday Island, Whitsunday Islands</div>
+            <v-btn color="cyan" icon dark>
+              <v-icon>mdi-twitter</v-icon>
+            </v-btn>
+
+            <v-btn color="green" icon dark>
+              <v-icon>mdi-whatsapp</v-icon>
+            </v-btn>
+
+            <v-btn color="red" icon dark>
+              <v-icon>mdi-gmail</v-icon>
+            </v-btn>
+          </div>
+
+          
         </v-card-text>
 
         <v-card-actions>
@@ -433,6 +464,8 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    
     <v-app>
       <!-- MENSAGENS -->
       <div class="text-center ma-2">
@@ -464,13 +497,12 @@
                 height="160"
                 width="160"
                 max-width="160"
-               
               />
             </v-col>
             <v-col cols="12" sm="8" style="margin-top: 55px; margin-left: 140px;">
               <v-btn @click="sobreMktpecas" color="#6D6D6D" text class="my-1">SOBRE MARKETPEÇAS</v-btn>
               <v-btn @click="teamDev" color="#6D6D6D" text class="my-1">TEAM DEV</v-btn>
-              <v-btn @click="contato" color="#6D6D6D" text class="my-1">CONTATO</v-btn>
+              <v-btn @click="contato" color="#6D6D6D" text class="my-1">SOCIAL</v-btn>
             </v-col>
             <v-col cols="12" sm="1" style="margin-top: 50px; margin-left: -75px">
               <v-tooltip bottom>
@@ -790,8 +822,7 @@ export default {
         idCliente: null,
         nome: null,
         sobrenome: null
-      },
-
+      }
     };
   },
 
@@ -1217,7 +1248,7 @@ export default {
 
           this.mensagemBotaoAcesso =
             "OLÁ " + this.usuario.nome + " BEM-VINDO(A)";
-            this.flagverificaUsu = 1;
+          this.flagverificaUsu = 1;
         })
         .catch(e => {
           console.log(e);
