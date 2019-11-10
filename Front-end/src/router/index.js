@@ -11,6 +11,7 @@ import PerfilUsuarioEmpresa from '@/components/PerfilUsuarioEmpresa'
 import PerfilUsuarioCliente from '@/components/PerfilUsuarioCliente'
 import OfertaProduto from '@/components/OfertaProduto'
 import SiteCotacoes from '@/components/SiteCotacoes'
+import MinhasCotacoesCliente from '@/components/MinhasCotacoesCliente'
 
 Vue.use(Router)
 
@@ -35,6 +36,11 @@ export default new Router({
     path: '/MenuCliente',
     name: 'MenuCliente',
     component: MenuCliente,
+  },
+  {
+    path: '/MinhasCotacoesCliente',
+    name: 'MinhasCotacoesCliente',
+    component: MinhasCotacoesCliente,
   },
   {
     path: '/CadastroProduto',

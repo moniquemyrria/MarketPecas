@@ -43,7 +43,7 @@
           <v-col cols="9" sm="12">
             <v-row style="float: right; ">
               <v-btn color="error" text @click="dialogSemUsuario = false">NÃO</v-btn>
-              <v-btn color="primary" text @click="dialogLogin = true">SIM</v-btn>
+              <v-btn color="primary" text @click="modalLogin">SIM</v-btn>
             </v-row>
           </v-col>
         </v-card-actions>
@@ -464,7 +464,7 @@
                 height="160"
                 width="160"
                 max-width="160"
-                @click="login"
+               
               />
             </v-col>
             <v-col cols="12" sm="8" style="margin-top: 55px; margin-left: 140px;">
@@ -489,7 +489,30 @@
             </v-col>
 
             <v-col cols="12" sm="6" style="margin-top: 60px; ">
-              <v-btn @click="login" text>Entre ou Cadastre-se</v-btn>
+              <!-- BOTAO CLIENTE LOGADO -->
+              <div v-if="flagverificaUsu == 1">
+                <v-menu open-on-hover top offset-y>
+                  <template v-slot:activator="{ on }">
+                    <v-btn @click="login" v-on="on" text>{{ mensagemBotaoAcesso}}</v-btn>
+                    <!-- <v-btn color="primary" dark v-on="on">Dropdown</v-btn> -->
+                  </template>
+
+                  <v-list>
+                    <v-list-item
+                      v-for="item in itemsMenuAcesso"
+                      :key="item.id"
+                      v-model="on"
+                      @click="opcaoMenuAcesso(item.opcao)"
+                    >
+                      <v-list-item-title>{{item.opcao}}</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </div>
+              <!-- BOTAO EMPRESA LOGADA OU NENHUM -->
+              <div v-if="flagverificaUsu == 2 || flagverificaUsu == null">
+                <v-btn @click="loginSemUsuLogado" text>{{ mensagemBotaoAcesso}}</v-btn>
+              </div>
             </v-col>
           </v-layout>
         </v-container>
@@ -687,8 +710,9 @@ export default {
   vue: new Vue(),
   data() {
     return {
+      flagverificaUsu: null,
       cotacaoDados: [],
-
+      mensagemBotaoAcesso: "ENTRE OU CADASTRE-SE",
       timeout: 9000,
       color: null,
       colors: ["purple", "info", "success", "warning", "error"],
@@ -756,6 +780,8 @@ export default {
         }
       ],
 
+      itemsMenuAcesso: [],
+
       dadosUsuLogado: [],
       usuario: {
         id: null,
@@ -764,12 +790,33 @@ export default {
         idCliente: null,
         nome: null,
         sobrenome: null
-      }
+      },
+
     };
   },
 
   methods: {
     on() {},
+
+    opcaoMenuAcesso(opcao) {
+      if (opcao == "MINHA CONTA") {
+        this.login();
+      }
+
+      if (opcao == "SAIR") {
+        sessionStorage.clear();
+        this.colors = "blue";
+        this.timeout = 5000;
+        this.snack("center", "center");
+        this.text =
+          "Obrigado por utilizar o MarketPeças. Volte sempre que precisar.";
+        this.error = true;
+        this.mensagemBotaoAcesso = "ENTRE OU CADASTRE-SE";
+        this.flagverificaUsu = null;
+        this.initialize();
+      }
+    },
+
     msgAlertCamposPreenchidos() {
       this.colors = "warning";
       this.timeout = 5000;
@@ -791,7 +838,7 @@ export default {
       if (
         this.usuario.email == "" ||
         this.usuario.email == null ||
-        (this.usuario.email.length <= 0 || this.usuario.email.length > 20)
+        (this.usuario.email.length <= 0 || this.usuario.email.length > 100)
       ) {
         this.msgAlertCamposPreenchidosUsuario();
         return true;
@@ -800,11 +847,15 @@ export default {
       if (
         this.usuario.senha == "" ||
         this.usuario.senha == null ||
-        (this.usuario.senha.length <= 0 || this.usuario.senha.length > 20)
+        (this.usuario.senha.length <= 0 || this.usuario.senha.length > 100)
       ) {
         this.msgAlertCamposPreenchidosUsuario();
         return true;
       }
+    },
+
+    modalLogin() {
+      this.dialogLogin = true;
     },
 
     acessar: function() {
@@ -825,6 +876,8 @@ export default {
                 );
                 this.usuario.id = response.data[0].usuario[0].id;
                 this.carregarDadosCliente();
+                this.flagverificaUsu = 1;
+                this.listarOpcoesMenuAceso();
                 this.dialogLogin = false;
                 this.dialogSemUsuario = false;
               } else {
@@ -943,13 +996,12 @@ export default {
       this.dadosUsuLogado = JSON.parse(sessionStorage.getItem("usuario"));
       if (this.dadosUsuLogado == null) {
         this.dialogSemUsuario = true;
-        this.acessar();
       } else {
         this.dadosUsuLogado = JSON.parse(sessionStorage.getItem("usuario"));
-        this.usuario.id = this.dadosUsuLogado[0].id;
+        this.usuario.id = this.dadosUsuLogado[0].idUsuario;
 
         axios
-          .get("/pesquisaUsuarioClienteId/" + this.dadosUsuLogado[0].id)
+          .get("/pesquisaUsuarioClienteId/" + this.dadosUsuLogado[0].idUsuario)
           .then(response => {
             this.usuario.email = this.dadosUsuLogado[0].email;
             this.usuario.idCliente = response.data[0].idCliente;
@@ -1108,7 +1160,35 @@ export default {
       this.dialogContato = true;
     },
 
+    acessaMenuCliente() {
+      axios
+        .get("/validadadoscliente/" + this.usuario.id)
+        .then(response => {
+          if (response.data[0].cliente.length > 0) {
+            sessionStorage.clear();
+            sessionStorage.setItem(
+              "usuario",
+              JSON.stringify(response.data[0].cliente)
+            );
+            this.$router.push({ path: "/PerfilUsuarioCliente" });
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+
     login() {
+      if (this.usuario.idCliente != null) {
+        this.acessaMenuCliente();
+      } else {
+        sessionStorage.clear();
+        this.$router.push({ path: "/LoginCadastroUsuario" });
+      }
+    },
+
+    loginSemUsuLogado() {
+      sessionStorage.clear();
       this.$router.push({ path: "/LoginCadastroUsuario" });
     },
 
@@ -1134,6 +1214,10 @@ export default {
           this.usuario.nome = response.data[0].nome;
           this.usuario.senha = null;
           this.usuario.sobrenome = response.data[0].sobrenome;
+
+          this.mensagemBotaoAcesso =
+            "OLÁ " + this.usuario.nome + " BEM-VINDO(A)";
+            this.flagverificaUsu = 1;
         })
         .catch(e => {
           console.log(e);
@@ -1180,6 +1264,18 @@ export default {
         });
     },
 
+    listarOpcoesMenuAceso() {
+      this.itemsMenuAcesso = [];
+
+      this.itemsMenuAcesso.push(
+        { id: 1, opcao: "MINHA CONTA" },
+        {
+          id: 2,
+          opcao: "SAIR"
+        }
+      );
+    },
+
     listarItemCategoria(categoria) {
       axios
         .post("/produtocategoria", { categoria: categoria })
@@ -1219,6 +1315,34 @@ export default {
     },
 
     initialize() {
+      if (JSON.parse(sessionStorage.getItem("usuario") == null)) {
+        sessionStorage.clear();
+        console.log("nao ha usuario logado");
+      } else if (JSON.parse(sessionStorage.getItem("usuario") != null)) {
+        console.log("usuario logado");
+        let verUsuLogado = [];
+        verUsuLogado = JSON.parse(sessionStorage.getItem("usuario"));
+
+        if (verUsuLogado[0].idCliente != undefined) {
+          if (verUsuLogado[0].idCliente != "") {
+            this.flagverificaUsu = 1;
+            console.log("é um cliente");
+            this.usuario.id = verUsuLogado[0].idUsuario;
+            this.carregarDadosCliente();
+            this.listarOpcoesMenuAceso();
+          }
+        }
+
+        if (verUsuLogado[0].idEmpresa != undefined) {
+          if (verUsuLogado[0].idEmpresa != "") {
+            this.flagverificaUsu = 2;
+            console.log("é uma empresa");
+            //this.listarOpcoesMenuAceso = [];
+            sessionStorage.clear();
+          }
+        }
+      }
+
       this.todosProdutos();
       this.listarCategoria();
       this.listarMarca();

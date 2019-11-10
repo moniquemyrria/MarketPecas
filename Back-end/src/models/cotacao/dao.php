@@ -1,5 +1,85 @@
 <?php
 
+function listarCotacaoPorCliente($db, $idCliente){
+
+    $str = $db->prepare(
+        "DECLARE @idCliente int;
+        set @idCliente = :idCliente;
+        select c.id, 
+            concat(
+                (select count(ec.id) from empresa_cotacao ec where ec.id_cotacao = c.id),
+                ' Empresas nesta cotação / ', 
+                (select count(*) from itens_cotacao ic2 inner join empresa_cotacao ec2 on (ec2.id = ic2.id_empresa_cotacao) inner join cotacao c2 on (c2.id = ec2.id_cotacao) where c2.id = c.id),
+                ' produtos cotados'
+            ) as dadosCotacao,
+            convert(nvarchar, c.data, 103) as data
+        from cotacao c with(nolock)
+        where c.id_cliente = @idCliente
+        
+    ");
+    $str->bindParam("idCliente", $idCliente);
+    $str->execute();
+    return $str->fetchAll();
+}
+
+function impressaoCotacao($db, $idCotacao){
+
+    $str = $db->prepare(
+        "SELECT ec.id as idEmpresaCotacao, ec.id_cotacao as idCotacao,   
+        ec.id_empresa as idEmpresa, e.nome_fantasia as nomeFantasia, ec.valor_total_cotacao as valorCotacao
+        from empresa_cotacao ec
+        inner join empresa e with(nolock) on (e.id = ec.id_empresa)
+        where id_cotacao = :idCotacao
+        
+    ");
+    $str->bindParam("idCotacao", $idCotacao);
+    $str->execute();
+    $empresaCotacao = $str->fetchAll();
+
+    $arrayG = array();
+    foreach($empresaCotacao as $key => $item){
+
+        $itens = array();
+        $sttr = $db->prepare(
+            "SELECT ic.id_empresa_cotacao as idEmpresaCotacao, ic.id_produto as idProduto, 
+            p.descricao, ic.quantidade, ic.valor_total_produto as valorProduto
+            from itens_cotacao ic
+            inner join produto p with(nolock) on (p.id = ic.id_produto)
+            where id_empresa_cotacao = :idEmpresaCotacao
+            
+        ");
+        $sttr->bindParam("idEmpresaCotacao", $item['idEmpresaCotacao']);
+        $sttr->execute();
+        $itensCotacao = $sttr->fetchAll();
+
+        foreach($itensCotacao as $key => $item2){
+            $arrayAux = array(
+                "idEmpresaCotacao" => $item2['idEmpresaCotacao'],
+                "idProduto" => $item2['idProduto'],
+                "descricao" => $item2['descricao'],
+                "quantidade" => $item2['quantidade'],
+                "valorProduto" => $item2['valorProduto']
+            );
+
+            array_push($itens, $arrayAux);
+        }
+
+        $arrayAuxG = array(
+            "idEmpresaCotacao" => $item['idEmpresaCotacao'],
+            "idCotacao" => $item['idCotacao'],
+            "idEmpresa" => $item['idEmpresa'],
+            "nomeFantasia" => $item['nomeFantasia'],
+            "valorCotacao" => $item['valorCotacao'],
+            "itens" => $itens,
+        );
+
+        array_push($arrayG, $arrayAuxG);
+    }
+
+    return $arrayG;
+}
+
+
 function listarCotacaoMenorPreco($db, $produtos){
 
     //dados dos itens

@@ -50,7 +50,7 @@ function consultaEmailDuplicado($db, $usuario){
 function validaUsuario($db, $usuario){
 
     $str = $db->prepare(
-        "SELECT id, email, tipo_pessoa, ativo from usuario where email = :email and senha = :senha
+        "SELECT id, id as idUsuario, email, tipo_pessoa, ativo from usuario where email = :email and senha = :senha
     ");
     $str->bindParam("email", $usuario["email"]);
     $str->bindParam("senha", $usuario["senha"]);

@@ -15,13 +15,13 @@
           </v-col>
           <v-col cols="12" sm="11" style="margin-top: 30px; margin-left: 30px;">
             <v-btn text @click="menuDadosCliente">MEUS DADOS</v-btn>
-            <v-btn text @click="menuPerCotacoes">MINHAS COTAÇÕES</v-btn>
+            <v-btn text @click="minhasCotacoesCliente">MINHAS COTAÇÕES</v-btn>
             
           </v-col>
 
           <v-col cols="12" sm="1" style="margin-top: 25px;">
-            <v-btn @click="login" text icon color="#0277BD">
-              <v-icon>people</v-icon>
+            <v-btn @click="sair" text icon color="#0277BD">
+              <v-icon>mdi-exit-to-app</v-icon>
             </v-btn>
           </v-col>
         </v-layout>
@@ -52,13 +52,18 @@ export default {
       this.$router.push({ path: "/PerfilUsuarioCliente" });
     },
 
-    menuPerCotacoes() {
-      //this.$router.push({ path: "/PerfilUsuarioEmpresa" });
+    minhasCotacoesCliente() {
+      this.$router.push({ path: "/MinhasCotacoesCliente" });
+    },
+
+    sair() {
+      sessionStorage.clear();
+      this.$router.push({ path: "/" });;
     },
 
     login() {
       this.$router.push({ path: "/LoginCadastroUsuario" });
-    }
+    },
   }
 };
 </script>

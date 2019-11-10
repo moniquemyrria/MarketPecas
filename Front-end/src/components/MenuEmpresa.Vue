@@ -20,8 +20,8 @@
           </v-col>
 
           <v-col cols="12" sm="1" style="margin-top: 25px;">
-            <v-btn @click="login" text icon color="#0277BD">
-              <v-icon>people</v-icon>
+            <v-btn @click="sair" text icon color="#0277BD">
+              <v-icon>mdi-exit-to-app</v-icon>
             </v-btn>
           </v-col>
         </v-layout>
@@ -62,6 +62,11 @@ export default {
 
     menuOfertaProduto() {
       this.$router.push({ path: "/OfertaProduto" });
+    },
+
+    sair() {
+      sessionStorage.clear();
+      this.$router.push({ path: "/" });;
     },
 
     login() {

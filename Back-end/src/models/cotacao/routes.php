@@ -6,6 +6,16 @@ use Slim\Http\Response;
 require 'dao.php';
 // Routes
 
+$app->get('/listagemCotacaocliente/{idCliente}', function ($request, $response, $args) {
+    $listagem = listarCotacaoPorCliente($this->db, $args['idCliente']);
+    return $this->response->withJson($listagem);
+});
+
+$app->get('/imprimircotacao/{idCotacao}', function ($request, $response, $args) {
+    $listagem = impressaoCotacao($this->db, $args['idCotacao']);
+    return $this->response->withJson($listagem);
+});
+
 $app->post('/cotacao', function ($request, $response, $args) {
     $produto = $request->getParsedBody();
     $cotacao = listarCotacaoMenorPreco($this->db, $produto);
