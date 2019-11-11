@@ -95,6 +95,13 @@
                     </v-btn>
                   </template>
                 </v-data-table>
+                <br />
+                <v-pagination
+                  v-model="page"
+                  :length="pageCount"
+                  prev-icon="mdi-menu-left"
+                  next-icon="mdi-menu-right"
+                ></v-pagination>
               </v-card-text>
             </v-card>
           </v-col>

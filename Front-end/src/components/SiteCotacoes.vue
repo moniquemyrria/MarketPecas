@@ -681,7 +681,7 @@
                   <div>{{ 'Marca: ' + item.marca}}</div>
                 </v-card-text>
                 <v-card-actions>
-                  <v-btn @click="addProdutoCotacao(item)" color="primary" text>ADCIONAR COTAÇÃO</v-btn>
+                  <v-btn @click="addProdutoCotacao(item)" color="primary" text>ADICIONAR COTAÇÃO</v-btn>
 
                   <v-spacer></v-spacer>
 

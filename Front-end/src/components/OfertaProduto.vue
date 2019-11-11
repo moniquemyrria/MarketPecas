@@ -78,7 +78,7 @@
               <v-col cols="9" sm="12">
                 <v-row style="float: right; ">
                   <v-btn color="error" text @click="cancelarProdutoOferta">CANCELAR</v-btn>
-                  <v-btn color="primary" text @click="addProdutoOferta">ADCIONAR</v-btn>
+                  <v-btn color="primary" text @click="addProdutoOferta">ADICIONAR</v-btn>
                 </v-row>
               </v-col>
             </v-card-actions>
@@ -216,7 +216,7 @@
                                   large
                                   class="mb-2"
                                   @click="modalAddPerco"
-                                >ADCIONAR PRODUTO</v-btn>
+                                >ADICIONAR PRODUTO</v-btn>
                               </v-col>
                             </v-row>
 

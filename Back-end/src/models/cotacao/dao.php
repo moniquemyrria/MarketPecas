@@ -15,7 +15,7 @@ function listarCotacaoPorCliente($db, $idCliente){
             convert(nvarchar, c.data, 103) as data
         from cotacao c with(nolock)
         where c.id_cliente = @idCliente
-        
+        order by c.data desc
     ");
     $str->bindParam("idCliente", $idCliente);
     $str->execute();
@@ -194,9 +194,11 @@ function cadastrarCotacao($db, $dadosCliente, $dadosCotacao){
     $str = $db->prepare(
         "INSERT INTO COTACAO(
             id_cliente
+            , data
         )
         VALUES( 
             :idCliente
+            , convert(nvarchar, getdate(), 103) 
         )
         ");
 
