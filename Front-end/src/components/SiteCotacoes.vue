@@ -1087,6 +1087,7 @@ export default {
         if (parseInt(item.id) == parseInt(this.produtosCotacao[i].id)) {
           this.produtosCotacao[i].quantidade =
             parseInt(this.produtosCotacao[i].quantidade, 10) + 1;
+            this.gerarCotacao();
         }
       }
     },
@@ -1095,6 +1096,21 @@ export default {
         if (parseInt(item.id) == parseInt(this.produtosCotacao[i].id)) {
           this.produtosCotacao[i].quantidade =
             parseInt(this.produtosCotacao[i].quantidade, 10) - 1;
+
+            if (parseInt(this.produtosCotacao[i].quantidade) <= 0){
+              this.colors = "error";
+                this.timeout = 2000;
+                this.snack("bottom", "center");
+                this.text = "Ops! Quantidade inválida. Não é permitido quantidade inferior a 1.";
+                this.error = true;
+                this.produtosCotacao[i].quantidade = 1;
+                return;
+               
+            }
+            else{
+              this.gerarCotacao();
+            }
+           
         }
       }
     },
