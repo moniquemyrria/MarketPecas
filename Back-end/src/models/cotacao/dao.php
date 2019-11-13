@@ -99,7 +99,8 @@ function listarCotacaoMenorPreco($db, $produtos){
             inner join contato c with(nolock) on (c.id = e.id_contato)
             inner join marca m with(nolock) on (m.id = p.id_marca)
             inner join categoria ca with(nolock) on (ca.id = p.id_categoria)
-            where p.descricao in (" . $produtoDescricao .")
+            where p.deletado = 'N' 
+            and p.descricao in (" . $produtoDescricao .")
         ) as t
         group by 
             t.idEmpresa, t.cnpj, t.cobreOferta, t.razSocial, t.nomeFant, t.observacao,

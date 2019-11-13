@@ -990,6 +990,8 @@ export default {
         let cotacao = "";
         let produtosCot = [];
 
+        console.log(this.produtosCotacao);
+
         for (let i = 0; i < this.produtosCotacao.length; i++) {
           if (i < this.produtosCotacao.length - 1) {
             cotacao = cotacao.concat(
