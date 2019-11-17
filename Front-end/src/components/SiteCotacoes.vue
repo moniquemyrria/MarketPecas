@@ -300,7 +300,7 @@
 
                       <v-card-text>
                         <v-row>
-                          <v-col cols="6" sm="4">
+                          <v-col cols="6" sm="3">
                             <b style="font-size: 12px;">DESCRIÇÃO</b>
                           </v-col>
                           <v-col cols="6" sm="2">
@@ -309,6 +309,7 @@
                           <v-col cols="6" sm="2">
                             <b style="font-size: 12px;">QTDE</b>
                           </v-col>
+                          <v-col cols="6" sm="1"></v-col>
                           <v-col cols="6" sm="2">
                             <b style="font-size: 12px;">PREÇO (R$)</b>
                           </v-col>
@@ -320,9 +321,14 @@
                           v-for="(cotacaoItem, index2) in cotacao.produtosCotacao"
                           :key="index2"
                         >
-                          <v-col cols="6" sm="4">{{cotacaoItem.descProduto}}</v-col>
+                          <v-col cols="6" sm="3">{{cotacaoItem.descProduto}}</v-col>
                           <v-col cols="6" sm="2">{{cotacaoItem.marca}}</v-col>
-                          <v-col cols="6" sm="2" class="--text align-end">{{cotacaoItem.quantidade}}</v-col>
+                          <v-col cols="6" sm="2" class="--text align-end">
+                            {{cotacaoItem.quantidade}}
+                          </v-col>
+                          <v-col  cols="6" sm="1" class="--text align-end">
+                            <v-icon v-if="cotacaoItem.produtoEmOferta == 'S'" color="green darken-2">mdi-star-outline</v-icon>
+                          </v-col>
                           <v-col
                             cols="6"
                             sm="2"
@@ -336,12 +342,12 @@
                         <v-row>
                           <v-col cols="6" sm="4"></v-col>
                           <v-col cols="6" sm="2"></v-col>
-                          <v-col cols="6" sm="1"></v-col>
+                          
                           <v-col cols="6" sm="3">
-                            <b style="font-size: 12px;">VALOR TOTAL (R$):</b>
+                            <b style="float: right; font-size: 14px; color: #1976D2">VALOR TOTAL (R$):</b>
                           </v-col>
-                          <v-col cols="6" sm="2" style="font-size: 12px;">
-                            <b>{{cotacao.totalProdutosCotacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}}</b>
+                          <v-col cols="6" sm="3" style="font-size: 12px;">
+                            <b style="float: right; color: #1976D2;font-size: 14px;">{{cotacao.totalProdutosCotacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}}</b>
                           </v-col>
                         </v-row>
                       </v-card-text>
@@ -965,7 +971,7 @@ export default {
 
           this.cotacaoDados[j].totalProdutosCotacao =
             parseFloat(this.cotacaoDados[j].totalProdutosCotacao) +
-            parseFloat(this.cotacaoDados[j].produtosCotacao[k].valor);
+            parseFloat(this.cotacaoDados[j].produtosCotacao[k].totalProduto);
         }
       }
     },
@@ -989,8 +995,6 @@ export default {
 
         let cotacao = "";
         let produtosCot = [];
-
-        console.log(this.produtosCotacao);
 
         for (let i = 0; i < this.produtosCotacao.length; i++) {
           if (i < this.produtosCotacao.length - 1) {
@@ -1073,6 +1077,10 @@ export default {
       }
     },
     cancelarCotacao() {
+
+      for (let i = 0; i < this.produtosCotacao.length; i++) {
+        this.produtosCotacao[i].quantidade = 0;
+      }
       this.produtosCotacao = [];
       this.cotacaoDados = [];
       this.colors = "info";
@@ -1082,6 +1090,7 @@ export default {
       this.error = true;
       this.dialogoCotacoes = false;
       this.dialogExcluir = false;
+
     },
 
     increment(item) {
@@ -1111,6 +1120,7 @@ export default {
             }
             else{
               this.gerarCotacao();
+              
             }
            
         }
@@ -1152,10 +1162,12 @@ export default {
       this.error = true;
 
       this.gerarCotacao();
+      this.somaTotalCotacaoProduto();
 
       if (this.produtosCotacao.length == 0) {
         this.dialogoCotacoes = false;
       }
+     
     },
 
     addProdutoCotacao(item) {

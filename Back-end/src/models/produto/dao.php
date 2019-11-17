@@ -9,6 +9,7 @@ function listarProduto($db, $idEmpresa){
         inner join categoria c with(nolock) on (c.id = p.id_categoria)
         and p.deletado = 'N'
         and p.id_empresa = :idEmpresa
+        order by p.id desc
     ");
     $str->bindParam("idEmpresa", $idEmpresa);
     $str->execute();
@@ -77,7 +78,7 @@ function listarProdutoOferta($db){
 
     $str = $db->prepare(
         "SELECT p.id, p.codigo, p.descricao, p.aplicacao, p.unidade_medida as un,
-        p.altura, p.largura, p.comprimento, p.peso, p.preco,
+        p.altura, p.largura, p.comprimento, p.peso, iop.preco,
         m.descricao as marca, c.descricao as categoria, e.nome_fantasia as empresa, p.imagem,
         0 as quantidade
         from itens_oferta_produto iop with(nolock)

@@ -2,7 +2,6 @@
   <div id="app">
     <va-appbar-menu-emp />
     <v-app>
-      
       <v-container style="float: right; width: 165vh; margin-top: 10vh">
         <!-- CARREGANDO DADOS -->
         <v-dialog v-model="dialogCarregandoDados" width="320">
@@ -157,7 +156,6 @@
                             class="mb-2"
                             @click="novoProduto"
                           >NOVA OFERTA</v-btn>
-                          
                         </v-col>
                       </v-row>
                     </v-col>
@@ -290,6 +288,10 @@
 
                   <v-btn style="margin-left: 10px;" fab x-small outlined dark color="primary">
                     <v-icon @click="smsOfertaEnvio()">mdi-android-messages</v-icon>
+                  </v-btn>
+
+                  <v-btn style="margin-left: 10px;" fab x-small outlined dark color="red">
+                    <v-icon @click="emailOfertaEnvio()">mdi-email</v-icon>
                   </v-btn>
                 </template>
               </v-data-table>
@@ -457,7 +459,8 @@ export default {
 
   methods: {
     smsOfertaEnvio() {
-      this.textCarregandoDados = 'Enviando SMS aos clientes informando sobre ofertas.' ;
+      this.textCarregandoDados =
+        "Enviando SMS aos clientes informando sobre ofertas.";
       this.dialogCarregandoDados = true;
       this.dadosUsuLogado = JSON.parse(sessionStorage.getItem("usuario"));
       axios
@@ -496,6 +499,43 @@ export default {
       //let params = {
 
       //};
+      //sendSMS(params);
+    },
+
+    emailOfertaEnvio() {
+      this.textCarregandoDados =
+        "Enviando E-mail aos clientes informando sobre ofertas.";
+      this.dialogCarregandoDados = true;
+      this.dadosUsuLogado = JSON.parse(sessionStorage.getItem("usuario"));
+      axios
+        .get("/listarcontatosemailoferta")
+        .then(response => {
+          if (response.data.length > 0) {
+            let listaEmailOferta = [];
+            listaEmailOferta = response.data;
+
+            axios
+              .post("/emailoferta", listaEmailOferta)
+              .then(response => {
+                
+                  this.colors = "primary";
+                  this.timeout = 5000;
+                  this.snack("bottom", "center");
+                  this.text =
+                    "E-mail's enviado com sucesso.";
+                  this.error = true;
+                  this.dialogCarregandoDados = false;
+                
+              })
+              .catch(e => {
+                console.log(e);
+              });
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
+
       //sendSMS(params);
     },
     cancelarProdutoOferta() {
@@ -728,8 +768,12 @@ export default {
           this.snack("top", "right");
           this.dialog = false;
 
+          //this.smsOfertaEnvio();
+          this.emailOfertaEnvio();
+
           this.close();
           this.initialize();
+
         })
         .catch(e => {
           console.log(e);

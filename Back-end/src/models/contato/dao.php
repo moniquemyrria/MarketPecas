@@ -44,5 +44,16 @@ function listarContatosSMSOferta($db)
     return $str->fetchAll();
 }
 
+function listarContatosEmailOferta($db)
+{
+    $str = $db->prepare(
+        "SELECT u.email, CONCAT(c.nome, ' ', c.sobrenome) as nome from cliente c
+        inner join usuario u on (u.id = c.id_contato)
+        where c.oferta_app = 'S'
+    ");
+    $str->execute();
+    return $str->fetchAll();
+}
+
 
 

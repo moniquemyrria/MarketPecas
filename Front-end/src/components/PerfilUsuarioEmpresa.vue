@@ -164,7 +164,7 @@
                           label="Telefone"
                           class="mx-4"
                           placeholder="Informe o telefone"
-                          :counter="13"
+                          :counter="14"
                           required
                           v-mask="maskTel"
                         />

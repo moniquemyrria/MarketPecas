@@ -113,9 +113,78 @@ function listarCotacaoMenorPreco($db, $produtos){
 
     
     $str = $db->prepare(
+        "SELECT *from(
+            SELECT e.id as idEmpresa, p.id as idProduto, 
+                (
+                    case
+                        when exists (
+                            Select g.idProduto from(
+                                SELECT p.id as idProduto
+                                from itens_oferta_produto iop
+                                inner join produto p with(nolock) on (p.id = iop.id_produto)
+                                inner join empresa e with(nolock) on (e.id = p.id_empresa)
+                                inner join endereco en with(nolock) on (en.id = e.id_endereco)
+                                inner join contato c with(nolock) on (c.id = e.id_contato)
+                                inner join marca m with(nolock) on (m.id = p.id_marca)
+                                inner join categoria ca with(nolock) on (ca.id = p.id_categoria)
+                                and p.deletado = 'N'
+                            ) as g
+                            where g.idProduto = p.id
+                                        
+                        ) then (Select f.preco from(
+                                SELECT p.id as idProduto, iop.preco
+                                from itens_oferta_produto iop
+                                inner join produto p with(nolock) on (p.id = iop.id_produto)
+                                inner join empresa e with(nolock) on (e.id = p.id_empresa)
+                                inner join endereco en with(nolock) on (en.id = e.id_endereco)
+                                inner join contato c with(nolock) on (c.id = e.id_contato)
+                                inner join marca m with(nolock) on (m.id = p.id_marca)
+                                inner join categoria ca with(nolock) on (ca.id = p.id_categoria)
+                                and p.deletado = 'N'
+                            ) as f
+                            where f.idProduto = p.id)
+                        else (
+                            SELECT o.preco from (
+                                SELECT e.id as idEmpresa, p.id as idProduto, p.preco, p.descricao as descProduto, 
+                                e.cnpj, e.cobre_oferta_praca as cobreOferta, razao_social as razSocial, nome_fantasia as nomeFant,
+                                e.observacao, e.forma_pgto_dinheiro as fpDinheiro, e.forma_pgto_cartao_credito as fpCredito,
+                                e.forma_pgto_cartao_debito as fpDebito, e.forma_pgto_boleto as fpBoleto, e.forma_pgto_crediario_proprio as fpCrediario,
+                                en.logradouro, en.numero, en.bairro, c.whatsapp, m.descricao as marca, ca.descricao as categoria 
+                                from produto p with(nolock)
+                                inner join empresa e with(nolock) on (e.id = p.id_empresa)
+                                inner join endereco en with(nolock) on (en.id = e.id_endereco)
+                                inner join contato c with(nolock) on (c.id = e.id_contato)
+                                inner join marca m with(nolock) on (m.id = p.id_marca)
+                                inner join categoria ca with(nolock) on (ca.id = p.id_categoria)
+                                and p.deletado = 'N'
+                            ) as o
+                            where o.idProduto = p.id
+                        )
         
-        "SELECT t.* from (
-            SELECT e.id as idEmpresa, p.id as idProduto, p.preco, p.descricao as descProduto, 
+                    end
+                ) as preco,
+                (
+                    case
+                        when exists (
+                            Select g.idProduto from(
+                                SELECT p.id as idProduto
+                                from itens_oferta_produto iop
+                                inner join produto p with(nolock) on (p.id = iop.id_produto)
+                                inner join empresa e with(nolock) on (e.id = p.id_empresa)
+                                inner join endereco en with(nolock) on (en.id = e.id_endereco)
+                                inner join contato c with(nolock) on (c.id = e.id_contato)
+                                inner join marca m with(nolock) on (m.id = p.id_marca)
+                                inner join categoria ca with(nolock) on (ca.id = p.id_categoria)
+                                and p.deletado = 'N'
+                            ) as g
+                            where g.idProduto = p.id
+                                        
+                        ) then 'S'
+                        else 'N'
+                    end
+                ) as produtoEmOferta,
+                            
+            p.descricao as descProduto, 
             e.cnpj, e.cobre_oferta_praca as cobreOferta, razao_social as razSocial, nome_fantasia as nomeFant,
             e.observacao, e.forma_pgto_dinheiro as fpDinheiro, e.forma_pgto_cartao_credito as fpCredito,
             e.forma_pgto_cartao_debito as fpDebito, e.forma_pgto_boleto as fpBoleto, e.forma_pgto_crediario_proprio as fpCrediario,
@@ -127,12 +196,13 @@ function listarCotacaoMenorPreco($db, $produtos){
             inner join marca m with(nolock) on (m.id = p.id_marca)
             inner join categoria ca with(nolock) on (ca.id = p.id_categoria)
             where p.descricao in (" . $produtoDescricao .")
+            and p.deletado = 'N'
         ) as t
         group by 
             t.idEmpresa, t.idProduto, t.preco, t.descProduto, t.cnpj, t.cobreOferta, t.razSocial, t.nomeFant, t.observacao,
             t.fpDinheiro, t.fpCredito,t.fpDebito, t.fpBoleto, 
-            t.fpCrediario, t.logradouro, t.numero, t.bairro, t.whatsapp, t.categoria, t.marca
-        order by t.preco, t.razSocial asc
+            t.fpCrediario, t.logradouro, t.numero, t.bairro, t.whatsapp, t.categoria, t.marca, t.produtoEmOferta
+        order by t.preco, t.razSocial asc        
     ");
     $str->execute();
     $cotacao = $str->fetchAll();
@@ -152,6 +222,7 @@ function listarCotacaoMenorPreco($db, $produtos){
                     "marca"=> $aux['marca'],
                     "quantidade"=> intval(1),
                     "totalProduto"=> floatval(0),
+                    "produtoEmOferta"=>$aux['produtoEmOferta']
                 );
 
                 array_push($arrayC,  $arrayGAux);
