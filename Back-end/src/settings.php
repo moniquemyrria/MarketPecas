@@ -13,9 +13,9 @@ return [
         // Database connection settings
         "db" => [
             "host" => "localhost",
-            "dbname" => "MKTPECAS",
+            "dbname" => "MKTPECAS_2",
             "user" => "sa",
-            "pass" => "1234"
+            "pass" => "123"
         ],
         // Database connection settings
         "dbERP" => [

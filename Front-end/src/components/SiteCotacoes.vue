@@ -4,13 +4,13 @@
     <v-dialog v-model="dialogExcluir" max-width="500px">
       <v-card>
         <v-card-title>
-          <span>Excluír Produto</span>
+          <span>Cancelar Cotação</span>
 
           <div class="flex-grow-1" />
         </v-card-title>
         <v-card-text>
           <span>
-            <b>Deseja relamente excluír todos os produto da Cotação?</b>
+            <b>Deseja realmente cancelar a Cotação?</b>
           </span>
           <br />
         </v-card-text>
@@ -35,7 +35,7 @@
         </v-card-title>
         <v-card-text>
           <span>
-            <b>Ops! Para salvar a cotação é necessário estar logado. Deseja realizar o Login no Marketpeças?</b>
+            <b>Ops! Para salvar a cotação é necessário estar logado. Deseja realizar o Login no MarketPeças?</b>
           </span>
           <br />
         </v-card-text>
@@ -1254,12 +1254,16 @@ export default {
     },
 
     todosProdutos() {
+      this.dialogCarregandoDados = true;
+      this.textCarregandoDados = 'Carregando os produtos...'
+      
       axios
         .get("/produtotodos")
         .then(response => {
           if (response.data.length > 0) {
             this.produtosTodos = [];
             this.produtosTodos = response.data;
+             this.dialogCarregandoDados = false;
           }
         })
         .catch(e => {
@@ -1286,12 +1290,15 @@ export default {
     },
 
     produtosOferta() {
+      this.dialogCarregandoDados = true;
+      this.textCarregandoDados = 'Carregando produtos em oferta...'
       axios
         .get("/produtooferta")
         .then(response => {
           if (response.data.length > 0) {
             this.produtosTodos = [];
             this.produtosTodos = response.data;
+            this.dialogCarregandoDados = false;
           }
         })
         .catch(e => {
@@ -1338,6 +1345,8 @@ export default {
     },
 
     listarItemCategoria(categoria) {
+      this.dialogCarregandoDados = true;
+      this.textCarregandoDados = 'Carregando os produtos da categoria ...' + categoria 
       axios
         .post("/produtocategoria", { categoria: categoria })
         .then(response => {
@@ -1364,11 +1373,14 @@ export default {
     },
 
     listarItemMarca(marca) {
+      this.dialogCarregandoDados = true;
+      this.textCarregandoDados = 'Carregando os produtos da marca... ' + marca
       axios
         .post("/produtomarca", { marca: marca })
         .then(response => {
           this.produtosTodos = [];
           this.produtosTodos = response.data;
+          this.dialogCarregandoDados = false;
         })
         .catch(e => {
           console.log(e);
