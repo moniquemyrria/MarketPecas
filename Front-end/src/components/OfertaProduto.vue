@@ -770,6 +770,7 @@ export default {
 
           //this.smsOfertaEnvio();
           this.emailOfertaEnvio();
+            this.dialogCarregandoDados = false;
 
           this.close();
           this.initialize();
