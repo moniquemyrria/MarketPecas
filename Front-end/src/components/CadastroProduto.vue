@@ -480,7 +480,7 @@ export default {
       error: false,
       file: "",
       model: "tab-0",
-      timeout: 9000,
+      timeout: 7000,
       color: null,
       colors: ["purple", "info", "success", "warning", "error"],
       top: true,

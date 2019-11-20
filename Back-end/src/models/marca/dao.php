@@ -3,7 +3,7 @@
 function listarMarca($db)
 {
     
-        $str = $db->prepare("SELECT * FROM MARCA");
+        $str = $db->prepare("SELECT * FROM MARCA order by descricao asc");
         // $str->bindParam("BLA", "BLA");
         $str->execute();
         return $str->fetchAll();

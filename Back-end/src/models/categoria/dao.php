@@ -3,7 +3,7 @@
 function listarCategoria($db)
 {
     
-        $str = $db->prepare("SELECT * FROM CATEGORIA");
+        $str = $db->prepare("SELECT * FROM CATEGORIA order by descricao asc");
         // $str->bindParam("BLA", "BLA");
         $str->execute();
         return $str->fetchAll();

@@ -191,21 +191,21 @@ function cadastrarProduto($db, $produto){
             , convert(DATE, :validade, 103)
         )
      ");
-    $str->bindParam("idCategoria", $idCategoria);
-    $str->bindParam("idMarca", $idMarca);
-    $str->bindParam("idEmpresa", $produto["idEmpresa"]);
-    $str->bindParam("codigo", $produto["codigo"]);
-    $str->bindParam("descricao", $produto["descricao"]);
-    $str->bindParam("aplicacao", $produto["aplicacao"]);
-    $str->bindParam("uniMedida", $produto["uniMedida"]);
-    $str->bindParam("altura", $produto["altura"]);
-    $str->bindParam("largura", $produto["largura"]);
-    $str->bindParam("comprimento", $produto["comprimento"]);
-    $str->bindParam("peso", $produto["peso"]);
-    $str->bindParam("dataCadastro", $produto['dataCadastro']);
-    $str->bindParam("preco", floatval($produto['preco']));
-    $str->bindParam("imagem", $produto["imagem"]);
-    $str->bindParam("validade", $produto["validade"]);
+    $str->bindParam("idCategoria",      $idCategoria);
+    $str->bindParam("idMarca",          $idMarca);
+    $str->bindParam("idEmpresa",        $produto["idEmpresa"]);
+    $str->bindParam("codigo",           $produto["codigo"]);
+    $str->bindParam("descricao",        $produto["descricao"]);
+    $str->bindParam("aplicacao",        $produto["aplicacao"]);
+    $str->bindParam("uniMedida",        $produto["uniMedida"]);
+    $str->bindParam("altura",           $produto["altura"]);
+    $str->bindParam("largura",          $produto["largura"]);
+    $str->bindParam("comprimento",      $produto["comprimento"]);
+    $str->bindParam("peso",             $produto["peso"]);
+    $str->bindParam("dataCadastro",     $produto['dataCadastro']);
+    $str->bindParam("preco",            floatval($produto['preco']));
+    $str->bindParam("imagem",           $produto["imagem"]);
+    $str->bindParam("validade",         $produto["validade"]);
     $str->execute();
     $produto["id"] = $db->lastInsertid();
 
@@ -224,8 +224,7 @@ function alterarProduto($db, $produto){
     $idCategoria = $categoria[0]['id'];
 
     $str = $db->prepare(
-        "
-        UPDATE PRODUTO SET
+        "UPDATE PRODUTO SET
             id_categoria = :idCategoria
             , id_marca = :idMarca
             , codigo = :codigo
