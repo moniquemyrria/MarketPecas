@@ -89,21 +89,15 @@
                             <v-row>
                               <v-col cols="9" sm="6">
                                 Dados de Acesso e Empresa
-
                                 <v-row style="margin-top: -55px;">
-                                  <v-col
-                                    cols="9"
-                                    sm="11"
-                                    class="d-flex justify-sm-end"
-                                   
-                                  >
+                                  <v-col cols="9" sm="11" class="d-flex justify-sm-end">
                                     <v-checkbox
                                       v-model="empresa.checkboxOfertaPraca"
                                       :label="`Cobre Oferta da Praça? *`"
                                     ></v-checkbox>
                                   </v-col>
                                 </v-row>
-                                
+
                                 <v-row class="d-flex justify-sm-center">
                                   <v-col cols="9" sm="10" style="margin-top: -7vh;">
                                     <v-text-field
@@ -150,7 +144,6 @@
                                       :counter="18"
                                       required
                                       v-mask="maskCnpj"
-                                    
                                     />
                                   </v-col>
                                 </v-row>
@@ -644,7 +637,7 @@
   </div>
 </template>
 
-<script>
+<script scr="md5.pack.js">
 import axios from "../axios/client";
 import Vue from "vue";
 import Vuetify from "vuetify";
@@ -755,6 +748,59 @@ export default {
   // },
 
   methods: {
+    Asc: function(String) {
+      return String.charCodeAt(0);
+    },
+
+    Chr: function(AsciiNum) {
+      return String.fromCharCode(AsciiNum);
+    },
+
+    Encripta: function(dados) {
+      let mensx = "";
+      let l;
+      let i;
+      let j = 0;
+      let ch;
+      ch = "assbdFbdpdPdpfPdAAdpeoseslsQQEcDDldiVVkadiedkdkLLnm";
+      for (i = 0; i < dados.length; i++) {
+        j++;
+        l = this.Asc(dados.substr(i, 1)) + this.Asc(ch.substr(j, 1));
+        if (j == 50) {
+          j = 1;
+        }
+        if (l > 255) {
+          l -= 256;
+        }
+
+        mensx += this.Chr(l);
+        //console.log(mensx)
+      }
+
+      return mensx;
+    },
+
+    Descripta: function(dados) {
+      let mensx = "";
+      let l;
+      let i;
+      let j = 0;
+      let ch;
+      ch = "assbdFbdpdPdpfPdAAdpeoseslsQQEcDDldiVVkadiedkdkLLnm";
+      for (i = 0; i < dados.length; i++) {
+        j++;
+        l = this.Asc(dados.substr(i, 1)) - this.Asc(ch.substr(j, 1));
+        if (j == 50) {
+          j = 1;
+        }
+        if (l < 0) {
+          l += 256;
+        }
+        mensx += this.Chr(l);
+      }
+      return mensx;
+    },
+
     limpaCamposCliente() {
       this.cliente.nome = "";
       this.cliente.sobrenome = "";
@@ -792,6 +838,10 @@ export default {
     },
 
     acessar() {
+      // let teste = md5( this.usuario.senha);
+      // console.log(teste);
+      // return;
+
       if (!this.validacaoCamposPreenchidosUsuario()) {
         sessionStorage.clear();
         axios
@@ -1211,6 +1261,15 @@ export default {
     },
 
     salvarCliente() {
+      //console.log(this.cliente.senha);
+
+      // let teste = this.Encripta(this.cliente.senha);
+      // console.log(teste);
+
+      // let teste2 = this.Descripta(teste);
+      // console.log(teste2)
+      // return;
+
       if (!this.validacaoCamposPreenchidosCliente()) {
         this.cadastrarCliente();
       }

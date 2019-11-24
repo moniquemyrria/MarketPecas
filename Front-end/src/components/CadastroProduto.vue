@@ -543,6 +543,7 @@ export default {
     };
   },
 
+  // instanciando menu empresa
   components: {
     "va-appbar-menu-emp": VANaviBarMenuEmp,
      "va-footer": VAFooter

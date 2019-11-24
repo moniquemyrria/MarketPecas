@@ -82,4 +82,3 @@ function pesquisaUsuarioEmpresaId($db, $id){
     $str->execute();
     return $str->fetchAll();
 }
-
