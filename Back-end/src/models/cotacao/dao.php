@@ -82,9 +82,10 @@ function impressaoCotacao($db, $idCotacao){
 
 function listarCotacaoMenorPreco($db, $produtos){
 
-    //dados dos itens
+    
     $produtoDescricao = $produtos[0]['descricao'];
 
+    // dados das empresas
     $strr = $db->prepare(
         
         "SELECT t.* from (
@@ -111,7 +112,7 @@ function listarCotacaoMenorPreco($db, $produtos){
     $strr->execute();
     $idsEmpresas = $strr->fetchAll();
 
-    
+    // dados do produto
     $str = $db->prepare(
         "SELECT *from(
             SELECT e.id as idEmpresa, p.id as idProduto, 
@@ -207,6 +208,7 @@ function listarCotacaoMenorPreco($db, $produtos){
     $str->execute();
     $cotacao = $str->fetchAll();
     
+    //montando array do JSON para exibir no front
     $arrayG = array();
     $arrayCotacao = array();
     foreach($idsEmpresas as $key => $item){

@@ -995,7 +995,7 @@ export default {
 
         let cotacao = "";
         let produtosCot = [];
-
+        // unindo string da descricao dos produtos com passagem de parametros para requiscao post cotacao
         for (let i = 0; i < this.produtosCotacao.length; i++) {
           if (i < this.produtosCotacao.length - 1) {
             cotacao = cotacao.concat(

@@ -316,8 +316,10 @@
 const AWS = require("aws-sdk");
 
 const credentials = {
-  id: "AKIAXAR4XEUNVZCYTQ7U",
-  secret: "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"
+  id: "AKIAYSDEJAKRCPNAFR5Y",
+  secret: "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"
+  //id: "AKIAXAR4XEUNVZCYTQ7U",
+  //secret: "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"
 };
 
 // Set region
@@ -479,7 +481,7 @@ export default {
                       Message:
                         "Olá, já conferiu o Marketpeças hoje?A Loja " +
                         nomeFantasia +
-                        " acaba de cadastrar uma super oferta para você." /* required */,
+                        " tem uma super oferta para você." /* required */,
                       PhoneNumber: response.data[i].PhoneNumber
                     };
                     sendSMS(params);
@@ -768,7 +770,7 @@ export default {
           this.snack("top", "right");
           this.dialog = false;
 
-          //this.smsOfertaEnvio();
+          this.smsOfertaEnvio();
           this.emailOfertaEnvio();
 
           this.close();
@@ -790,6 +792,10 @@ export default {
           this.colors = "blue";
           this.snack("top", "right");
           //}
+
+          this.smsOfertaEnvio();
+          this.emailOfertaEnvio();
+
           this.close();
           this.initialize();
           this.id = "";

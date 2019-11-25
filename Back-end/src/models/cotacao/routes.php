@@ -100,7 +100,7 @@ $app->post('/emailoferta', function ($request, $response, $args) {
       </html>
       ');
 
-      $mail->Send();
+      //$mail->Send();
 
       //testa se foi enviada ou não
       if($mail->Send())

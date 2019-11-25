@@ -803,7 +803,7 @@ export default {
               this.snack("top", "center");
 
               this.usuario.id = response.data[0].usuario[0].id;
-
+              // definir tipo de acesso F ou J
               if (response.data[0].usuario[0].tipo_pessoa == "F") {
                 this.acessaMenuCliente();
               } else {
